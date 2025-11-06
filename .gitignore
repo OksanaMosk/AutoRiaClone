@@ -1,0 +1,17 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# PyCharm
+.idea/
+
+
+# Env
+#.env
+
+# MySQL / Docker
+mysql/
+docker-compose.override.yml

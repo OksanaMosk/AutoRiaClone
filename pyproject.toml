@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "py-drf-hw"
+version = "0.1.0"
+description = ""
+authors = ["OksanaMosk <oks-m3@ukr.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<4.0"
+Django = "^5.1"
+djangorestframework = ">=3.16.1,<4.0.0"
+mysqlclient = ">=2.2.7,<3.0.0"
+python-dotenv = ">=1.0.0,<2.0.0"
+django-filter = ">=25.2,<26.0"
+djangorestframework-simplejwt = ">=5.5.1,<6.0.0"
+pillow = "^12.0.0"
+celery = "^5.5.3"
+redis = "^7.0.1"
+django-celery-results = "^2.6.0"
+django-celery-beat = "^2.8.1"
+djangochannelsrestframework = "^1.3.0"
+daphne = "^4.2.1"
+channels-redis = "^4.3.0"
+
+[tool.poetry.group.dev.dependencies]
+isort = ">=6.1.0,<7.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

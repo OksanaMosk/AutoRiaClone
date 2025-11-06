@@ -1,0 +1,21 @@
+.cardWrapper {
+   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 200px;
+  gap: 1rem;
+  background-color: inherit;
+  box-sizing: border-box;
+  padding: 2rem;
+  border: 1px solid white;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+              0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.cardWrapper:hover {
+    transform: scale(1.05);
+}
