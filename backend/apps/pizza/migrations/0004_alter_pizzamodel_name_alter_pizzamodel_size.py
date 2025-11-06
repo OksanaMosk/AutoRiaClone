@@ -7,17 +7,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('pizza', '0003_pizzamodel_day_alter_pizzamodel_name_and_more'),
+        ('car', '0003_carmodel_day_alter_carmodel_name_and_more'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pizzamodel',
+            model_name='carmodel',
             name='name',
             field=models.CharField(max_length=30, validators=[django.core.validators.RegexValidator('^[A-Z][a-z]{,29}$', 'Only alphanumeric characters are allowed.')]),
         ),
         migrations.AlterField(
-            model_name='pizzamodel',
+            model_name='carmodel',
             name='size',
             field=models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(100)]),
         ),

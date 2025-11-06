@@ -1,13 +1,13 @@
 const baseURL='/api'
 
 const auth='/auth'
-const pizzas='/pizzas'
+const cars='/cars'
 
 const urls={
     auth:{
         login:auth,
         socket:`${auth}/socket`
     },
-    pizzas
+    cars
 }
 export {baseURL, urls}

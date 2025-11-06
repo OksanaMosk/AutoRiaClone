@@ -6,10 +6,10 @@ from django.db.models import JSONField
 
 from core.enums.regex_enum import RegexEnum
 from core.models import BaseModel
-from core.services.file_service import upload_pizza_photo
+from core.services.file_service import upload_car_photo
 
-from ..pizza_shops.models import PizzaShopModel
-from .managers import PizzaManager
+from ..car_shops.models import carShopModel
+from .managers import carManager
 
 
 class DayChoice(models.TextChoices):
@@ -20,15 +20,15 @@ class DayChoice(models.TextChoices):
     FRIDAY = 'Friday'
     SATURDAY = 'Saturday'
     SUNDAY = 'Sunday'
-class PizzaModel(BaseModel):
+class carModel(BaseModel):
     class Meta:
-        db_table = 'pizza'
+        db_table = 'car'
     name = models.CharField(max_length=30,validators=[V.RegexValidator(RegexEnum.NAME.pattern, RegexEnum.NAME.msg)])
     price = models.FloatField()
     size = models.IntegerField(validators=[V.MinValueValidator(1), V.MaxValueValidator(100)])
     ingredients: JSONField | Any =models.JSONField(default=list)
     day = models.CharField(max_length=9, choices=DayChoice.choices)
     time_prepared = models.IntegerField()
-    pizza_shop=models.ForeignKey(PizzaShopModel, on_delete=models.CASCADE, related_name='pizzas')
-    photo=models.ImageField(upload_to=upload_pizza_photo, blank=True)
-    objects = PizzaManager()
+    car_shop=models.ForeignKey(carShopModel, on_delete=models.CASCADE, related_name='cars')
+    photo=models.ImageField(upload_to=upload_car_photo, blank=True)
+    objects = carManager()

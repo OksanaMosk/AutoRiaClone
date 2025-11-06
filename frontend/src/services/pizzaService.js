@@ -1,24 +1,24 @@
 import {apiService} from "./apiService";
 import {urls} from "../constants/urls";
 
-const pizzaService= {
+const carService= {
     getAll(){
-        return apiService.get(urls.pizzas)
+        return apiService.get(urls.cars)
     },
     create(data){
-        return apiService.post(urls.pizzas, data)
+        return apiService.post(urls.cars, data)
     }
 }
-export {pizzaService}
+export {carService}
 
-// const pizzaService = {
+// const carService = {
 //     getAll() {
-//         return apiService.get(urls.pizzas);
+//         return apiService.get(urls.cars);
 //     },
 //     create(data) {
-//         return apiService.post(urls.pizzas, data)
+//         return apiService.post(urls.cars, data)
 //             .catch(err => console.log(err.response?.data));
 //     }
 // }
 //
-// export { pizzaService };
+// export { carService };

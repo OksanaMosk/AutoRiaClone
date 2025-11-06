@@ -19,8 +19,8 @@ from django.conf.urls.static import static
 from django.urls import include, path
 
 urlpatterns = [
-    path('api/pizzas', include('apps.pizza.urls')),
-    path('api/pizza_shops', include('apps.pizza_shops.urls')),
+    path('api/cars', include('apps.car.urls')),
+    path('api/car_shops', include('apps.car_shops.urls')),
     path('api/auth', include('apps.auth.urls')),
     path('api/users', include('apps.user.urls')),
 ]

@@ -1,11 +1,11 @@
 from django_filters import rest_framework as filters
 
-from .serializers import PizzaSerializer
+from .serializers import carSerializer
 
 
 class CharArrayFilter(filters.BaseInFilter, filters.CharFilter):
     pass
-class PizzaFilter(filters.FilterSet):
+class carFilter(filters.FilterSet):
     name_starts_with = filters.CharFilter(field_name='name', lookup_expr='startswith')
     name_ends_with = filters.CharFilter(field_name='name', lookup_expr='endswith')
     name_contains = filters.CharFilter(field_name='name', lookup_expr='contains')
@@ -30,7 +30,7 @@ class PizzaFilter(filters.FilterSet):
     time_prepared_lte=filters.NumberFilter(field_name='time_prepared', lookup_expr='lte')
 
     allowed_fields = [
-        field for field in PizzaSerializer.Meta.fields
+        field for field in carSerializer.Meta.fields
         if field != 'ingredients'
     ]
     order=filters.OrderingFilter(

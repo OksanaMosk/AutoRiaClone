@@ -7,25 +7,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('pizza', '0002_pizzamodel_pizza_shop'),
-        ('pizza_shops', '0001_initial'),
+        ('car', '0002_carmodel_car_shop'),
+        ('car_shops', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pizzamodel',
+            model_name='carmodel',
             name='day',
             field=models.CharField(choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'), ('Sunday', 'Sunday')], default='Monday', max_length=9),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='pizzamodel',
+            model_name='carmodel',
             name='name',
             field=models.CharField(blank=True, max_length=30),
         ),
         migrations.AlterField(
-            model_name='pizzamodel',
-            name='pizza_shop',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pizzas', to='pizza_shops.pizzashopmodel'),
+            model_name='carmodel',
+            name='car_shop',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cars', to='car_shops.carshopmodel'),
         ),
     ]

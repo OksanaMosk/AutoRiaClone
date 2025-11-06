@@ -2,23 +2,23 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from rest_framework.response import Response
 
-from apps.pizza.serializers import PizzaSerializer
-from apps.pizza_shops.models import PizzaShopModel
-from apps.pizza_shops.serializers import PizzaShopSerializer
+from apps.car.serializers import carSerializer
+from apps.car_shops.models import carShopModel
+from apps.car_shops.serializers import carShopSerializer
 
 
-class PizzaShopsListCreateView(ListCreateAPIView):
-    serializer_class = PizzaShopSerializer
-    queryset = PizzaShopModel.objects.all()
+class carShopsListCreateView(ListCreateAPIView):
+    serializer_class = carShopSerializer
+    queryset = carShopModel.objects.all()
 
-class PizzaShopAddPizzaView(GenericAPIView):
-    queryset = PizzaShopModel.objects.all()
+class carShopAddcarView(GenericAPIView):
+    queryset = carShopModel.objects.all()
     def post(self, request, *args, **kwargs):
-        pizza_shop=self.get_object()
+        car_shop=self.get_object()
         data=self.request.data
-        serializer = PizzaSerializer(data=data)
+        serializer = carSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(pizza_shop=pizza_shop)
-        shop_serializer = PizzaShopSerializer(pizza_shop)
+        serializer.save(car_shop=car_shop)
+        shop_serializer = carShopSerializer(car_shop)
         return Response(shop_serializer.data,status=status.HTTP_201_CREATED)
 

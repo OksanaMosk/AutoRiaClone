@@ -51,8 +51,8 @@ INSTALLED_APPS = [
 
     # my apps
     'core',
-    'apps.pizza',
-    'apps.pizza_shops',
+    'apps.car',
+    'apps.car_shops',
     'apps.user',
     'apps.auth',
     'apps.chat'

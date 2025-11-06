@@ -8,13 +8,13 @@ import core.services.file_service
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('pizza', '0005_pizzamodel_photo'),
+        ('car', '0005_carmodel_photo'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pizzamodel',
+            model_name='carmodel',
             name='photo',
-            field=models.ImageField(blank=True, upload_to=core.services.file_service.upload_pizza_photo),
+            field=models.ImageField(blank=True, upload_to=core.services.file_service.upload_car_photo),
         ),
     ]

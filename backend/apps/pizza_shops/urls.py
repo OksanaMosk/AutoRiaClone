@@ -1,8 +1,8 @@
 from django.urls import path
 
-from apps.pizza_shops.views import PizzaShopAddPizzaView, PizzaShopsListCreateView
+from apps.car_shops.views import carShopAddcarView, carShopsListCreateView
 
 urlpatterns = [
-    path('', PizzaShopsListCreateView.as_view()),
-    path('/<int:pk>/pizzas', PizzaShopAddPizzaView.as_view()),
+    path('', carShopsListCreateView.as_view()),
+    path('/<int:pk>/cars', carShopAddcarView.as_view()),
 ]

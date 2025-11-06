@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
-from ..pizza.serializers import PizzaSerializer
-from ..pizza_shops.models import PizzaShopModel
+from ..car.serializers import carSerializer
+from ..car_shops.models import carShopModel
 
 
-class PizzaShopSerializer(serializers.ModelSerializer):
-    pizzas=PizzaSerializer(many=True, read_only=True)
+class carShopSerializer(serializers.ModelSerializer):
+    cars=carSerializer(many=True, read_only=True)
     class Meta:
-        model=PizzaShopModel
-        fields=('id','name','pizzas')
+        model=carShopModel
+        fields=('id','name','cars')
 

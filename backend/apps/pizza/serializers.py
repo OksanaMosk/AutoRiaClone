@@ -1,18 +1,18 @@
 from rest_framework import serializers
 
-from .models import PizzaModel
+from .models import carModel
 
 
-class PizzaSerializer(serializers.ModelSerializer):
+class carSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PizzaModel
+        model = carModel
         fields = ('id', 'name', 'price', 'size', 'ingredients', 'time_prepared', 'day', 'created_at', 'updated_at')
 
     def create(self, validated_data):
-        return PizzaModel.objects.create(**validated_data, pizza_shop_id=1)
+        return carModel.objects.create(**validated_data, car_shop_id=1)
 
         # extra_kwargs = {
-        #     "pizza_shop_id": {"read_only": True},
+        #     "car_shop_id": {"read_only": True},
         # }
     # def validate_price(self, price):
     #     if price <= 0:
@@ -26,7 +26,7 @@ class PizzaSerializer(serializers.ModelSerializer):
     #         raise serializers.ValidationError('Price cannot be equal to size')
     #     return attrs
 
-class PizzaPhotoSerializer(serializers.ModelSerializer):
+class carPhotoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PizzaModel
+        model = carModel
         fields=('photo',)
