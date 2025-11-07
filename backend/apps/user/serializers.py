@@ -43,10 +43,17 @@ class UserSerializer(serializers.ModelSerializer):
                 'write_only': True,
             },
         }
+
     @atomic
-    def create(self, validated_data:dict):
-       profile = validated_data.pop('profile')
-       user=UserModel.objects.create_user(**validated_data)
-       ProfileModel.objects.create(**profile, user=user )
-       EmailService.register(user)
-       return user
+    def create(self, validated_data: dict):
+        profile_data = validated_data.pop('profile')
+        password = validated_data.pop('password', None)
+        user = UserModel.objects.create_user(
+            email=validated_data.get('email'),
+            password=password,
+            **validated_data
+        )
+        ProfileModel.objects.create(user=user, **profile_data)
+        EmailService.register(user)
+        return user
+

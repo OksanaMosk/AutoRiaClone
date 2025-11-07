@@ -2,51 +2,58 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
 from core.models import BaseModel
-
 from apps.user.managers import UserManager
 
-
 class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
+    class Role(models.TextChoices):
+        BUYER = "buyer", "Buyer"
+        SELLER = "seller", "Seller"
+        MANAGER = "manager", "Manager"
+        ADMIN = "admin", "Administrator"
+
+    class AccountType(models.TextChoices):
+        BASIC = "basic", "Basic"
+        PREMIUM = "premium", "Premium"
+
+    email = models.EmailField(unique=True)
+    role = models.CharField(
+        max_length=20,
+        choices=Role.choices,
+        default=Role.BUYER
+    )
+    account_type = models.CharField(
+        max_length=20,
+        choices=AccountType.choices,
+        default=AccountType.BASIC
+    )
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    objects = UserManager()
+
     class Meta:
         db_table = 'auth_user'
         ordering = ['-id']
-    email = models.EmailField(unique=True)
-    is_active = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
-    USERNAME_FIELD = 'email'
-    objects = UserManager()
+
+    def __str__(self):
+        return self.email
 
 class ProfileModel(BaseModel):
+    name = models.CharField(max_length=50)
+    surname = models.CharField(max_length=50)
+    age = models.IntegerField(null=True, blank=True)
+    user = models.OneToOneField(
+        UserModel,
+        on_delete=models.CASCADE,
+        related_name="profile"
+    )
+
     class Meta:
         db_table = 'profile'
         ordering = ['-id']
-    name = models.CharField(max_length=20)
-    surname = models.CharField(max_length=20)
-    age = models.IntegerField()
-    user=models.OneToOneField(UserModel, on_delete=models.CASCADE,related_name='profile')
-    objects = models.Manager()
 
-
-#
-# from sqlalchemy import Column, Integer, String, Enum
-# from app.database import Base
-# import enum
-#
-# class Role(str, enum.Enum):
-#     ADMIN = "admin"
-#     MANAGER = "manager"
-#     SELLER = "seller"
-#     BUYER = "buyer"
-#
-# class AccountType(str, enum.Enum):
-#     BASIC = "basic"
-#     PREMIUM = "premium"
-#
-# class User(Base):
-#     __tablename__ = "users"
-#
-#     id = Column(Integer, primary_key=True, index=True)
-#     email = Column(String, unique=True, index=True)
-#     hashed_password = Column(String)
-#     role = Column(Enum(Role), default=Role.BUYER)
-#     account_type = Column(Enum(AccountType), default=AccountType.BASIC)
+    def __str__(self):
+        return f"{self.name} {self.surname}"

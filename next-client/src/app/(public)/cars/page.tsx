@@ -1,16 +1,16 @@
 import React from 'react';
-import CarForm from "@/components/form-car-component/CarForm";
+import CarFormComponent from "@/components/form-car-component/CarFormComponent";
 import CarsComponent from "@/components/cars-component/CarsComponent";
-import Chat from "@/components/chat-component/Chat";
+import ChatComponent from "@/components/chat-component/ChatComponent";
 
 const CarsPage = () => {
     return (
         <div>
-           <CarForm/>
+           <CarFormComponent/>
             <hr/>
             <CarsComponent/>
             <hr/>
-            <Chat/>
+            <ChatComponent/>
         </div>
     );
 };

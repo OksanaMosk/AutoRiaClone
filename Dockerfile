@@ -1,6 +1,6 @@
-FROM python:3.13-alpine
+FROM python:3.12-alpine
 
-MAINTAINER Some Dev
+LABEL maintainer="Some Dev"
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -12,18 +12,30 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DEBIAN_FRONTEND=noninteractive \
     COLUMNS=80
 
-RUN apk update
-RUN apk add --no-cache gcc musl-dev mariadb-dev curl
 
-RUN mkdir /app
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    mariadb-dev \
+    libffi-dev \
+    openssl-dev \
+    curl
+
+
 WORKDIR /app
+
 
 ENV POETRY_HOME=/usr/local/poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
-ENV PATH=$POETRY_HOME/bin:$PATH
+ENV PATH="${POETRY_HOME}/bin:${PATH}"
 
-COPY pyproject.toml /app/
+
+COPY pyproject.toml poetry.lock /app/
 
 RUN poetry config virtualenvs.create false
-RUN poetry lock
-RUN poetry install
+RUN poetry install --no-root --no-interaction --no-ansi
+
+
+COPY backend /app
+
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
