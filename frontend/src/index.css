@@ -1,6 +1,127 @@
+:root {
+  --color-disabled: #6b7280;
+  --color-active: #FFD700;
+  --color-border: #947e07;
+  --color-text: #f2e499;
+  --color-badgeId: #bda008;
+  --color-noposter: #374151;
+  --color-white: #ffffff;
+  --color-container: #1f2937;
+}
+
 body {
-    height: 100%;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
   margin: 0 auto;
-  background: linear-gradient(to left, #000000,#757574);
-  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+  background-size: cover;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  background:linear-gradient(to bottom left, black, #ebe68f);
+}
+
+html.light {
+
+  body {
+    background:linear-gradient(to bottom left, black, #ebe68f);
+            /*url("/background/light.png") no-repeat top right / auto,*/
+
+  }
+
+  .burgerMenu {
+    background:
+            /*url("/background/light.png") no-repeat bottom right / auto,*/
+            linear-gradient(to bottom left, black, #ebe68f);
+  }
+
+  .search-input,
+  .sort-select,
+  .movieInfoWrapper {
+    background-color: var(--color-white);
+  }
+
+  .search-button,
+  .search-input,
+  .noResults,
+  .search-input::placeholder {
+    color: var(--color-container);
+  }
+
+  .search-button:focus,
+  .search-button:active,
+  .search-button:hover,
+  .movieTitle {
+    color: var(--color-badgeId);
+  }
+
+  .search-input:focus {
+    opacity: 0.7;
+  }
+
+  .sort-label,
+  .search-clearButton {
+    color: var(--color-white);
+  }
+
+
+  .movieItem {
+    box-shadow: none;
+    border-bottom: 1px solid var(--color-active);
+  }
+
+
+  .loader {
+    fill: var(--color-container);
+  }
+
+  .loader-run {
+    fill: var(--color-active);
+  }
+
+
+  .auth {
+    background-color: black;
+    opacity: 0.8;
+  }
+
+
+  .burgerUserLogoutBtn {
+    color: black;
+  }
+
+  .slideheading{
+    color: var(--color-container);
+  }
+
+
+  .cell{
+   background:black;
+  }
+}
+
+html.dark {
+
+  body,
+  .burgerMenu {
+    /*background-image: url("/background/dark.jpg");*/
+  }
+
+  .mainTitle{
+    background: linear-gradient( var(--color-active), var(--color-badgeId));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .cell{
+    background:var(--color-active);
+  }
+}
+::-webkit-scrollbar {
+  display: none;
+}
+figure {
+  margin: 0;
+  overflow: hidden;
+
 }

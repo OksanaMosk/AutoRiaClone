@@ -1,18 +1,18 @@
 import React from 'react';
-import PizzaForm from "../components/PizzaForm";
-import PizzasComponent from "../components/PizzasComponent";
-import Chat from "../components/Chat";
+import CarForm from "../components/form-car-component/CarForm";
+import CarsComponent from "../components/cars-component/CarsComponent";
+import Chat from "../components/chat-component/Chat";
 
-const PizzasPage = () => {
+const CarsPage = () => {
     return (
         <div>
-           <PizzaForm/>
+           <CarForm/>
             <hr/>
-            <PizzasComponent/>
+            <CarsComponent/>
             <hr/>
             <Chat/>
         </div>
     );
 };
 
-export default PizzasPage;
+export default CarsPage;

@@ -43,3 +43,13 @@ services:
       sh -c 'celery -A configs worker -l info'
 #     sh -c 'celery -A configs worker -l info -B'
 
+  next-client:
+    build: ./next-client
+    container_name: next-client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./next-client:/app
+    command: npm run dev
+    depends_on:
+      - app

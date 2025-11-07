@@ -1,0 +1,82 @@
+.container {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 40px auto;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+.roomSelect {
+    text-align: center;
+}
+
+.roomInput {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.roomButton {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.roomButton:hover {
+    background-color: #0056b3;
+}
+
+.chatBox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.messages {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+}
+
+.messageItem {
+    margin-bottom: 8px;
+    padding: 5px 8px;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.username {
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    margin-right: 6px;
+    transition: color 0.2s ease;
+}
+
+.username:hover {
+    color: #007bff;
+}
+
+.activeUser {
+    color: #007bff;
+}
+
+.messageText {
+    color: #555;
+}
+
+.messageInput {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}

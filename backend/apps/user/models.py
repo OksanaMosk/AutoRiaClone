@@ -25,3 +25,28 @@ class ProfileModel(BaseModel):
     age = models.IntegerField()
     user=models.OneToOneField(UserModel, on_delete=models.CASCADE,related_name='profile')
     objects = models.Manager()
+
+
+#
+# from sqlalchemy import Column, Integer, String, Enum
+# from app.database import Base
+# import enum
+#
+# class Role(str, enum.Enum):
+#     ADMIN = "admin"
+#     MANAGER = "manager"
+#     SELLER = "seller"
+#     BUYER = "buyer"
+#
+# class AccountType(str, enum.Enum):
+#     BASIC = "basic"
+#     PREMIUM = "premium"
+#
+# class User(Base):
+#     __tablename__ = "users"
+#
+#     id = Column(Integer, primary_key=True, index=True)
+#     email = Column(String, unique=True, index=True)
+#     hashed_password = Column(String)
+#     role = Column(Enum(Role), default=Role.BUYER)
+#     account_type = Column(Enum(AccountType), default=AccountType.BASIC)

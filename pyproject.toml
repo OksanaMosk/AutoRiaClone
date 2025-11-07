@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "py-drf-hw"
+name = "AutoRiaClone"
 version = "0.1.0"
 description = ""
 authors = ["OksanaMosk <oks-m3@ukr.net>"]
@@ -21,6 +21,7 @@ django-celery-beat = "^2.8.1"
 djangochannelsrestframework = "^1.3.0"
 daphne = "^4.2.1"
 channels-redis = "^4.3.0"
+django-environ = "^0.12.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = ">=6.1.0,<7.0.0"

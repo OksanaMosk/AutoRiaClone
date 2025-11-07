@@ -1,12 +1,12 @@
 import React from 'react';
-import LoginComponent from "../components/login-component/LoginComponent";
+import RegisterComponent from "../components/register-component/RegisterComponent";
 
-const LoginPage = () => {
+const RegisterPage = () => {
     return (
         <div>
-            <LoginComponent/>
+            <RegisterComponent/>
         </div>
     );
 };
 
-export default LoginPage;
+export default RegisterPage;
