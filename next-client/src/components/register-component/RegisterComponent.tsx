@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import React,{ useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./RegisterComponent.module.css";
-import { authService } from "@/services/authService";
+import { authService } from "@/lib/services/authService";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,8 +22,8 @@ const RegisterComponent = () => {
 
   const router = useRouter();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event:React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setErrorMsg("");
 
     if (password !== confirmPassword) {
@@ -44,9 +44,16 @@ const RegisterComponent = () => {
         },
       });
 
-      router.push("/login"); // переходимо на логін після успішної реєстрації
-    } catch (err) {
-      setErrorMsg(err.response?.data?.detail || "Something went wrong");
+        router.push("/login");
+
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            setErrorMsg(err.message);
+        } else {
+            setErrorMsg("Something went wrong");
+        }
+
+
     } finally {
       setLoading(false);
     }
