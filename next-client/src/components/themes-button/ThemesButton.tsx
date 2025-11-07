@@ -9,7 +9,11 @@ import styles from "./ThemesButton.module.css";
 const ThemesButton = () => {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true); }, []);
+
+    useEffect(() => {
+        setMounted(true);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        }, []);
 
     if (!mounted) return null;
 
