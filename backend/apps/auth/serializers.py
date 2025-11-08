@@ -7,7 +7,5 @@ UserModel=get_user_model()
 class EmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-class PasswordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserModel
-        fields=['password']
+class PasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True, min_length=8)

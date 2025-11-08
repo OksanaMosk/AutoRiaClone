@@ -23,5 +23,7 @@ urlpatterns = [
     path('api/car_shops', include('apps.car_shops.urls')),
     path('api/auth', include('apps.auth.urls')),
     path('api/users', include('apps.user.urls')),
+    path('auth/register/', views.RegisterView.as_view(), name='register'),
+
 ]
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

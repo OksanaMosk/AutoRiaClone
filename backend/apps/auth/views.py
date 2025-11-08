@@ -1,11 +1,12 @@
 
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 
 from rest_framework import status
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
 
 from core.services.email_service import EmailService
 from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken, SocketToken
@@ -52,3 +53,25 @@ class SocketTokenView(GenericAPIView):
     def get(self, *args, **kwargs):
         token=JWTService.create_token(user=self.request.user,token_class=SocketToken)
         return Response({'token': str(token)}, status.HTTP_200_OK)
+
+
+class RegisterAPIView(GenericAPIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save(is_active=True)  # або False, якщо потрібна активація через email
+        return Response(UserSerializer(user).data, status.HTTP_201_CREATED)
+
+class LoginAPIView(GenericAPIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username') or request.data.get('email')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            token = JWTService.create_token(user=user, token_class=AccessToken)
+            return Response({"access": str(token)}, status=status.HTTP_200_OK)
+        return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)

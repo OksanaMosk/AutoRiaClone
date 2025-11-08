@@ -53,6 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=password,
             **validated_data
         )
+
         ProfileModel.objects.create(user=user, **profile_data)
         EmailService.register(user)
         return user
