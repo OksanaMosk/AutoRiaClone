@@ -122,9 +122,7 @@ const RegisterComponent = () => {
                 />
             </div>
 
-            {/* Age */}
             <div className={styles.inputGroup}>
-
                 <input
                     type="text"
                     placeholder="Age"
@@ -132,10 +130,7 @@ const RegisterComponent = () => {
                     value={age ?? ""}
                     onChange={(e) => {
                         const value = e.target.value;
-
-                        // Перевіряємо, чи складається значення лише з цифр
                         if (/^\d*$/.test(value)) {
-                            // Якщо рядок порожній, встановлюємо null, інакше перетворюємо на число
                             setAge(value === "" ? null : Number(value));
                         }
                     }}
@@ -148,15 +143,15 @@ const RegisterComponent = () => {
                 placeholder="Password"
             />
 
-            {/* Confirm Password */}
+
             <PasswordInput
                 value={confirmPassword}
                 onChangeAction={setConfirmPassword}
                 placeholder="Confirm Password"
             />
 
-            <div className="roleSelection">
-                <button className="roleButton" data-role="buyer">
+            <div className={styles.roleSelection}>
+                <button className={styles.roleButton} data-role="buyer">
                     <Image
                         src="/images/user.png"
                         alt="Buyer"
@@ -166,7 +161,7 @@ const RegisterComponent = () => {
                     <span>Buyer</span>
                 </button>
 
-                <button className="roleButton" data-role="seller">
+                <button className={styles.roleButton} data-role="seller">
                     <Image
                         src="/images/user.png"
                         alt="Seller"
@@ -174,26 +169,6 @@ const RegisterComponent = () => {
                         height={24}
                     />
                     <span>Seller</span>
-                </button>
-
-                <button className="roleButton" data-role="manager">
-                    <Image
-                        src="/images/user.png"
-                        alt="Manager"
-                        width={24}
-                        height={24}
-                    />
-                    <span>Manager</span>
-                </button>
-
-                <button className="roleButton" data-role="admin">
-                    <Image
-                        src="/images/user.png"
-                        alt="Admin"
-                        width={24}
-                        height={24}
-                    />
-                    <span>Superuser</span>
                 </button>
             </div>
 
