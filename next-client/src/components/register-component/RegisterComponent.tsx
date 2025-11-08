@@ -1,6 +1,6 @@
 "use client";
 
-import React,{ useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./RegisterComponent.module.css";
 import { authService } from "@/lib/services/authService";
@@ -14,7 +14,8 @@ const RegisterComponent = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [age, setAge] = useState("");
+  const [age, setAge] = useState<number | "">("");
+  const [role, setRole] = useState<"buyer" | "seller" | "manager">("buyer");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +23,7 @@ const RegisterComponent = () => {
 
   const router = useRouter();
 
-  const handleSubmit = async (event:React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMsg("");
 
@@ -37,23 +38,21 @@ const RegisterComponent = () => {
       await authService.register({
         email,
         password,
+        role,
         profile: {
           first_name: firstName,
           last_name: lastName,
-          age: age,
+          age: age === "" ? undefined : age,
         },
       });
 
-        router.push("/login");
-
+      router.push("/login");
     } catch (err: unknown) {
-        if (err instanceof Error) {
-            setErrorMsg(err.message);
-        } else {
-            setErrorMsg("Something went wrong");
-        }
-
-
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg("Something went wrong");
+      }
     } finally {
       setLoading(false);
     }
@@ -74,6 +73,21 @@ const RegisterComponent = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+        </div>
+
+        {/* Role */}
+        <div className={styles.inputGroup}>
+          <select
+            value={role}
+            onChange={(e) =>
+              setRole(e.target.value as "buyer" | "seller" | "manager")
+            }
+            className={styles.input}
+          >
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+            <option value="manager">Manager</option>
+          </select>
         </div>
 
         {/* First Name */}
@@ -105,10 +119,11 @@ const RegisterComponent = () => {
           <input
             type="number"
             placeholder="Age"
-            required
             className={styles.input}
             value={age}
-            onChange={(e) => setAge(e.target.value)}
+            onChange={(e) =>
+              setAge(e.target.value === "" ? "" : Number(e.target.value))
+            }
           />
         </div>
 
@@ -158,9 +173,7 @@ const RegisterComponent = () => {
           </div>
         </div>
 
-
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
-
 
         <button type="submit" className={styles.button} disabled={loading}>
           {loading ? <LoaderComponent /> : "Sign Up"}

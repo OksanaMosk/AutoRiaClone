@@ -1,9 +1,12 @@
 export interface IUser {
-    email: string;
-    token?: string;
-    profile?: {
-        first_name: string;
-        last_name: string;
-        age: number;
-    };
+  id?: number;
+  email: string;
+  token?: string;
+  role?: "buyer" | "seller" | "manager" | "admin";
+  account_type?: string;
+  profile?: {
+    first_name: string;
+    last_name: string;
+    age?: number;
+  };
 }
