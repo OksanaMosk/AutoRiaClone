@@ -12,7 +12,7 @@ const ThemesButton = () => {
 
     useEffect(() => {
         setMounted(true);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+
         }, []);
 
     if (!mounted) return null;
@@ -23,7 +23,7 @@ const ThemesButton = () => {
             className={styles.theme}
         >
             <Image
-                src={theme === "light" ? "/images/dark.png" : "/images/light.png"}
+                src={theme === "light" ? "/images/user.png" : "/images/eye.png"}
                 alt={theme === "light" ? "Dark Theme" : "Light Theme"}
                 width={60}
                 height={60}
