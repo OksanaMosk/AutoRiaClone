@@ -1,12 +1,15 @@
 import { cookies } from "next/headers";
 import { authService } from "@/lib/services/authService";
-import { MenuClientComponent } from "@/components/menu-client-component/MenuClientComponent";
 
-export default async function MenuComponent() {
-    const token = cookies().get("authToken")?.value;
+import { IUser } from "@/models/IUser";
+import {MenuClientComponent} from "@/components/menuClient-component/MenuClientComponent";
 
-    // Припустимо, у authService є метод getCurrentUser(token)
-    let user = null;
+export const MenuComponent = async () => {
+    const cookieStore = await cookies()
+    const token = cookieStore.get("authToken")?.value;
+
+    let user: IUser | null = null;
+
     if (token) {
         try {
             user = await authService.getCurrentUser(token);
@@ -18,5 +21,6 @@ export default async function MenuComponent() {
 
     const authenticated = !!user;
 
-    return <MenuClientComponent user={user} authenticated={authenticated} />;
-}
+   return  <MenuClientComponent user={user} authenticated={authenticated} />
+};
+

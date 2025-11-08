@@ -11,6 +11,7 @@ export const urls = {
     register: `${paths.auth}/register/`,
     login: `${paths.auth}/login/`,
     socket: `${paths.auth}/socket/`,
+    me: `${paths.auth}/me/`,
   },
 
   users: {

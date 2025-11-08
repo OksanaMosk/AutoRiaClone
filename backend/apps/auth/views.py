@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
 from core.services.email_service import EmailService
@@ -57,7 +58,7 @@ class SocketTokenView(GenericAPIView):
 
 class RegisterAPIView(GenericAPIView):
     permission_classes = (AllowAny,)
-
+    serializer_class = UserSerializer
     def post(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -75,3 +76,22 @@ class LoginAPIView(GenericAPIView):
             token = JWTService.create_token(user=user, token_class=AccessToken)
             return Response({"access": str(token)}, status=status.HTTP_200_OK)
         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+class CurrentUserAPIView(APIView):
+        permission_classes = [IsAuthenticated]
+
+        def get(self, request):
+            user = request.user
+            # Формуємо потрібні поля
+            data = {
+                "id": user.id,
+                "email": user.email,
+                "role": user.role,  # припускаємо, що у User model є поле role
+                "accountType": user.account_type,  # або account_type
+                "profile": {
+                    "firstName": user.first_name,
+                    "lastName": user.last_name,
+                    "avatarUrl": user.avatar.url if user.avatar else None,
+                }
+            }
+            return Response(data)

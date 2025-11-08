@@ -6,6 +6,7 @@ interface IRegisterUser {
   email: string;
   password: string;
   profile: IUser["profile"];
+  role?: "buyer" | "seller" | "manager" | "admin";
 }
 
 const authService = {
@@ -13,7 +14,7 @@ const authService = {
     const { data: { access } } = await apiService.post(urls.auth.login, user);
 
 
-    document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=strict`;
+    document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
 
     return access;
   },
@@ -25,6 +26,12 @@ const authService = {
 
   getSocketToken(): Promise<{ token: string }> {
     return apiService.get(urls.auth.socket);
+  },
+    async getCurrentUser(token: string): Promise<IUser> {
+    const { data } = await apiService.get<IUser>(urls.auth.me, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return data;
   }
 };
 
