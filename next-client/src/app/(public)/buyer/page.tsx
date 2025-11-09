@@ -9,13 +9,15 @@ const BuyerPage = () => {
   const [isActivated, setIsActivated] = useState(false);
   const router = useRouter();
 
-useEffect(() => {
-
+  useEffect(() => {
     const { query } = router;
-    if (query?.activated === "true") {
-      setIsActivated(true);
+
+    if (query?.activated === "true" && !isActivated) {
+      setTimeout(() => {
+        setIsActivated(true);
+      }, 0);
     }
-  }, [router.query]);
+  }, [router, router.query, isActivated]);
 
   return (
     <div>
