@@ -1,35 +1,68 @@
 
-
 from django.contrib.auth import get_user_model, authenticate
-from django.shortcuts import redirect
 
-from rest_framework import status
 from rest_framework.generics import GenericAPIView, get_object_or_404
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import AccessToken
 
-from core.exceptions.jwt_exception import JWTException
 from core.services.email_service import EmailService
-from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken, SocketToken
+from core.services.jwt_service import RecoveryToken, SocketToken
 
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
 from apps.user.serializers import UserSerializer
 
+from django.shortcuts import redirect
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from core.services.jwt_service import JWTService, ActivateToken
+from core.exceptions.jwt_exception import JWTException
+
+import logging
+
 UserModel = get_user_model()
+
+
+logger = logging.getLogger(__name__)
+
+
 class ActivateUserView(GenericAPIView):
     permission_classes = (AllowAny,)
-    def patch(self, *args, **kwargs):
-        token = kwargs['token']
+
+    def patch(self, request, *args, **kwargs):
+        token = kwargs.get('token')
+
         try:
+            # Перевірка токену
             user = JWTService.verify_token(token, ActivateToken)
+            logger.info(f"User found: {user.email}")
+
+            if user.is_active:
+                logger.info(f"User {user.email} is already activated.")
+                return Response({'detail': 'Account is already activated.'}, status=status.HTTP_200_OK)
+
+            # Активуємо користувача
             user.is_active = True
             user.save()
 
-            return redirect(f"http://localhost:3000/seller-dashboard?activated=true")
-        except JWTException:
+            # Серіалізація користувача після активації
+            serializer = UserSerializer(user)
+
+            # Логуємо успішну активацію
+            logger.info(f"User {user.email} activated successfully.")
+
+            # Повертаємо серіалізовані дані користувача після активації
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except JWTException as e:
+            logger.error(f"Invalid or expired token: {e}")  # Лог для помилки токену
             return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            logger.error(f"Unexpected error: {e}")  # Лог для інших помилок
+            return Response({'detail': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 
@@ -105,3 +138,51 @@ class CurrentUserAPIView(APIView):
         }
 
         return Response(data)
+
+
+# class ActivateUserView(GenericAPIView):
+#     permission_classes = (AllowAny,)
+#
+#     def patch(self, request, *args, **kwargs):
+#         token = kwargs['token']
+#
+#
+#         try:
+#             # Перевірка токену
+#             user = JWTService.verify_token(token, ActivateToken)
+#             logger.info(f"User found: {user.email}")
+#
+#             if user.is_active:
+#                 logger.info(f"User {user.email} is already activated.")
+#                 return Response({'detail': 'Account is already activated.'}, status=status.HTTP_200_OK)
+#
+#             # Активуємо користувача
+#             user.is_active = True
+#             user.save()
+#
+#             # Серіалізація користувача після активації
+#             serializer = UserSerializer(user)
+#
+#             # Логуємо успішну активацію
+#             logger.info(f"User {user.email} activated successfully.")
+#
+#             # Перевіряємо роль користувача та редіректимо на відповідну сторінку
+#             if user.role == 'seller':
+#                 logger.info(f"Redirecting to seller dashboard for {user.email}")
+#                 return redirect(f"http://localhost:3000/seller?activated=true")
+#             elif user.role == 'buyer':
+#                 logger.info(f"Redirecting to buyer dashboard for {user.email}")
+#                 return redirect(f"http://localhost:3000/buyer?activated=true")
+#             else:
+#                 logger.info(f"Redirecting to default dashboard for {user.email}")
+#                 return redirect(f"http://localhost:3000?activated=true")
+#
+#
+#
+#         except JWTException as e:
+#             logger.error(f"Invalid or expired token: {e}")  # Лог для помилки токену
+#             return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+#
+#         except Exception as e:
+#             logger.error(f"Unexpected error: {e}")  # Лог для інших помилок
+#             return Response({'detail': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

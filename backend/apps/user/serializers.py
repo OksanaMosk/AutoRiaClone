@@ -39,7 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
             'updated_at',
             'profile'
         )
-        read_only_fields = ('id', 'is_staff', 'is_superuser', 'last_login', 'created_at', 'updated_at')
+        read_only_fields = ('id',  'is_active', 'is_staff', 'is_superuser', 'last_login', 'created_at', 'updated_at')
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -54,12 +54,16 @@ class UserSerializer(serializers.ModelSerializer):
         profile_data = validated_data.pop('profile')
         password = validated_data.pop('password', None)
 
+
+        validated_data['is_active'] = False
+
         user = UserModel.objects.create_user(
             password=password,
-            is_active=False,
-            **validated_data  # Роль буде передана через validated_data
+            **validated_data
         )
 
         ProfileModel.objects.create(user=user, **profile_data)
+
         EmailService.register(user)
+
         return user

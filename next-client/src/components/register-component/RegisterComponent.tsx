@@ -60,11 +60,11 @@ const RegisterComponent = () => {
 
       // Перехід на відповідний dashboard в залежності від ролі
       if (role === "buyer") {
-        router.push("/buyer-dashboard");
+        router.push("/buyer");
       } else if (role === "seller") {
-        router.push("/seller-dashboard");
+        router.push("/seller");
       } else {
-        router.push("/manager-dashboard");
+        router.push("/manager");
       }
     } catch (err: unknown) {
       if (err instanceof Error) {

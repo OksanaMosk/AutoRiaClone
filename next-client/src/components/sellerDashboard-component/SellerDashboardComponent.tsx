@@ -4,10 +4,8 @@ import React from "react";
 
 export const SellerDashboardComponent=()=> {
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Seller Dashboard</h1>
-      <p>Your account type: Seller.</p>
-      <ul className="list-disc ml-6">
+    <div>
+      <ul>
         <li>Create a new listing</li>
         <li>View your active listings</li>
         <li>View statistics (if you have a Premium account)</li>

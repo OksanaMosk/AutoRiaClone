@@ -27,8 +27,8 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         choices=AccountType.choices,
         default=AccountType.BASIC  # За замовчуванням акаунт "Basic"
     )
-    is_verified = models.BooleanField(default=False)  # За замовчуванням False
-    is_active = models.BooleanField(default=False)  # Користувач не активний до підтвердження
+    is_verified = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
