@@ -119,7 +119,9 @@
   transform: translateY(-5px);
 }
 .roleButton{
-border-radius: 50%;
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
 }
 .roleCard img {
   width: 50px;

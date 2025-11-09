@@ -62,7 +62,7 @@ class RegisterAPIView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save(is_active=True)  # або False, якщо потрібна активація через email
+        user = serializer.save(is_active=True)
         return Response(UserSerializer(user).data, status.HTTP_201_CREATED)
 
 class LoginAPIView(GenericAPIView):

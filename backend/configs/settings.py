@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG")=="True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 
 AUTH_USER_MODEL = 'user.UserModel'
@@ -55,12 +55,15 @@ INSTALLED_APPS = [
     'apps.car_shops',
     'apps.user',
     'apps.auth',
-    'apps.chat'
+    'apps.chat',
+    'corsheaders',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'configs.urls'
@@ -141,3 +144,7 @@ MEDIA_URL='/api/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH=False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]

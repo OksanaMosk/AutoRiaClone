@@ -1,15 +1,12 @@
-
-
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
-
 from rest_framework import serializers
-
 from core.services.email_service import EmailService
-
 from apps.user.models import ProfileModel
 
-UserModel=get_user_model()
+UserModel = get_user_model()
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileModel
@@ -21,11 +18,14 @@ class ProfileSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         )
+
+
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer()
+
     class Meta:
         model = UserModel
-        fields=(
+        fields = (
             'id',
             'email',
             'password',
@@ -37,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
             'updated_at',
             'profile'
         )
-        read_only_fields=('id', 'is_active','is_staff','is_superuser','last_login', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'created_at', 'updated_at')
         extra_kwargs = {
             'password': {
                 'write_only': True,
@@ -48,8 +48,9 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict):
         profile_data = validated_data.pop('profile')
         password = validated_data.pop('password', None)
+
+
         user = UserModel.objects.create_user(
-            email=validated_data.get('email'),
             password=password,
             **validated_data
         )
@@ -57,4 +58,3 @@ class UserSerializer(serializers.ModelSerializer):
         ProfileModel.objects.create(user=user, **profile_data)
         EmailService.register(user)
         return user
-
