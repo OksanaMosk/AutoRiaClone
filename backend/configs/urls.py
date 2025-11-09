@@ -5,7 +5,7 @@ from django.urls import include, path
 urlpatterns = [
     path('api/cars/', include('apps.car.urls')),
     path('api/car_shops/', include('apps.car_shops.urls')),
-    path('api/auth/', include('apps.auth.urls')),  # тут усі auth роути
+    path('api/auth/', include('apps.auth.urls')),
     path('api/users/', include('apps.user.urls')),
 ]
 

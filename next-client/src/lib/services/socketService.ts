@@ -1,5 +1,6 @@
 import { authService } from "./authService";
-import { w3cwebsocket as W3cwebsocket } from "websocket";
+
+import { WebSocket as W3cwebsocket } from 'ws';
 
 const baseURL = "ws://localhost/api";
 

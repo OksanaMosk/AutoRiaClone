@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export const SellerDashboard=()=> {
+export const SellerDashboardComponent=()=> {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Seller Dashboard</h1>

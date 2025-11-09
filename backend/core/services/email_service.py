@@ -43,13 +43,3 @@ class EmailService:
             subject='Recovery'
         )
 
-    # @staticmethod
-    # @app.task
-    # def spam():
-    #     for user in UserModel.objects.all():
-    #         EmailService.__send_email(
-    #             to=user.email,
-    #             template_name='spam.html',
-    #             context={},
-    #             subject='SPAM'
-    #         )

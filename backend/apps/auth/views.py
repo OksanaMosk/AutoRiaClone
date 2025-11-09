@@ -1,6 +1,7 @@
 
 
 from django.contrib.auth import get_user_model, authenticate
+from django.shortcuts import redirect
 
 from rest_framework import status
 from rest_framework.generics import GenericAPIView, get_object_or_404
@@ -9,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
+from core.exceptions.jwt_exception import JWTException
 from core.services.email_service import EmailService
 from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken, SocketToken
 
@@ -20,11 +22,16 @@ class ActivateUserView(GenericAPIView):
     permission_classes = (AllowAny,)
     def patch(self, *args, **kwargs):
         token = kwargs['token']
-        user=JWTService.verify_token(token,ActivateToken)
-        user.is_active = True
-        user.save()
-        serializer = UserSerializer(user)
-        return Response (serializer.data, status.HTTP_200_OK)
+        try:
+            user = JWTService.verify_token(token, ActivateToken)
+            user.is_active = True
+            user.save()
+
+            return redirect(f"http://localhost:3000/seller-dashboard?activated=true")
+        except JWTException:
+            return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class RecoveryRequestView(GenericAPIView):
     permission_classes = (AllowAny,)
@@ -78,20 +85,23 @@ class LoginAPIView(GenericAPIView):
         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class CurrentUserAPIView(APIView):
-        permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
-        def get(self, request):
-            user = request.user
-            # Формуємо потрібні поля
-            data = {
-                "id": user.id,
-                "email": user.email,
-                "role": user.role,  # припускаємо, що у User model є поле role
-                "accountType": user.account_type,  # або account_type
-                "profile": {
-                    "firstName": user.first_name,
-                    "lastName": user.last_name,
-                    "avatarUrl": user.avatar.url if user.avatar else None,
-                }
+    def get(self, request):
+        user = request.user
+
+        data = {
+            "id": user.id,
+            "email": user.email,
+            "role": user.role,
+            "accountType": user.account_type,
+            "is_active": user.is_active,
+            "profile": {
+                "name": user.profile.name,
+                "surname": user.profile.surname,
+                "age": user.profile.age,
+                "avatarUrl": user.profile.avatar.url if user.profile.avatar else None,
             }
-            return Response(data)
+        }
+
+        return Response(data)

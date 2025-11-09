@@ -1,3 +1,4 @@
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
@@ -19,15 +20,17 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
     role = models.CharField(
         max_length=20,
         choices=Role.choices,
-        default=Role.BUYER
+        default=Role.BUYER  # За замовчуванням роль Buyer
     )
     account_type = models.CharField(
         max_length=20,
         choices=AccountType.choices,
-        default=AccountType.BASIC
+        default=AccountType.BASIC  # За замовчуванням акаунт "Basic"
     )
-    is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)  # За замовчуванням False
+    is_active = models.BooleanField(default=False)  # Користувач не активний до підтвердження
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -41,10 +44,12 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
     def __str__(self):
         return self.email
 
+
 class ProfileModel(BaseModel):
     name = models.CharField(max_length=50)
     surname = models.CharField(max_length=50)
     age = models.IntegerField(null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     user = models.OneToOneField(
         UserModel,
         on_delete=models.CASCADE,

@@ -13,13 +13,13 @@ const RegisterComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");  // Замінили firstName на name
+  const [surname, setSurname] = useState("");  // Замінили lastName на surname
   const [age, setAge] = useState<number | null>(null);
   const [role, setRole] = useState<"buyer" | "seller" | "manager">("buyer");
   const [errorMsg, setErrorMsg] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // Стан для індикації під час відправки
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
@@ -52,8 +52,8 @@ const RegisterComponent = () => {
         password,
         role,
         profile: {
-          first_name: firstName,
-          last_name: lastName,
+          name,
+          surname,
           age: age ?? undefined,
         },
       });
@@ -103,27 +103,27 @@ const RegisterComponent = () => {
           {emailError && <p className={styles.error}>{emailError}</p>} {/* Помилка для Email */}
         </div>
 
-        {/* First Name */}
+        {/* Name */}
         <div className={styles.inputGroup}>
           <input
             type="text"
-            placeholder="First Name"
+            placeholder="Name"
             required
             className={styles.input}
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
 
-        {/* Last Name */}
+        {/* Surname */}
         <div className={styles.inputGroup}>
           <input
             type="text"
-            placeholder="Last Name"
+            placeholder="Surname"
             required
             className={styles.input}
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            value={surname}
+            onChange={(e) => setSurname(e.target.value)}
           />
         </div>
 
@@ -205,4 +205,3 @@ const RegisterComponent = () => {
 };
 
 export default RegisterComponent;
-

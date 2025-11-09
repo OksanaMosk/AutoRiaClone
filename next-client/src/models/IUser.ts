@@ -5,8 +5,8 @@ export interface IUser {
   role?: "buyer" | "seller" | "manager" | "admin";
   account_type?: string;
   profile?: {
-    first_name: string;
-    last_name: string;
+    name: string;
+    surname: string;
     age?: number;
   };
 }
