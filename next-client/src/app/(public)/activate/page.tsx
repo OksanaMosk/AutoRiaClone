@@ -1,10 +1,9 @@
 
-import ActivateAccountComponent from "@/components/аctivateAccount-component/ActivateAccountComponent";
 
 const ActivatePage = () => {
   return (
     <div>
-      <ActivateAccountComponent />
+      Activate
     </div>
   );
 };

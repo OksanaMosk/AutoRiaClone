@@ -8,6 +8,8 @@ services:
       - ./backend:/app
     env_file:
       - .env
+    environment:
+       - DJANGO_SETTINGS_MODULE=configs.settings
     ports:
       - "8888:8000"
     restart: on-failure

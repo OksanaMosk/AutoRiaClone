@@ -1,5 +1,7 @@
 
 from django.contrib.auth import get_user_model, authenticate
+from django.shortcuts import redirect
+from rest_framework.exceptions import NotFound
 
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -11,18 +13,19 @@ from core.services.jwt_service import RecoveryToken, SocketToken
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
 from apps.user.serializers import UserSerializer
 
-from django.shortcuts import redirect
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from core.services.jwt_service import JWTService, ActivateToken
 from core.exceptions.jwt_exception import JWTException
 
 import logging
 
-UserModel = get_user_model()
 
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.generics import GenericAPIView
+from rest_framework.exceptions import NotFound
+UserModel = get_user_model()
 
 logger = logging.getLogger(__name__)
 
@@ -30,41 +33,56 @@ logger = logging.getLogger(__name__)
 class ActivateUserView(GenericAPIView):
     permission_classes = (AllowAny,)
 
-    def patch(self, request, *args, **kwargs):
-        token = kwargs.get('token')
+    def activate_user(self, token):
+        """Окремий метод для логіки активації (щоб не дублювати)"""
+        if not token:
+            return Response({'detail': 'Token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        print(f"Received token: {token}")
 
         try:
-            # Перевірка токену
             user = JWTService.verify_token(token, ActivateToken)
-            logger.info(f"User found: {user.email}")
+            print(f"User found: {user.email}")
 
             if user.is_active:
-                logger.info(f"User {user.email} is already activated.")
+                print(f"User {user.email} is already activated.")
                 return Response({'detail': 'Account is already activated.'}, status=status.HTTP_200_OK)
 
-            # Активуємо користувача
             user.is_active = True
             user.save()
+            print(f"User {user.email} has been activated.")
 
-            # Серіалізація користувача після активації
             serializer = UserSerializer(user)
-
-            # Логуємо успішну активацію
             logger.info(f"User {user.email} activated successfully.")
-
-            # Повертаємо серіалізовані дані користувача після активації
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({'detail': 'Account activated successfully!', 'user': serializer.data}, status=status.HTTP_200_OK)
 
         except JWTException as e:
-            logger.error(f"Invalid or expired token: {e}")  # Лог для помилки токену
+            print(f"Invalid or expired token: {e}")
             return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        except NotFound as e:
+            print(f"User not found: {e}")
+            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            logger.error(f"Unexpected error: {e}")  # Лог для інших помилок
+            print(f"Unexpected error: {e}")
+            logger.error(f"Unexpected error: {e}")
             return Response({'detail': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    # ✅ обробка PATCH (React fetch)
+    def patch(self, request, *args, **kwargs):
+        token = kwargs.get('token')
+        return self.activate_user(token)
 
+    # ✅ обробка GET (коли користувач просто переходить по лінку)
+    def get(self, request, *args, **kwargs):
+        token = kwargs.get('token')
+        response = self.activate_user(token)
 
+        # Якщо успішно активовано — редіректимо на фронтенд
+        if response.status_code == 200:
+            return redirect("http://localhost:3000/login?activated=true")
+
+        # Інакше просто показуємо JSON із помилкою
+        return response
 
 class RecoveryRequestView(GenericAPIView):
     permission_classes = (AllowAny,)

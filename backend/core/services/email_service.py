@@ -25,7 +25,8 @@ class EmailService:
     @classmethod
     def register(cls, user):
         token=JWTService.create_token(user,ActivateToken)
-        url = f'http://localhost:3000/activate/{token}'
+        url = f'http://localhost:8888/api/auth/activate/{token}/'
+        print(url)
         cls.__send_email.delay(
             to=user.email,
             template_name='register.html',
