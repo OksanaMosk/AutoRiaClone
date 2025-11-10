@@ -1,47 +1,52 @@
 "use client";
 
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 const ActivateAccount = () => {
   const [isActivated, setIsActivated] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-  const { token } = router.query;
-
+  const { token } = useParams(); // ✅ замість useRouter()
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   useEffect(() => {
-    if (!router.isReady || !token) return; // 👈 чекаємо, поки router буде готовий
+    if (token) {
+      const activationUrl = `${API_BASE_URL}/auth/activate/${token}/`;
+      console.log("Activation URL (Client):", activationUrl);
 
-    const activationUrl = `http://localhost:8888/api/auth/activate/${token}/`;
-    console.log("Activation URL (Client):", activationUrl);
-
-    fetch(activationUrl, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then(async (response) => {
-        const data = await response.json();
-        console.log("Activation Response:", data);
-
-        if (response.ok && data.detail === "Account activated successfully!") {
-          setIsActivated(true);
-        } else {
-          setError(data.detail || "Failed to activate account");
-        }
+      fetch(activationUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .catch((err) => {
-        console.error("Error during activation:", err);
-        setError("Failed to activate account");
-      });
-  }, [router.isReady, token]); // 👈 додаємо router.isReady до залежностей
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to activate account");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Activation Response:", data);
+          if (data.detail === "Account activated successfully!") {
+            setIsActivated(true);
+          } else {
+            setError("Failed to activate account");
+          }
+        })
+        .catch((error) => {
+          console.error("Error during activation:", error);
+          setError("Failed to activate account");
+        });
+    }
+  }, [token]);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "60px" }}>
+    <div>
       <h1>Activate Your Account</h1>
       {isActivated ? (
-        <p style={{ color: "green" }}>✅ Your account has been successfully activated!</p>
+        <p>Your account has been successfully activated!</p>
       ) : (
         <p>{error ? error : "Activating your account..."}</p>
       )}

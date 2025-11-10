@@ -1,88 +1,73 @@
-
 from django.contrib.auth import get_user_model, authenticate
-from django.shortcuts import redirect
-from rest_framework.exceptions import NotFound
-
-from rest_framework.generics import GenericAPIView, get_object_or_404
+from rest_framework.generics import  get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import AccessToken
-
 from core.services.email_service import EmailService
 from core.services.jwt_service import RecoveryToken, SocketToken
-
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
 from apps.user.serializers import UserSerializer
-
-from rest_framework.views import APIView
 from core.services.jwt_service import JWTService, ActivateToken
 from core.exceptions.jwt_exception import JWTException
-
-import logging
-
-
+from rest_framework.generics import GenericAPIView
+from rest_framework.exceptions import NotFound
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework.generics import GenericAPIView
-from rest_framework.exceptions import NotFound
+from django.shortcuts import redirect
+
+
 UserModel = get_user_model()
 
-logger = logging.getLogger(__name__)
-
-
-class ActivateUserView(GenericAPIView):
+class ActivateUserView(APIView):
     permission_classes = (AllowAny,)
-
     def activate_user(self, token):
-        """Окремий метод для логіки активації (щоб не дублювати)"""
         if not token:
-            return Response({'detail': 'Token is required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        print(f"Received token: {token}")
-
+            return Response(
+                {'detail': 'Token is required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         try:
             user = JWTService.verify_token(token, ActivateToken)
-            print(f"User found: {user.email}")
-
             if user.is_active:
-                print(f"User {user.email} is already activated.")
-                return Response({'detail': 'Account is already activated.'}, status=status.HTTP_200_OK)
-
+                return Response(
+                    {'detail': 'Account already activated.'},
+                    status=status.HTTP_200_OK
+                )
             user.is_active = True
             user.save()
-            print(f"User {user.email} has been activated.")
-
             serializer = UserSerializer(user)
-            logger.info(f"User {user.email} activated successfully.")
-            return Response({'detail': 'Account activated successfully!', 'user': serializer.data}, status=status.HTTP_200_OK)
-
-        except JWTException as e:
-            print(f"Invalid or expired token: {e}")
-            return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
-        except NotFound as e:
-            print(f"User not found: {e}")
-            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+            # logger.info(f"User {user.email} activated successfully.")
+            return Response(
+                {
+                    'detail': 'Account activated successfully!',
+                    'user': serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
+        except JWTException:
+            return Response(
+                {'detail': 'Invalid or expired token.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except NotFound:
+            return Response(
+                {'detail': 'User not found.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
         except Exception as e:
-            print(f"Unexpected error: {e}")
-            logger.error(f"Unexpected error: {e}")
-            return Response({'detail': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    # ✅ обробка PATCH (React fetch)
+            return Response(
+                {'detail': 'Something went wrong.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     def patch(self, request, *args, **kwargs):
         token = kwargs.get('token')
         return self.activate_user(token)
 
-    # ✅ обробка GET (коли користувач просто переходить по лінку)
     def get(self, request, *args, **kwargs):
         token = kwargs.get('token')
-        response = self.activate_user(token)
-
-        # Якщо успішно активовано — редіректимо на фронтенд
-        if response.status_code == 200:
-            return redirect("http://localhost:3000/login?activated=true")
-
-        # Інакше просто показуємо JSON із помилкою
-        return response
+        return redirect(f"http://localhost:3000/activate/{token}/")
 
 class RecoveryRequestView(GenericAPIView):
     permission_classes = (AllowAny,)
@@ -94,18 +79,28 @@ class RecoveryRequestView(GenericAPIView):
         EmailService.recovery(user)
         return Response({'details': 'Link send to email'}, status.HTTP_200_OK)
 
+
 class RecoveryPasswordView(GenericAPIView):
     permission_classes = (AllowAny,)
-    def post(self, *args, **kwargs):
-        data=self.request.data
-        serializer = PasswordSerializer(data=data)
+    serializer_class = PasswordSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = PasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        token=kwargs['token']
-        user=JWTService.verify_token(token,RecoveryToken)
-        user.set_password(serializer.data['password'])
+
+        token = kwargs['token']
+        user = JWTService.verify_token(token, RecoveryToken)
+
+        user.set_password(serializer.validated_data['password'])
         user.save()
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status.HTTP_200_OK)
+
+        return Response(UserSerializer(user).data, status.HTTP_200_OK)
+
+    # def get(self, request, *args, **kwargs):
+    #     token = kwargs.get("token")
+    #     frontend_url = f"http://localhost:3000/"
+    #     return redirect(frontend_url)
+
 
 class SocketTokenView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
@@ -156,51 +151,3 @@ class CurrentUserAPIView(APIView):
         }
 
         return Response(data)
-
-
-# class ActivateUserView(GenericAPIView):
-#     permission_classes = (AllowAny,)
-#
-#     def patch(self, request, *args, **kwargs):
-#         token = kwargs['token']
-#
-#
-#         try:
-#             # Перевірка токену
-#             user = JWTService.verify_token(token, ActivateToken)
-#             logger.info(f"User found: {user.email}")
-#
-#             if user.is_active:
-#                 logger.info(f"User {user.email} is already activated.")
-#                 return Response({'detail': 'Account is already activated.'}, status=status.HTTP_200_OK)
-#
-#             # Активуємо користувача
-#             user.is_active = True
-#             user.save()
-#
-#             # Серіалізація користувача після активації
-#             serializer = UserSerializer(user)
-#
-#             # Логуємо успішну активацію
-#             logger.info(f"User {user.email} activated successfully.")
-#
-#             # Перевіряємо роль користувача та редіректимо на відповідну сторінку
-#             if user.role == 'seller':
-#                 logger.info(f"Redirecting to seller dashboard for {user.email}")
-#                 return redirect(f"http://localhost:3000/seller?activated=true")
-#             elif user.role == 'buyer':
-#                 logger.info(f"Redirecting to buyer dashboard for {user.email}")
-#                 return redirect(f"http://localhost:3000/buyer?activated=true")
-#             else:
-#                 logger.info(f"Redirecting to default dashboard for {user.email}")
-#                 return redirect(f"http://localhost:3000?activated=true")
-#
-#
-#
-#         except JWTException as e:
-#             logger.error(f"Invalid or expired token: {e}")  # Лог для помилки токену
-#             return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
-#
-#         except Exception as e:
-#             logger.error(f"Unexpected error: {e}")  # Лог для інших помилок
-#             return Response({'detail': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

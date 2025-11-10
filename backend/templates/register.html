@@ -1,7 +1,19 @@
 {% extends 'base.html' %}
 {% block body %}
-    <h2>Welcome to our platform!</h2>
-    <p style="color: red">To activate your account, please click on the link below:</p>
-    <p style="color: red"><a href="{{ url }}">Activate Account</a></p>
-    <p>If you did not sign up for this account, you can ignore this email.</p>
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #333;">Welcome to our platform!</h2>
+      <p>To activate your account, please click the button below:</p>
+
+      <p style="text-align: center; margin: 30px 0;">
+          <a href="{{ url }}"
+             style="background-color: darkgreen; color: white; padding: 12px 24px;
+                    text-decoration: none; border-radius: 6px; display: inline-block;">
+              Activate Account
+          </a>
+      </p>
+
+      <p style="color: #555;">
+          If you did not sign up for this account, you can safely ignore this email.
+      </p>
+  </div>
 {% endblock %}

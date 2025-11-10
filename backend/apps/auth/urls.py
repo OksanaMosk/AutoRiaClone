@@ -14,6 +14,9 @@ urlpatterns = [
     # path('activate/<str:token>/', ActivateUserView.as_view(), name='activate-user'),
     re_path(r'^activate/(?P<token>[\w\.-]+)/$', ActivateUserView.as_view(), name='activate-user'),
     path('recovery/', RecoveryRequestView.as_view(), name='recovery-request'),
-    path('recovery/<str:token>/', RecoveryPasswordView.as_view(), name='recovery-password'),
+    # path('recovery/<str:token>/', RecoveryPasswordView.as_view(), name='recovery-password'),
+    # re_path(r'^recovery/(?P<token>[\w\.-]+)/$', RecoveryPasswordView.as_view(), name='recovery-password'),
+    re_path(r'^recovery/(?P<token>.+)/$', RecoveryPasswordView.as_view(), name='recovery-password'),
+
     path('me/', CurrentUserAPIView.as_view(), name='current_user'),
 ]

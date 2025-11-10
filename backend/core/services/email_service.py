@@ -36,8 +36,8 @@ class EmailService:
     @classmethod
     def recovery(cls, user):
         token=JWTService.create_token(user, RecoveryToken)
-        url = f'http://localhost:3000/auth/recovery/{token}'
-        cls.__send_email(
+        url =  f"http://localhost:3000/reset-password?token={token}"
+        cls.__send_email.delay(
             to=user.email,
             template_name='recovery.html',
             context={'url': url},

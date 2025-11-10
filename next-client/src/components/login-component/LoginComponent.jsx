@@ -90,13 +90,20 @@ const LoginComponent = () => {
           </div>
         </div>
 
+        {/* Forgot password */}
+        <div className={styles.registerText}>
+          <Link href="/forgot-password" className={styles.link}>
+            Forgot password?
+          </Link>
+        </div>
+
         {/* Error message */}
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
         {/* Submit button */}
         <button type="submit" className={styles.button} disabled={loading}>
           {loading ? (
-            <div className={`authbutton ${styles.loaderWrapper}`}>
+            <div className= {styles.loaderWrapper}>
               <LoaderComponent />
             </div>
           ) : (
