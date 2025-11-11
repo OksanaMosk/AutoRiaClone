@@ -123,7 +123,9 @@ const UserManagementComponent = () => {
             <table className={styles.table}>
                 <thead>
                 <tr>
-                    <th>User</th>
+                    <th>User ID</th>
+                    <th>Email</th>
+                    <th>Full Name</th>
                     <th>Role</th>
                     <th>Account Type</th>
                     <th>Blocked</th>
@@ -133,7 +135,10 @@ const UserManagementComponent = () => {
                 <tbody>
                 {users.map(user => (
                     <tr key={user.id}>
+                        <td className={styles.user}>{user.id}</td>
+                        <td className={styles.user}>{user.email}</td>
                         <td className={styles.user}>{user.profile?.name} {user.profile?.surname}</td>
+
                         <td>
                             <select
                                 value={user.role}
