@@ -1,197 +1,194 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { authService } from "@/lib/services/authService";
-import { IUser } from "@/models/IUser";
+import React, {useEffect, useState} from "react";
+import {authService} from "@/lib/services/authService";
+import {IUser} from "@/models/IUser";
 import styles from './UserManagementComponent.module.css';
 import userService from "@/lib/services/userService";
 
 const UserManagementComponent = () => {
-  const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const [roleFilter, setRoleFilter] = useState<string>("");
-  const [accountTypeFilter, setAccountTypeFilter] = useState<string>("");
-  const [isBlockedFilter, setIsBlockedFilter] = useState<boolean | null>(null);
+    const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const token = authService.getRefreshToken();
-        if (!token) {
-          setError("Please activate your account.");
-          return;
+    useEffect(() => {
+        (async () => {
+            try {
+                const token = authService.getRefreshToken();
+                if (!token) {
+                    setError("Please activate your account.");
+                    return;
+                }
+
+                const allUsers = await userService.getAll();
+                const usersData = allUsers.data;
+                console.log("usersData", usersData);
+                setUsers(usersData);
+
+            } catch (err) {
+                console.error("Failed to load users:", err);
+                setError("Failed to load user data");
+            } finally {
+                setLoading(false);
+            }
+        })();
+    }, []);
+
+    // Блокування користувача
+    const handleBlockUser = async (userId: string) => {
+        try {
+            await userService.block(userId);
+            setUsers(prev =>
+                prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, is_active: false} : u))
+            );
+        } catch (err) {
+            console.error("Error blocking user", err);
+        }
+    };
+
+    // Розблокування користувача
+    const handleUnblockUser = async (userId: string) => {
+        try {
+            await userService.unblock(userId);
+            setUsers(prev =>
+                prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, is_active: true} : u))
+            );
+        } catch (err) {
+            console.error("Error unblocking user", err);
+        }
+    };
+
+    // Призначення ролі "admin"
+    const handlePromoteToAdmin = async (userId: string) => {
+        try {
+            await userService.promoteToAdmin(userId);
+            setUsers(prev =>
+                prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, role: "admin"} : u))
+            );
+            alert("User promoted to Admin");
+        } catch (err) {
+            console.error("Error promoting user", err);
+        }
+    };
+
+    // Зміна ролі користувача
+    const handleChangeRole = async (userId: string, role: "buyer" | "seller" | "manager" | "admin") => {
+        try {
+            await userService.changeRole(userId, role);
+            setUsers(prev => prev.map(u =>
+                u.id !== undefined && String(u.id) === userId ? {...u, role} : u
+            ));
+        } catch (err) {
+            console.error("Error changing account type", err);
+        }
+    };
+
+    // Зміна типу акаунту
+    const handleChangeAccountType = async (userId: string, account_type: string) => {
+        try {
+            await userService.changeAccountType(userId, account_type);
+            setUsers(prev => prev.map(u =>
+                u.id !== undefined && String(u.id) === userId ? {...u, account_type} : u
+            ));
+        } catch (err) {
+            console.error("Error changing account type", err);
+        }
+    };
+
+    // Видалення користувача
+    const handleDeleteUser = async (userId: number | undefined) => {
+        if (userId === undefined) {
+            alert("User ID is undefined");
+            return;
         }
 
-        const allUsers = await userService.getAll();
-        const usersData=allUsers.data
-        console.log("usersData", usersData);
-        setUsers(usersData);
+        try {
+            await userService.delete(String(userId));
+            setUsers(users.filter(user => String(user.id) !== String(userId))); // Перетворення тут
+            alert('User deleted successfully');
+        } catch (err) {
+            console.error('Error deleting user', err);
+            alert('Error deleting user');
+        }
+    };
 
-      } catch (err) {
-        console.error("Failed to load users:", err);
-        setError("Failed to load user data");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+    if (loading) return <div>Loading...</div>;
+    if (error) return <p>{error}</p>;
 
-  const handleFilterChange = async () => {
-    try {
-      const filteredUsers = await userService.filterUsers({
-        role: roleFilter,
-        account_type: accountTypeFilter,
-        // isBlocked: isBlockedFilter,
-      });
-      setUsers(filteredUsers);  // Оновлюємо список користувачів
-    } catch (err) {
-      console.error("Error filtering users", err);
-      alert("Error filtering users");
-    }
-  };
+    return (
+        <section className={styles.userManagement}>
+            <h2 className={styles.subtitle}>Manage Users</h2>
 
-  const handleChangeRole = async (userId: string | number | undefined, role: string) => {
-    if (userId === undefined) {
-      alert("User ID is undefined");
-      return;
-    }
+            {/* Таблиця користувачів */}
+            <table className={styles.table}>
+                <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Account Type</th>
+                    <th>Blocked</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {users.map(user => (
+                    <tr key={user.id}>
+                        <td className={styles.user}>{user.profile?.name} {user.profile?.surname}</td>
+                        <td>
+                            <select
+                                value={user.role}
+                                onChange={e => handleChangeRole(String(user.id), e.target.value as "buyer" | "seller" | "manager" | "admin")}
+                            >
+                                <option value="buyer">Buyer</option>
+                                <option value="seller">Seller</option>
+                                <option value="manager">Manager</option>
+                                <option value="admin">Admin</option>
+                            </select>
 
-    try {
-      const userIdStr = String(userId);
-      await userService.update(userIdStr, { role });
-      alert('Role updated successfully');
-    } catch (err) {
-      console.error('Error changing role', err);
-      alert('Error changing role');
-    }
-  };
-
-  const handleChangeAccountType = async (userId: string | number | undefined, accountType: string) => {
-    if (userId === undefined) {
-      alert("User ID is undefined");
-      return;
-    }
-
-    try {
-      const userIdStr = String(userId);
-      await userService.update(userIdStr, { account_type: accountType });
-      alert('Account type updated successfully');
-    } catch (err) {
-      console.error('Error changing account type', err);
-      alert('Error changing account type');
-    }
-  };
-
-  const handleDeleteUser = async (userId: string | number | undefined) => {
-    if (userId === undefined) {
-      alert("User ID is undefined");
-      return;
-    }
-
-    try {
-      const userIdStr = String(userId);
-      await userService.delete(userIdStr);
-      setUsers(users.filter(user => String(user.id) !== userIdStr));
-      alert('User deleted successfully');
-    } catch (err) {
-      console.error('Error deleting user', err);
-      alert('Error deleting user');
-    }
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <p>{error}</p>;
-
-  return (
-    <section className={styles.userManagement}>
-      <h2 className={styles.subtitle}>Manage Users</h2>
-
-      {/* Форма для фільтрації */}
-      <div className={styles.filterForm}>
-        <label>Role:</label>
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-        >
-          <option value="">All</option>
-          <option value="buyer">Buyer</option>
-          <option value="seller">Seller</option>
-          <option value="manager">Manager</option>
-          <option value="admin">Admin</option>
-        </select>
-
-        <label>Account Type:</label>
-        <select
-          value={accountTypeFilter}
-          onChange={(e) => setAccountTypeFilter(e.target.value)}
-        >
-          <option value="">All</option>
-          <option value="basic">Basic</option>
-          <option value="premium">Premium</option>
-        </select>
-
-        <label>Blocked:</label>
-        {/*<select*/}
-        {/*  value={isBlockedFilter === null ? "" : isBlockedFilter}*/}
-        {/*  onChange={(e) => setIsBlockedFilter(e.target.value === "" ? null : e.target.value === "true")}*/}
-        {/*>*/}
-        {/*  <option value="">All</option>*/}
-        {/*  <option value="true">Blocked</option>*/}
-        {/*  <option value="false">Unblocked</option>*/}
-        {/*</select>*/}
-
-        <button onClick={handleFilterChange}>Apply Filters</button>
-      </div>
-
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Role</th>
-            <th>Account Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-       <tbody>
-  {Array.isArray(users) && users.map(user => (
-    <tr key={user.id}>
-      <td>{user.profile?.name} {user.profile?.surname}</td>
-      <td>
-        <select
-          defaultValue={user.role}
-          onChange={(e) => handleChangeRole(user.id, e.target.value)}
-        >
-          <option value="buyer">Buyer</option>
-          <option value="seller">Seller</option>
-          <option value="manager">Manager</option>
-          <option value="admin">Admin</option>
-        </select>
-      </td>
-      <td>
-        <select
-          defaultValue={user.account_type}
-          onChange={(e) => handleChangeAccountType(user.id, e.target.value)}
-        >
-          <option value="basic">Basic</option>
-          <option value="premium">Premium</option>
-        </select>
-      </td>
-      <td>
-        <button
-          className={styles.deleteButton}
-          onClick={() => handleDeleteUser(user.id)}
-        >
-          Delete User
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
-      </table>
-    </section>
-  );
+                        </td>
+                        <td>
+                            <select className={styles.select} defaultValue={user.account_type}
+                                    onChange={e => handleChangeAccountType(String(user.id), e.target.value)}>
+                                <option value="basic">Basic</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </td>
+                        <td>{user.is_active ? "Yes" : "No"}</td>
+                        <td className={styles.actions}>
+                            {user.is_active ? (
+                                <button onClick={() => handleUnblockUser(String(user.id))}
+                                        className={styles.unblockButton}>Unblock</button>
+                            ) : (
+                                <button onClick={() => handleBlockUser(String(user.id))}
+                                        className={styles.blockButton}>Block</button>
+                            )}
+                            <button onClick={() => handlePromoteToAdmin(String(user.id))}
+                                    className={styles.promoteButton}>Promote to Admin
+                            </button>
+                            <button onClick={() => handleDeleteUser(user.id)} className={styles.deleteButton}>Delete
+                            </button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+        </section>
+    );
 };
 
 export default UserManagementComponent;
 
+
+//   const handleFilterChange = async () => {
+//   try {
+//     const filteredUsers = await userService.filterUsers({
+//       role: roleFilter || undefined,
+//       account_type: accountTypeFilter || undefined,
+//       // is_active: blockedFilter || undefined,
+//     });
+//     setUsers(filteredUsers);
+//   } catch (err) {
+//     console.error("Error filtering users", err);
+//     alert("Error filtering users");
+//   }
+// };

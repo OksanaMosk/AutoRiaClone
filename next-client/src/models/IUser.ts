@@ -1,4 +1,5 @@
 export interface IUser {
+
   id?: number;
   email: string;
   token?: string;
@@ -9,4 +10,6 @@ export interface IUser {
     surname: string;
     age?: number;
   };
+  is_active?: boolean;
+  dealership_id?: string;
 }

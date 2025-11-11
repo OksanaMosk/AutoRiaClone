@@ -24,12 +24,7 @@ export const urls = {
         changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
         update: (id: string) => `${paths.users}/${id}/update/`,
         delete: (id: string) => `${paths.users}/${id}/delete/`,
-        status: (id: string) => `${paths.users}/${id}/status/`,
-        getUserRole: (id: string) => `${paths.users}/${id}/role/`,
-        resetPassword: (id: string) => `${paths.users}/${id}/reset-password/`,
         filter: `${paths.users}/filter/`,
-        testEmail: `${paths.users}/test/`,
-
     },
 
   cars: paths.cars,

@@ -23,8 +23,13 @@ import { urls } from "../constants/urls";
     return data;
   },
 
-  sendTestEmail: async () => {
-    const { data } = await apiService.get(urls.users.testEmail);
+  changeAccountType: async (userId: string, accountType: string) => {
+    const { data } = await apiService.patch(urls.users.changeAccountType(userId), { account_type: accountType });
+    return data;
+  },
+
+  changeRole: async (userId: string, role: string) => {
+    const { data } = await apiService.patch(urls.users.changeRole(userId), { role });
     return data;
   },
 
@@ -38,29 +43,10 @@ import { urls } from "../constants/urls";
     return data;
   },
 
-  // getUserRole: async (userId: string) => {
-  //   const { data } = await apiService.get(urls.users.getUserRole(userId));
-  //   return data;
-  // },
-
   filterUsers: async (filterCriteria: { role?: string, account_type?: string, isBlocked?: boolean }) => {
     const { data } = await apiService.get(urls.users.filter, { params: filterCriteria });
     return data;
   },
-
-
-}
+};
 
 export default userService
-
-
-
-// create: async (userData: {
-  //   email: string;
-  //   password: string;
-  //   role?: string;
-  //   account_type?: string;
-  // }) => {
-  //   const { data } = await apiService.post(urls.users.create, userData);
-  //   return data;
-  // },
