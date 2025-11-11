@@ -5,7 +5,7 @@ import { authService } from "@/lib/services/authService";
 import { IUser } from "@/models/IUser";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from './AdminDashboardComponent.module.css';
-import UserManagementComponent from "@/components/userManagement-component/UserManagementComponent";
+import AdminUserManagementComponent from "@/components/adminUserManagement-component/AdminUserManagementComponent";
 
 const AdminDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -48,7 +48,7 @@ const AdminDashboardComponent = () => {
           <p className={styles.role}>Role: {user.role}</p>
           {user.profile?.age && <p className={styles.age}>Age: {user.profile.age}</p>}
           <p className={styles.info}>Browse listings, contact a seller or dealership.</p>
-          <UserManagementComponent />
+          <AdminUserManagementComponent />
         </>
       ) : (
         <p className={styles.noUser}>No user data available.</p>

@@ -18,10 +18,7 @@ import { urls } from "../constants/urls";
     return data;
   },
 
-  promoteToAdmin: async (userId: string) => {
-    const { data } = await apiService.patch(urls.users.promoteToAdmin(userId));
-    return data;
-  },
+
 
   changeAccountType: async (userId: string, accountType: string) => {
     const { data } = await apiService.patch(urls.users.changeAccountType(userId), { account_type: accountType });
@@ -33,10 +30,6 @@ import { urls } from "../constants/urls";
     return data;
   },
 
-  update: async (userId: string, userData: { email?: string, role?: string, account_type?: string }) => {
-    const { data } = await apiService.patch(urls.users.update(userId), userData);
-    return data;
-  },
 
   delete: async (userId: string) => {
     const { data } = await apiService.delete(urls.users.delete(userId));
@@ -50,3 +43,10 @@ import { urls } from "../constants/urls";
 };
 
 export default userService
+
+
+
+ // promoteToAdmin: async (userId: string) => {
+  //   const { data } = await apiService.patch(urls.users.promoteToAdmin(userId));
+  //   return data;
+  // },

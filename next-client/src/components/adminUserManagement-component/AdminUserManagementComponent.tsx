@@ -3,10 +3,10 @@
 import React, {useEffect, useState} from "react";
 import {authService} from "@/lib/services/authService";
 import {IUser} from "@/models/IUser";
-import styles from './UserManagementComponent.module.css';
+import styles from './AdminUserManagementComponent.module.css';
 import userService from "@/lib/services/userService";
 
-const UserManagementComponent = () => {
+const AdminUserManagementComponent = () => {
     const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
@@ -58,18 +58,6 @@ const UserManagementComponent = () => {
         }
     };
 
-    // Призначення ролі "admin"
-    const handlePromoteToAdmin = async (userId: string) => {
-        try {
-            await userService.promoteToAdmin(userId);
-            setUsers(prev =>
-                prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, role: "admin"} : u))
-            );
-            alert("User promoted to Admin");
-        } catch (err) {
-            console.error("Error promoting user", err);
-        }
-    };
 
     // Зміна ролі користувача
     const handleChangeRole = async (userId: string, role: "buyer" | "seller" | "manager" | "admin") => {
@@ -83,17 +71,24 @@ const UserManagementComponent = () => {
         }
     };
 
-    // Зміна типу акаунту
     const handleChangeAccountType = async (userId: string, account_type: string) => {
-        try {
-            await userService.changeAccountType(userId, account_type);
-            setUsers(prev => prev.map(u =>
-                u.id !== undefined && String(u.id) === userId ? {...u, account_type} : u
-            ));
-        } catch (err) {
-            console.error("Error changing account type", err);
-        }
-    };
+  try {
+    const { data } = await userService.changeAccountType(userId, account_type);
+    // Якщо зміна пройшла успішно
+    setUsers(prev => prev.map(u =>
+      u.id !== undefined && String(u.id) === userId ? { ...u, account_type } : u
+    ));
+  } catch (err: any) {
+    if (err.response && err.response.status === 500) {
+      // Виведення повідомлення, якщо сервер повернув помилку 500
+      console.error("Internal Server Error:", err.response.data);
+      alert("Internal server error occurred. Please try again later.");
+    } else {
+      console.error("Error changing account type", err);
+      alert("An error occurred while changing the account type.");
+    }
+  }
+};
 
     // Видалення користувача
     const handleDeleteUser = async (userId: number | undefined) => {
@@ -167,9 +162,6 @@ const UserManagementComponent = () => {
                                 <button onClick={() => handleBlockUser(String(user.id))}
                                         className={styles.blockButton}>Block</button>
                             )}
-                            <button onClick={() => handlePromoteToAdmin(String(user.id))}
-                                    className={styles.promoteButton}>Promote to Admin
-                            </button>
                             <button onClick={() => handleDeleteUser(user.id)} className={styles.deleteButton}>Delete
                             </button>
                         </td>
@@ -181,7 +173,7 @@ const UserManagementComponent = () => {
     );
 };
 
-export default UserManagementComponent;
+export default AdminUserManagementComponent;
 
 
 //   const handleFilterChange = async () => {
@@ -197,3 +189,16 @@ export default UserManagementComponent;
 //     alert("Error filtering users");
 //   }
 // };
+
+   // // Призначення ролі "admin"
+    // const handlePromoteToAdmin = async (userId: string) => {
+    //     try {
+    //         await userService.promoteToAdmin(userId);
+    //         setUsers(prev =>
+    //             prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, role: "admin"} : u))
+    //         );
+    //         alert("User promoted to Admin");
+    //     } catch (err) {
+    //         console.error("Error promoting user", err);
+    //     }
+    // };

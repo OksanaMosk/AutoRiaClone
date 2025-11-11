@@ -19,16 +19,14 @@ export const urls = {
         list: `${paths.users}/`,
         block: (id: string) => `${paths.users}/${id}/block/`,
         unblock: (id: string) => `${paths.users}/${id}/unblock/`,
-        promoteToAdmin: (id: string) => `${paths.users}/${id}/to_admin/`,
         changeAccountType: (id: string) => `${paths.users}/change-account-type/${id}/`,
         changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
-        update: (id: string) => `${paths.users}/${id}/update/`,
         delete: (id: string) => `${paths.users}/${id}/delete/`,
         filter: `${paths.users}/filter/`,
     },
 
   cars: paths.cars,
 };
-
-
+ // update: (id: string) => `${paths.users}/${id}/update/`,
+ //   promoteToAdmin: (id: string) => `${paths.users}/${id}/to_admin/`,
 

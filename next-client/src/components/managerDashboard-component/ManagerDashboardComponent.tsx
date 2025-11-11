@@ -5,6 +5,8 @@ import { authService } from "@/lib/services/authService";
 import { IUser } from "@/models/IUser";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./ManagerDashboardComponent.module.css";
+import ManagerUserManagementComponent
+    from "@/components/managerUserManagement-component/ManagerUserManagementComponent";
 
 export const ManagerDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -41,8 +43,6 @@ export const ManagerDashboardComponent = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.header}>MANAGER DASHBOARD</h1>
-
-      {/* Картка з інформацією про користувача */}
       {user ? (
         <div className={styles.userInfo}>
           <p className={styles.text}>
@@ -51,6 +51,7 @@ export const ManagerDashboardComponent = () => {
           <p className={styles.text}>Email: {user.email}</p>
           <p className={styles.text}>Role: {user.role}</p>
           {user.profile?.age && <p className={styles.text}>Age: {user.profile.age}</p>}
+            <ManagerUserManagementComponent/>
         </div>
       ) : (
         <p className={styles.text}>No user data available.</p>
