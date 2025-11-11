@@ -6,11 +6,11 @@ import ChatComponent from "@/components/chat-component/ChatComponent";
 const CarsPage = () => {
     return (
         <div>
-           <CarFormComponent/>
-            <hr/>
-            <CarsComponent/>
-            <hr/>
-            <ChatComponent/>
+           {/*<CarFormComponent/>*/}
+           {/* <hr/>*/}
+           {/* <CarsComponent/>*/}
+           {/* <hr/>*/}
+           {/* <ChatComponent/>*/}
         </div>
     );
 };

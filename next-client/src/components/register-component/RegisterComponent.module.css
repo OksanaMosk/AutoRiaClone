@@ -57,6 +57,7 @@
 .error {
     padding: 0;
     color: var(--color-active);
+    color:red;
     font-size: 0.6rem;
 }
 .button {

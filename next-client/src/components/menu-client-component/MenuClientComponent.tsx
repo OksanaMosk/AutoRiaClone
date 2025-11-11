@@ -9,6 +9,7 @@ import type { IUser } from "@/models/IUser";
 import {usePathname} from "next/navigation";
 import Image from "next/image";
 import styles from "./MenuClientComponent.module.css";
+import {router} from "next/client";
 
 type Props = {
     user: IUser | null;
@@ -19,7 +20,7 @@ export const MenuClientComponent = ({ user, authenticated }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
     const [theme, setTheme] = useState<"light" | "dark">("dark");
     const pathname = usePathname();
-    const isMoviesActive = pathname.startsWith("/movies");
+    const isCarsActive = pathname.startsWith("/cars");
     const isLoginActive = pathname === "/login";
     const isRegisterActive = pathname === "/register";
     const from = "/";
@@ -42,7 +43,7 @@ export const MenuClientComponent = ({ user, authenticated }: Props) => {
 
                 <ul className={styles.menuList}>
                     <li>
-                        <Link href="/cars" className={isMoviesActive ? styles.activeLink : styles.menuItem}>
+                        <Link href="/cars" className={isCarsActive ? styles.activeLink : styles.menuItem}>
                             Cars
                         </Link>
                     </li>

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import styles from "./PasswordInputComponent.module.css";
 import Image from "next/image";
 
-// Компонент PasswordInput
 export const PasswordInput = ({
   value,
   onChangeAction,

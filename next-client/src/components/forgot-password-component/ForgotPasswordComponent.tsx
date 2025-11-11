@@ -30,6 +30,7 @@ export default function ForgotPasswordComponent() {
 
       if (res.ok) {
         setMessage(data.detail || "Check your email for a recovery link.");
+        // !!треба додати редірект('/')
       } else {
         setMessage(data.detail || "Failed to send recovery email.");
       }

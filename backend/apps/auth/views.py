@@ -15,59 +15,63 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.shortcuts import redirect
-
+import logging
 
 UserModel = get_user_model()
 
-class ActivateUserView(APIView):
+logger = logging.getLogger(__name__)
+class ActivateUserView(GenericAPIView):
     permission_classes = (AllowAny,)
+    serializer_class = UserSerializer
     def activate_user(self, token):
+        """Окремий метод для логіки активації (щоб не дублювати)"""
         if not token:
-            return Response(
-                {'detail': 'Token is required.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({'detail': 'Token is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        print(f"Received token: {token}")
+
         try:
             user = JWTService.verify_token(token, ActivateToken)
+            print(f"User found: {user.email}")
+
             if user.is_active:
-                return Response(
-                    {'detail': 'Account already activated.'},
-                    status=status.HTTP_200_OK
-                )
+                print(f"User {user.email} is already activated.")
+                return Response({'detail': 'Account is already activated.'}, status=status.HTTP_200_OK)
+
             user.is_active = True
             user.save()
-            serializer = UserSerializer(user)
-            # logger.info(f"User {user.email} activated successfully.")
-            return Response(
-                {
-                    'detail': 'Account activated successfully!',
-                    'user': serializer.data
-                },
-                status=status.HTTP_200_OK
-            )
-        except JWTException:
-            return Response(
-                {'detail': 'Invalid or expired token.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        except NotFound:
-            return Response(
-                {'detail': 'User not found.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
+            print(f"User {user.email} has been activated.")
 
-            return Response(
-                {'detail': 'Something went wrong.'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            serializer = UserSerializer(user)
+            logger.info(f"User {user.email} activated successfully.")
+            return Response({'detail': 'Account activated successfully!', 'user': serializer.data}, status=status.HTTP_200_OK)
+
+        except JWTException as e:
+            print(f"Invalid or expired token: {e}")
+            return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+        except NotFound as e:
+            print(f"User not found: {e}")
+            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            logger.error(f"Unexpected error: {e}")
+            return Response({'detail': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
     def patch(self, request, *args, **kwargs):
         token = kwargs.get('token')
         return self.activate_user(token)
 
+
     def get(self, request, *args, **kwargs):
         token = kwargs.get('token')
-        return redirect(f"http://localhost:3000/activate/{token}/")
+        response = self.activate_user(token)
+
+
+        if response.status_code == 200:
+            return redirect("http://localhost:3000/login?activated=true")
+
+        return response
 
 class RecoveryRequestView(GenericAPIView):
     permission_classes = (AllowAny,)
@@ -96,10 +100,6 @@ class RecoveryPasswordView(GenericAPIView):
 
         return Response(UserSerializer(user).data, status.HTTP_200_OK)
 
-    # def get(self, request, *args, **kwargs):
-    #     token = kwargs.get("token")
-    #     frontend_url = f"http://localhost:3000/"
-    #     return redirect(frontend_url)
 
 
 class SocketTokenView(GenericAPIView):
@@ -118,17 +118,24 @@ class RegisterAPIView(GenericAPIView):
         user = serializer.save(is_active=True)
         return Response(UserSerializer(user).data, status.HTTP_201_CREATED)
 
-class LoginAPIView(GenericAPIView):
+class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request, *args, **kwargs):
         username = request.data.get('username') or request.data.get('email')
         password = request.data.get('password')
+
         user = authenticate(username=username, password=password)
         if user:
+            print(f"User role: {user.role}")
+            role = user.role
             token = JWTService.create_token(user=user, token_class=AccessToken)
-            return Response({"access": str(token)}, status=status.HTTP_200_OK)
+            return Response({
+                "access": str(token),
+                "role": role
+            }, status=status.HTTP_200_OK)
         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 class CurrentUserAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -151,3 +158,18 @@ class CurrentUserAPIView(APIView):
         }
 
         return Response(data)
+
+
+
+
+# class LoginAPIView(GenericAPIView):
+#     permission_classes = (AllowAny,)
+#
+#     def post(self, request, *args, **kwargs):
+#         username = request.data.get('username') or request.data.get('email')
+#         password = request.data.get('password')
+#         user = authenticate(username=username, password=password)
+#         if user:
+#             token = JWTService.create_token(user=user, token_class=AccessToken)
+#             return Response({"access": str(token)}, status=status.HTTP_200_OK)
+#         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)

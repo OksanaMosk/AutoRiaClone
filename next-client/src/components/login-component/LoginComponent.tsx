@@ -1,7 +1,6 @@
-"use client"; // обов'язково для компонентів з useState/useEffect у Next 13+
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+"use client";
+import { AxiosError } from 'axios';
+import React, { useState } from "react";
 import styles from "./LoginComponent.module.css";
 import { authService } from "@/lib/services/authService";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
@@ -9,48 +8,51 @@ import Image from "next/image";
 import Link from "next/link";
 
 const LoginComponent = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");  // Заміна username на email
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setLoading(true);
     setErrorMsg("");
 
-    try {
-      await authService.login({ username, password }); // твій authService
-      router.push("/dashboard"); // переходимо після успішного логіну
-    } catch (err) {
+   try {
+    await authService.login({ email, password });
+  } catch (err: unknown) {
+    if (err instanceof AxiosError) {
       setErrorMsg(err.response?.data?.detail || "An error occurred");
-    } finally {
-      setLoading(false);
+    } else if (err instanceof Error) {
+      setErrorMsg(err.message);
+    } else {
+      setErrorMsg("An unknown error occurred");
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className={styles.centerContainer}>
       <form onSubmit={handleSubmit} className={`auth ${styles.form}`}>
         <h2 className={styles.title}>Sign In</h2>
 
-        {/* Username */}
         <div className={styles.inputGroup}>
-          <label htmlFor="username" className="sr-only">
-            Username
+          <label htmlFor="email" className="sr-only">
+            Email
           </label>
           <input
-            id="username"
-            type="text"
-            name="username"
-            placeholder="Username"
+            id="email"
+            type="email"
+            name="email"
+            placeholder="Email"
             required
             className={styles.input}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <div className={styles.icon}>
             <Image
@@ -82,7 +84,7 @@ const LoginComponent = () => {
             onClick={() => setShowPassword(!showPassword)}
           >
             <Image
-              src={showPassword ? "/images/eye.png" : "/images/no-eye.png"}
+              src={showPassword ? "/images/eye.png" : "/images/noEye.png"}
               alt="Toggle password visibility"
               width={24}
               height={24}
@@ -90,20 +92,15 @@ const LoginComponent = () => {
           </div>
         </div>
 
-        {/* Forgot password */}
-        <div className={styles.registerText}>
-          <Link href="/forgot-password" className={styles.link}>
-            Forgot password?
-          </Link>
-        </div>
-
-        {/* Error message */}
+        <Link href="/forgot-password" className={styles.link}>
+          Forgot Password?
+        </Link>
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
         {/* Submit button */}
         <button type="submit" className={styles.button} disabled={loading}>
           {loading ? (
-            <div className= {styles.loaderWrapper}>
+            <div className={`authButton ${styles.loaderWrapper}`}>
               <LoaderComponent />
             </div>
           ) : (
@@ -111,7 +108,6 @@ const LoginComponent = () => {
           )}
         </button>
 
-        {/* Register link */}
         <div className={styles.bottomContainer}>
           <p className={styles.registerText}>
             Dont have an account?{" "}

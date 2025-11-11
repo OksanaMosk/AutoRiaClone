@@ -44,7 +44,7 @@ export default function ResetPasswordPage() {
       const data = await res.json();
         console.log(`${API_BASE_URL}/auth/recovery/${token}/`);
       if (res.ok) {
-        router.push("/");
+        router.push("/login/");
       } else {
         setMessage(data.detail || "Error resetting password");
       }

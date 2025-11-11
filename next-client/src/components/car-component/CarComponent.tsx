@@ -1,17 +1,24 @@
 import React from 'react';
 import styles from "./CarComponent.module.css"
 
-const CarComponent = ({car}) => {
+interface CarComponentProps {
+    car: {
+        id:number,
+        name:string,
+        price:number,
+        day:string
+
+    }
+}
+
+const CarComponent = ({car}: CarComponentProps) => {
     console.log("Car data:", car)
     const {
         id,
         name,
         price,
-        size,
-        ingredients,
-        time_prepared,
         day,
-        photo
+
     } = car
     return (
         <div className={styles.cardWrapper}>
@@ -20,16 +27,14 @@ const CarComponent = ({car}) => {
                 <p>Day: {day}</p>
             </div>
             <div>
-                {photo && <img src={photo} alt={name} style={{ width: '200px' }} />}
+                {/*{photo && <img src={photo} alt={name} style={{width: '200px'}}/>}*/}
                 <p>Name: {name}</p>
                 <p>Price: ${price}</p>
             </div>
-            {/*<p>Size: {size}'</p>*/}
-            {/*<p>Time Prepare: {time_prepared} min</p>*/}
-            {/*<p>Ingredients: {ingredients.join(', ')}</p>*/}
+
 
         </div>
     );
 };
 
-export  default CarComponent;
+export default CarComponent;

@@ -21,9 +21,8 @@ export const UserInfoComponent = ({ user, classNames = {} }: UserInfoProps) => {
 
     const handleLogout = async () => {
         try {
-            // await signOut(auth);
             await fetch("/api/logout", { method: "POST" });
-            window.location.href = "/movies";
+            window.location.href = "/";
         } catch (error) {
             console.error("Logout error:", error);
         }

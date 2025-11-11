@@ -5,29 +5,29 @@ import { authService } from "@/lib/services/authService";
 import { IUser } from "@/models/IUser";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 
-export const SellerDashboardComponent=()=> {
+const AdminDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    const token = document.cookie.split('=')[1];
+    const token = document.cookie.split('; ').find(row => row.startsWith('authToken='))?.split('=')[1]; // Перевіряємо наявність токену
 
     const fetchUserData = async () => {
       if (!token) {
-        setError("Please activate your account. No token found.");
+        setError("Please activate your account.");
         setLoading(false);
         return;
       }
 
-        try {
-            const userData: IUser = await authService.getCurrentUser(token);
-            setUser(userData);
-        } catch {
-            setError("Failed to load user data");
-        } finally {
-            setLoading(false);
-        }
+      try {
+        const userData: IUser = await authService.getCurrentUser(token);
+        setUser(userData);
+      } catch {
+          setError("Failed to load user data");
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchUserData();
@@ -48,9 +48,10 @@ export const SellerDashboardComponent=()=> {
           <p>Browse listings, contact a seller or dealership.</p>
         </>
       ) : (
-        <p>No user data available.</p> // Якщо дані не знайдено
+        <p>No user data available.</p>
       )}
     </div>
   );
 };
-export default SellerDashboardComponent
+
+export default AdminDashboardComponent;

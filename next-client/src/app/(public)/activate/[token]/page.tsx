@@ -1,6 +1,5 @@
 "use client";
 
-"use client";
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -9,10 +8,10 @@ const ActivateAccount = () => {
   const [isActivated, setIsActivated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { token } = useParams(); // ✅ замість useRouter()
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
   useEffect(() => {
     if (token) {
-      const activationUrl = `${API_BASE_URL}/auth/activate/${token}/`;
+      const activationUrl = `http://localhost:8888/api/auth/activate/${token}/`;
       console.log("Activation URL (Client):", activationUrl);
 
       fetch(activationUrl, {

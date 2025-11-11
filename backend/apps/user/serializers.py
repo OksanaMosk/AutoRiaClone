@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
-
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.db.transaction import atomic
 from rest_framework import serializers
 from core.services.email_service import EmailService
@@ -48,6 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
         if value not in [UserModel.Role.BUYER, UserModel.Role.SELLER, UserModel.Role.MANAGER, UserModel.Role.ADMIN]:
             raise serializers.ValidationError("Invalid role.")
         return value
+
 
     @atomic
     def create(self, validated_data: dict):

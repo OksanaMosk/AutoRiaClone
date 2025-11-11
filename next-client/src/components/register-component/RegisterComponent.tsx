@@ -13,34 +13,52 @@ const RegisterComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [name, setName] = useState("");  // Замінили firstName на name
-  const [surname, setSurname] = useState("");  // Замінили lastName на surname
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
   const [age, setAge] = useState<number | null>(null);
   const [role, setRole] = useState<"buyer" | "seller" | "manager">("buyer");
-  const [errorMsg, setErrorMsg] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [errorFields, setErrorFields] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
 
-  // Валідація email
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailRegex.test(email);
   };
 
+  const validatePassword = (password: string): boolean => {
+    return password.length >= 6;
+  };
+
+  const validateAge = (age: number | null): boolean => {
+    return age != null && age > 0 && age < 150;
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMsg("");
-    setEmailError(""); // Скидаємо повідомлення про помилку з email
+    setErrorFields({});
+    const errors: { [key: string]: string } = {};
 
+    // Email validation
     if (!validateEmail(email)) {
-      setEmailError("Please enter a valid email address.");
-      return;
+      errors.email = "Please enter a valid email address.";
     }
 
     if (password !== confirmPassword) {
-      setErrorMsg("Passwords do not match");
+      errors.password = "Passwords do not match.";
+    } else if (!validatePassword(password)) {
+      errors.password = "Password must be at least 6 characters.";
+    }
+
+    if (!validateAge(age)) {
+      errors.age = "Please enter a valid age.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setErrorFields(errors);
       return;
     }
 
@@ -58,7 +76,7 @@ const RegisterComponent = () => {
         },
       });
 
-      // Перехід на відповідний dashboard в залежності від ролі
+
       if (role === "buyer") {
         router.push("/buyer");
       } else if (role === "seller") {
@@ -73,7 +91,7 @@ const RegisterComponent = () => {
         setErrorMsg("Something went wrong");
       }
     } finally {
-      setIsSubmitting(false); // Завершуємо відправку
+      setIsSubmitting(false);
     }
   };
 
@@ -100,7 +118,7 @@ const RegisterComponent = () => {
               height={24}
             />
           </div>
-          {emailError && <p className={styles.error}>{emailError}</p>} {/* Помилка для Email */}
+          {errorFields.email && <p className={styles.error}>{errorFields.email}</p>}
         </div>
 
         {/* Name */}
@@ -127,9 +145,10 @@ const RegisterComponent = () => {
           />
         </div>
 
+        {/* Age */}
         <div className={styles.inputGroup}>
           <input
-            type="text"
+            type="number"
             placeholder="Age"
             className={styles.input}
             value={age ?? ""}
@@ -140,6 +159,7 @@ const RegisterComponent = () => {
               }
             }}
           />
+          {errorFields.age && <p className={styles.error}>{errorFields.age}</p>}
         </div>
 
         <PasswordInput
@@ -147,7 +167,6 @@ const RegisterComponent = () => {
           onChangeAction={setPassword}
           placeholder="Password"
         />
-
         <PasswordInput
           value={confirmPassword}
           onChangeAction={setConfirmPassword}
@@ -185,8 +204,7 @@ const RegisterComponent = () => {
           </button>
         </div>
 
-        {errorMsg && <p className={styles.error}>{errorMsg}</p>} {/* Помилка для пароля */}
-
+        {errorMsg && <p className={styles.error}>{errorMsg}</p>}
         <button type="submit" className={styles.button} disabled={isSubmitting}>
           {isSubmitting ? <LoaderComponent /> : "Sign Up"}
         </button>
