@@ -4,8 +4,15 @@ from django.core.exceptions import ValidationError
 from django.db.transaction import atomic
 from rest_framework import serializers
 from core.services.email_service import EmailService
-from apps.user.models import ProfileModel
+from apps.user.models import ProfileModel, Dealership
+
 UserModel = get_user_model()
+
+
+class DealershipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dealership
+        fields = ["id", "name", "address", "phone"]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -38,7 +45,8 @@ class UserSerializer(serializers.ModelSerializer):
             'last_login',
             'created_at',
             'updated_at',
-            'profile'
+            'profile',
+            "dealership",
         )
         read_only_fields = ('id',  'is_active', 'is_staff', 'is_superuser', 'last_login', 'created_at', 'updated_at')
         extra_kwargs = {

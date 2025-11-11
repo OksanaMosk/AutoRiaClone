@@ -68,7 +68,7 @@ const RegisterComponent = () => {
              if (err.message.includes("already exists")) {
                  setErrorMsg("A user with this email already exists.");
              } else {
-                 setErrorMsg("A user with this email already exists.");
+                 setErrorMsg("!!!!!!!!!!!!!!A user with this email already exists.");
              }
          } else {
              setErrorMsg("An unknown error occurred.");

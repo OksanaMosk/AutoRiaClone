@@ -48,15 +48,7 @@ import { urls } from "../constants/urls";
     return data;
   },
 
-  // resetPassword: async (userId: string) => {
-  //   const { data } = await apiService.post(urls.users.resetPassword(userId));
-  //   return data;
-  // },
 
-  // getStatus: async (userId: string) => {
-  //   const { data } = await apiService.get(urls.users.status(userId));
-  //   return data;
-  // },
 }
 
 export default userService
