@@ -64,7 +64,6 @@ const LoginComponent = () => {
           </div>
         </div>
 
-        {/* Password */}
         <div className={styles.inputGroup}>
           <label htmlFor="password" className="sr-only">
             Password
@@ -97,7 +96,6 @@ const LoginComponent = () => {
         </Link>
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
 
-        {/* Submit button */}
         <button type="submit" className={styles.button} disabled={loading}>
           {loading ? (
             <div className={`authButton ${styles.loaderWrapper}`}>

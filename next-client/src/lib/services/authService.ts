@@ -49,7 +49,7 @@ getSocketToken(): Promise<{ token: string }> {
   },
 
  async getCurrentUser(token: string | null) {
-    if (!token) return null; // якщо токена немає, повертаємо null
+    if (!token) return null;
 
     try {
         const { data } = await apiService.get(urls.auth.me, {
@@ -64,28 +64,27 @@ getSocketToken(): Promise<{ token: string }> {
             return null;
         }
 
-        // інші помилки прокидуємо
         console.error("Get current user error:", axiosError.response || axiosError.message);
         throw error;
     }
 },
 
-
-  async refreshToken(): Promise<string | null> {
-    const refresh = this.getRefreshToken();
-    if (!refresh) return null;
-
-    try {
-      const { data } = await apiService.post(urls.auth.refresh, { refresh });
-      if (typeof document !== "undefined") {
-        document.cookie = `authToken=${data.access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
-      }
-      return data.access;
-    } catch (error) {
-      console.error("Refresh token error:", error);
-      return null;
-    }
-  },
+  //
+  // async refreshToken(): Promise<string | null> {
+  //   const refresh = this.getRefreshToken();
+  //   if (!refresh) return null;
+  //
+  //   try {
+  //     const { data } = await apiService.post(urls.auth.refresh, { refresh });
+  //     if (typeof document !== "undefined") {
+  //       document.cookie = `authToken=${data.access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
+  //     }
+  //     return data.access;
+  //   } catch (error) {
+  //     console.error("Refresh token error:", error);
+  //     return null;
+  //   }
+  // },
 
 
   getRefreshToken(): string | null {
@@ -95,6 +94,9 @@ getSocketToken(): Promise<{ token: string }> {
 };
 
 export { authService };
+
+
+
 //
 //
 // import {apiService} from "./apiService";

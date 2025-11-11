@@ -35,41 +35,48 @@ const RegisterComponent = () => {
   };
 
  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
-  setErrorMsg("");
-  setErrorFields({});
-  const errors: { [key: string]: string } = {};
+     event.preventDefault();
+     setErrorMsg("");
+     setErrorFields({});
+     const errors: { [key: string]: string } = {};
 
-  if (!validateEmail(email)) errors.email = "Please enter a valid email address.";
-  if (password !== confirmPassword) errors.password = "Passwords do not match.";
-  else if (!validatePassword(password)) errors.password = "Password must be at least 6 characters long.";
-  if (!validateAge(age)) errors.age = "Please enter a valid age.";
+     if (!validateEmail(email)) errors.email = "Please enter a valid email address.";
+     if (password !== confirmPassword) errors.password = "Passwords do not match.";
+     else if (!validatePassword(password)) errors.password = "Password must be at least 6 characters long.";
+     if (!validateAge(age)) errors.age = "Please enter a valid age.";
 
-  if (Object.keys(errors).length > 0) {
-    setErrorFields(errors);
-    return;
-  }
+     if (Object.keys(errors).length > 0) {
+         setErrorFields(errors);
+         return;
+     }
 
-  setIsSubmitting(true);
+     setIsSubmitting(true);
 
-  try {
-    await authService.register({
-      email,
-      password,
-      role,
-      profile: { name, surname, age: age ?? undefined },
-    });
+     try {
+         await authService.register({
+             email,
+             password,
+             role,
+             profile: {name, surname, age: age ?? undefined},
+         });
 
-    // Не робимо ніяких запитів до /me або refreshToken
-    router.push("/?message=Please check your email to activate your account");
+         router.push("/?message=Please check your email to activate your account");
 
-  } catch (err: unknown) {
-    if (err instanceof Error) setErrorMsg(err.message);
-    else setErrorMsg("Something went wrong");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+     } catch (err: unknown) {
+         if (err instanceof Error) {
+             // Перевіряємо повідомлення помилки від сервера
+             if (err.message.includes("already exists")) {
+                 setErrorMsg("A user with this email already exists.");
+             } else {
+                 setErrorMsg("A user with this email already exists.");
+             }
+         } else {
+             setErrorMsg("An unknown error occurred.");
+         }
+     } finally {
+         setIsSubmitting(false); // Завжди виконується, незалежно від того, була помилка чи ні
+     }
+ };
 
   return (
     <div className={styles.centerContainer}>
