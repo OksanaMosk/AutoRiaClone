@@ -17,15 +17,21 @@ export const urls = {
 
     users: {
         list: `${paths.users}/`,
-        // create: `${paths.users}/`,  // реєстрація через /auth/register, тут можна видалити
         block: (id: string) => `${paths.users}/${id}/block/`,
         unblock: (id: string) => `${paths.users}/${id}/unblock/`,
         promoteToAdmin: (id: string) => `${paths.users}/${id}/to_admin/`,
+        update: (id: string) => `${paths.users}/${id}/update/`,
+        delete: (id: string) => `${paths.users}/${id}/delete/`,
+        status: (id: string) => `${paths.users}/${id}/status/`,
+        getUserRole: (id: string) => `${paths.users}/${id}/role/`,
+        resetPassword: (id: string) => `${paths.users}/${id}/reset-password/`,
+        filter: `${paths.users}/filter/`,
         testEmail: `${paths.users}/test/`,
+
     },
 
   cars: paths.cars,
 };
 
-// export { baseURL };
+
 

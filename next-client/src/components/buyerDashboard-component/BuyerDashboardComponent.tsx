@@ -36,7 +36,7 @@ const BuyerDashboardComponent = () => {
   }, []);
 
   if (loading) return <LoaderComponent />;
-  if (error) return <p>{error}</p>;
+  if (error) return <p className={styles.errorText}>{error}</p>;
 
   return (
     <div className={styles.container}>
@@ -50,6 +50,13 @@ const BuyerDashboardComponent = () => {
           <p className={styles.text}>Role: {user.role}</p>
           {user.profile?.age && <p className={styles.text}>Age: {user.profile.age}</p>}
           <p className={styles.text}>Browse listings, contact a seller or dealership.</p>
+
+
+          <section className={styles.buyerInfo}>
+            <h2>Your Dashboard</h2>
+            <p>As a buyer, you can browse and contact sellers.</p>
+
+          </section>
         </>
       ) : (
         <p className={styles.text}>No user data available.</p>
@@ -59,4 +66,3 @@ const BuyerDashboardComponent = () => {
 };
 
 export default BuyerDashboardComponent;
-

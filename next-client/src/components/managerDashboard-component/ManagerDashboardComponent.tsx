@@ -36,27 +36,60 @@ export const ManagerDashboardComponent = () => {
   }, []);
 
   if (loading) return <LoaderComponent />;
-  if (error) return <p>{error}</p>;
+  if (error) return <p className={styles.error}>{error}</p>;
 
   return (
     <div className={styles.container}>
       <h1 className={styles.header}>MANAGER DASHBOARD</h1>
+
+      {/* Картка з інформацією про користувача */}
       {user ? (
-        <>
+        <div className={styles.userInfo}>
           <p className={styles.text}>
             Welcome, {user.profile?.name} {user.profile?.surname}!
           </p>
           <p className={styles.text}>Email: {user.email}</p>
           <p className={styles.text}>Role: {user.role}</p>
           {user.profile?.age && <p className={styles.text}>Age: {user.profile.age}</p>}
-          <p className={styles.text}>Browse listings, contact a seller or dealership.</p>
-        </>
+        </div>
       ) : (
         <p className={styles.text}>No user data available.</p>
       )}
+
+      {/* Секція для завдань менеджера */}
+      <div className={styles.taskList}>
+        <h2 className={styles.taskListHeader}>Your Tasks</h2>
+        <div className={styles.taskItem}>
+          <p className={styles.taskItemHeader}>Review Suspicious Listings</p>
+          <p className={styles.taskItemDescription}>
+            Check the listings that have been flagged by the system for suspicious activity and take necessary actions.
+          </p>
+        </div>
+
+        <div className={styles.taskItem}>
+          <p className={styles.taskItemHeader}>Block Problematic Users</p>
+          <p className={styles.taskItemDescription}>
+            Review users flagged for violations and block them if necessary to maintain the integrity of the platform.
+          </p>
+        </div>
+
+        <div className={styles.taskItem}>
+          <p className={styles.taskItemHeader}>Moderate Reports</p>
+          <p className={styles.taskItemDescription}>
+            Review and resolve any reports made by users regarding inappropriate listings, spamming, or other issues.
+          </p>
+        </div>
+      </div>
+
+      {/* Інші можливості менеджера */}
+      <div className={styles.adminOptions}>
+        <h2 className={styles.adminOptionsHeader}>Admin Options</h2>
+        <button className={styles.adminButton}>View User Activity</button>
+        <button className={styles.adminButton}>Manage Banned Users</button>
+        <button className={styles.adminButton}>Generate Reports</button>
+      </div>
     </div>
   );
 };
 
 export default ManagerDashboardComponent;
-
