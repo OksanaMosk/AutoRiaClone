@@ -9,15 +9,15 @@ export const userService = {
   },
 
 
-  create: async (userData: {
-    email: string;
-    password: string;
-    role?: string;
-    account_type?: string;
-  }) => {
-    const { data } = await apiService.post(urls.users.create, userData);
-    return data;
-  },
+  // create: async (userData: {
+  //   email: string;
+  //   password: string;
+  //   role?: string;
+  //   account_type?: string;
+  // }) => {
+  //   const { data } = await apiService.post(urls.users.create, userData);
+  //   return data;
+  // },
 
 
   block: async (userId: string) => {
@@ -35,11 +35,11 @@ export const userService = {
   promoteToAdmin: async (userId: string) => {
     const { data } = await apiService.patch(urls.users.promoteToAdmin(userId));
     return data;
-  },
+  }
 
 
-  sendTestEmail: async () => {
-    const { data } = await apiService.get(urls.users.testEmail);
-    return data;
-  },
-};
+//   sendTestEmail: async () => {
+//     const { data } = await apiService.get(urls.users.testEmail);
+//     return data;
+//   },
+}

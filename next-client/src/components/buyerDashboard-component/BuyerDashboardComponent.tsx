@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { authService } from "@/lib/services/authService";
 import { IUser } from "@/models/IUser";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import styles from "./BuyerDashboardComponent.module.css";
 
 const BuyerDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -11,9 +12,12 @@ const BuyerDashboardComponent = () => {
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    const token = document.cookie.split('; ').find(row => row.startsWith('authToken='))?.split('=')[1]; // Перевіряємо наявність токену
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
 
-    const fetchUserData = async () => {
+    (async () => {
       if (!token) {
         setError("Please activate your account.");
         setLoading(false);
@@ -24,34 +28,35 @@ const BuyerDashboardComponent = () => {
         const userData: IUser = await authService.getCurrentUser(token);
         setUser(userData);
       } catch {
-          setError("Failed to load user data");
+        setError("Please activate your account.");
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchUserData();
+    })();
   }, []);
 
-  if (loading) return <LoaderComponent />
-  if (error) return <p>{error}</p>
+  if (loading) return <LoaderComponent />;
+  if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <div className={styles.container}>
+      <h1 className={styles.header}>BUYER PORTAL</h1>
       {user ? (
         <>
-          <p>Welcome, {user.profile?.name} {user.profile?.surname}!</p>
-          <p>Email: {user.email}</p>
-          <p>Role: {user.role}</p>
-          <p>Account Type: {user.account_type}</p>
-          {user.profile?.age && <p>Age: {user.profile.age}</p>}
-          <p>Browse listings, contact a seller or dealership.</p>
+          <p className={styles.text}>
+            Welcome, {user.profile?.name} {user.profile?.surname}!
+          </p>
+          <p className={styles.text}>Email: {user.email}</p>
+          <p className={styles.text}>Role: {user.role}</p>
+          {user.profile?.age && <p className={styles.text}>Age: {user.profile.age}</p>}
+          <p className={styles.text}>Browse listings, contact a seller or dealership.</p>
         </>
       ) : (
-        <p>No user data available.</p>
+        <p className={styles.text}>No user data available.</p>
       )}
     </div>
   );
 };
 
 export default BuyerDashboardComponent;
+

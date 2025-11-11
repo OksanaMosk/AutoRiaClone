@@ -1,12 +1,10 @@
-"use client";
-
+"use client"
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authService } from "@/lib/services/authService";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import Image from "next/image";
-import Link from "next/link";
+import { authService } from "@/lib/services/authService";
 import { PasswordInput } from "@/components/passwordInput-component/PasswordInputComponent";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./RegisterComponent.module.css";
 
 const RegisterComponent = () => {
@@ -36,71 +34,48 @@ const RegisterComponent = () => {
     return age != null && age > 0 && age < 150;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setErrorMsg("");
-    setErrorFields({});
-    const errors: { [key: string]: string } = {};
+ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  setErrorMsg("");
+  setErrorFields({});
+  const errors: { [key: string]: string } = {};
 
-    // Email validation
-    if (!validateEmail(email)) {
-      errors.email = "Please enter a valid email address.";
-    }
+  if (!validateEmail(email)) errors.email = "Please enter a valid email address.";
+  if (password !== confirmPassword) errors.password = "Passwords do not match.";
+  else if (!validatePassword(password)) errors.password = "Password must be at least 6 characters long.";
+  if (!validateAge(age)) errors.age = "Please enter a valid age.";
 
-    if (password !== confirmPassword) {
-      errors.password = "Passwords do not match.";
-    } else if (!validatePassword(password)) {
-      errors.password = "Password must be at least 6 characters.";
-    }
+  if (Object.keys(errors).length > 0) {
+    setErrorFields(errors);
+    return;
+  }
 
-    if (!validateAge(age)) {
-      errors.age = "Please enter a valid age.";
-    }
+  setIsSubmitting(true);
 
-    if (Object.keys(errors).length > 0) {
-      setErrorFields(errors);
-      return;
-    }
+  try {
+    await authService.register({
+      email,
+      password,
+      role,
+      profile: { name, surname, age: age ?? undefined },
+    });
 
-    setIsSubmitting(true);
+    // Не робимо ніяких запитів до /me або refreshToken
+    router.push("/?message=Please check your email to activate your account");
 
-    try {
-      await authService.register({
-        email,
-        password,
-        role,
-        profile: {
-          name,
-          surname,
-          age: age ?? undefined,
-        },
-      });
-
-
-      if (role === "buyer") {
-        router.push("/buyer");
-      } else if (role === "seller") {
-        router.push("/seller");
-      } else {
-        router.push("/manager");
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setErrorMsg(err.message);
-      } else {
-        setErrorMsg("Something went wrong");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  } catch (err: unknown) {
+    if (err instanceof Error) setErrorMsg(err.message);
+    else setErrorMsg("Something went wrong");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className={styles.centerContainer}>
       <form onSubmit={handleSubmit} className={`auth ${styles.form}`}>
         <h2 className={styles.title}>Sign Up</h2>
 
-        {/* Email */}
         <div className={styles.inputGroup}>
           <input
             type="email"
@@ -111,17 +86,11 @@ const RegisterComponent = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
           <div className={styles.icon}>
-            <Image
-              src="/images/user.png"
-              alt="user icon"
-              width={24}
-              height={24}
-            />
+            <Image src="/images/user.png" alt="user icon" width={24} height={24} />
           </div>
           {errorFields.email && <p className={styles.error}>{errorFields.email}</p>}
         </div>
 
-        {/* Name */}
         <div className={styles.inputGroup}>
           <input
             type="text"
@@ -133,7 +102,6 @@ const RegisterComponent = () => {
           />
         </div>
 
-        {/* Surname */}
         <div className={styles.inputGroup}>
           <input
             type="text"
@@ -145,7 +113,6 @@ const RegisterComponent = () => {
           />
         </div>
 
-        {/* Age */}
         <div className={styles.inputGroup}>
           <input
             type="number"
@@ -154,9 +121,7 @@ const RegisterComponent = () => {
             value={age ?? ""}
             onChange={(e) => {
               const value = e.target.value;
-              if (/^\d*$/.test(value)) {
-                setAge(value === "" ? null : Number(value));
-              }
+              if (/^\d*$/.test(value)) setAge(value === "" ? null : Number(value));
             }}
           />
           {errorFields.age && <p className={styles.error}>{errorFields.age}</p>}
@@ -165,41 +130,23 @@ const RegisterComponent = () => {
         <PasswordInput
           value={password}
           onChangeAction={setPassword}
-          placeholder="Password"
+          placeholder="Password (min 6 characters)"
         />
         <PasswordInput
           value={confirmPassword}
           onChangeAction={setConfirmPassword}
           placeholder="Confirm Password"
         />
+        {errorFields.password && <p className={styles.error}>{errorFields.password}</p>}
 
-        {/* Role selection */}
         <div className={styles.roleSelection}>
-          <button
-            type="button"
-            className={styles.roleButton}
-            onClick={() => setRole("buyer")}
-          >
-            <Image
-              src="/images/user.png"
-              alt="Buyer"
-              width={30}
-              height={30}
-            />
+          <button type="button" className={styles.roleButton} onClick={() => setRole("buyer")}>
+            <Image src="/images/user.png" alt="Buyer" width={30} height={30} />
             <span>Buyer</span>
           </button>
 
-          <button
-            type="button"
-            className={styles.roleButton}
-            onClick={() => setRole("seller")}
-          >
-            <Image
-              src="/images/user.png"
-              alt="Seller"
-              width={30}
-              height={30}
-            />
+          <button type="button" className={styles.roleButton} onClick={() => setRole("seller")}>
+            <Image src="/images/user.png" alt="Seller" width={30} height={30} />
             <span>Seller</span>
           </button>
         </div>
@@ -212,9 +159,9 @@ const RegisterComponent = () => {
         <div className={styles.bottomContainer}>
           <p className={styles.registerText}>
             Already have an account?{" "}
-            <Link href="/login" className={styles.link}>
+            <a href="/login" className={styles.link}>
               Sign in
-            </Link>
+            </a>
           </p>
         </div>
       </form>
