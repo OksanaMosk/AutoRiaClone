@@ -1,87 +1,22 @@
-/* ManagerDashboardComponent.module.css */
-
-.container {
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.container{
+    margin: 20px ;
 }
-
-.header {
-  font-size: 24px;
-  font-weight: 600;
-  color: #343a40;
-  margin-bottom: 20px;
-}
-
-.text {
-  font-size: 16px;
-  color: #495057;
-  margin: 5px 0;
-}
-
-.error {
-  color: red;
-  font-size: 14px;
+.title {
+  text-transform: uppercase;
+  font-size: 2.4rem;
   font-weight: bold;
+  margin-bottom: 1rem;
+    color: var(--color-white)
 }
-
-.userInfo {
-  margin-bottom: 30px;
+.welcome,
+.email,
+.role{
+  margin-bottom: 0.3rem;
+   font-weight: bold;
+  font-size: 1rem;
+    color: var(--color-white)
 }
-
-.taskList {
-  margin-top: 30px;
-}
-
-.taskListHeader {
-  font-size: 20px;
-  font-weight: 600;
-  color: #007bff;
-  margin-bottom: 10px;
-}
-
-.taskItem {
-  background-color: #ffffff;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.taskItemHeader {
-  font-weight: 600;
-  font-size: 18px;
-  color: #007bff;
-}
-
-.taskItemDescription {
-  font-size: 14px;
-  color: #6c757d;
-}
-
-.adminOptions {
-  margin-top: 40px;
-}
-
-.adminOptionsHeader {
-  font-size: 20px;
-  font-weight: 600;
-  color: #007bff;
-  margin-bottom: 10px;
-}
-
-.adminButton {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  margin-top: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.adminButton:hover {
-  background-color: #0056b3;
+.noUser {
+  font-size: 1rem;
+  color: red;
 }

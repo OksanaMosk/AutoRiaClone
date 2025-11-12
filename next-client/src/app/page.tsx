@@ -1,6 +1,7 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import styles from "@/components/adminUserManagement-component/AdminUserManagementComponent.module.css";
 
 const HomePage = () => {
   const searchParams = useSearchParams();
@@ -19,7 +20,7 @@ const HomePage = () => {
 
   return (
     <div>
-      {message && <p style={{ color: "green" }}>{message}</p>}
+      {message && <p className={styles.registerMessage}>{message}</p>}
       <h2>Welcome to the platform</h2>
       <div className="flex flex-col justify-center items-center h-[84%] w-full">
         GSAP HOME

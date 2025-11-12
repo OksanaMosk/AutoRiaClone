@@ -60,7 +60,7 @@ export default function ResetPasswordPage() {
     <div className={styles.centerContainer}>
       <form onSubmit={handleSubmit} className={`auth ${styles.form}`}>
         <h2 className={styles.title}>Reset Password</h2>
-        <p>Please enter your new password and confirm it below.</p>
+        <p  className={styles.reset}>Please enter your new password and confirm it below.</p>
 
         <div className={styles.inputGroup}>
           <label htmlFor="password" className="sr-only">New Password</label>

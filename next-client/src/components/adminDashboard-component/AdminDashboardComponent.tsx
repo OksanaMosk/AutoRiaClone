@@ -37,7 +37,7 @@ const AdminDashboardComponent = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.containerDashboard}>
       <h1 className={styles.title}>ADMIN DASHBOARD</h1>
       {user ? (
         <>
@@ -46,8 +46,6 @@ const AdminDashboardComponent = () => {
           </p>
           <p className={styles.email}>Email: {user.email}</p>
           <p className={styles.role}>Role: {user.role}</p>
-          {user.profile?.age && <p className={styles.age}>Age: {user.profile.age}</p>}
-          <p className={styles.info}>Browse listings, contact a seller or dealership.</p>
           <AdminUserManagementComponent />
         </>
       ) : (

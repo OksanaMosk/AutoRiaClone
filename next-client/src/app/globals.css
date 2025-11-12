@@ -11,10 +11,6 @@
   --color-container: #1f2937;
     --color-black: black;
 }
-/*background: radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #003333);*/
-    /*#30CFCF*/
-    /*#00B8B8*/
-
 
 body {
   font-optical-sizing: auto;
@@ -26,7 +22,7 @@ body {
 
   background:
           url("/images/dark-background.jpg") no-repeat center center / cover,
-     linear-gradient(to bottom right, black, #1e9c9c 40%, #003333);
+          linear-gradient(to bottom, black 70%, #003333);
 }
 
 
@@ -40,7 +36,7 @@ body {
   .burgerMenu {
     background:
             url("/images/light-background.jpg") no-repeat center center / cover,
-          radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #003333);
+            radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #003333);
   }
 
   .search-input,
@@ -48,6 +44,9 @@ body {
   .movieInfoWrapper {
     background-color: var(--color-white);
   }
+    .registerMessage{
+    color: var(--color-border);
+}
 
   .search-button,
   .search-input,
@@ -102,7 +101,6 @@ body {
     color: var(--color-container);
   }
 
-
   .cell{
    background:black;
   }
@@ -110,20 +108,25 @@ body {
 
 html.dark {
 
-  body,
-  .burgerMenu {
-    /*background-image: url("/background/dark.jpg");*/
-  }
+    body,
+    .burgerMenu {
+        /*background-image: url("/background/dark.jpg");*/
+    }
 
-  .mainTitle{
-    background: linear-gradient( var(--color-active), var(--color-badgeId));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+    .registerMessage {
+        color: var(--color-text);
+    }
 
-  .cell{
-    background:var(--color-active);
-  }
+    .mainTitle {
+        background: linear-gradient(var(--color-active), var(--color-badgeId));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .cell {
+        background: var(--color-active);
+    }
+
 }
 ::-webkit-scrollbar {
   display: none;
