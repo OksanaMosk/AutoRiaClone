@@ -111,8 +111,8 @@ class ChangeUserAccountTypeAPIView(APIView):
 
         new_account_type = request.data.get("account_type")
         if new_account_type not in [
-            UserModel.account_type.BASIC,
-            UserModel.account_type.PREMIUM,
+            UserModel.AccountType.BASIC,
+            UserModel.AccountType.PREMIUM,
         ]:
             return Response({"detail": "Invalid account type."}, status=400)
 
