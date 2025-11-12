@@ -13,7 +13,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from apps.user.models import Dealership
 from apps.user.serializers import UserSerializer
-from apps.user.permissions import IsAdmin
+from apps.user.permissions import IsAdmin, IsManager
 
 UserModel = get_user_model()
 
@@ -25,7 +25,7 @@ class UserListCreateAPIView(ListCreateAPIView):
 class BlockUserAPIView(RetrieveUpdateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin | IsManager]
     lookup_field = "pk"
 
     def patch(self, request, *args, **kwargs):
@@ -38,7 +38,7 @@ class BlockUserAPIView(RetrieveUpdateAPIView):
 class UnblockUserAPIView(RetrieveUpdateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin | IsManager]
     lookup_field = "pk"
 
     def patch(self, request, *args, **kwargs):
@@ -56,7 +56,7 @@ class UpdateUserAPIView(RetrieveUpdateAPIView):
 
 class DeleteUserAPIView(DestroyAPIView):
     queryset = UserModel.objects.all()
-    permission_classes = [IsAuthenticated, IsAdmin]
+    permission_classes = [IsAuthenticated, IsAdmin | IsManager]
     lookup_field = "pk"
 
 
@@ -139,3 +139,36 @@ class ChangeUserDealershipAPIView(APIView):
             user.dealership = None  # від’єднати від салону
         user.save()
         return Response(UserSerializer(user).data, status=200)
+
+
+class UserFilterSortAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsManager | IsAdmin]
+
+    def get(self, request):
+        is_active = request.query_params.get('is_active', None)
+        account_type = request.query_params.get('account_type', None)
+        role = request.query_params.get('role', None)
+        sort_by = request.query_params.get('sort_by', 'id')
+        sort_order = request.query_params.get('sort_order', 'asc')
+        valid_roles = ['buyer', 'seller', 'manager', 'admin']
+        if role and role not in valid_roles:
+            return Response({"detail": "Invalid role."}, status=400)
+        users = UserModel.objects.all()
+        if is_active is not None:
+            if is_active.lower() not in ['true', 'false']:
+                return Response({"detail": "Invalid value for 'is_active' parameter."}, status=400)
+            is_active = is_active.lower() == 'true'
+            users = users.filter(is_active=is_active)
+        if account_type:
+            users = users.filter(account_type=account_type)
+        if role:
+            users = users.filter(role=role)
+        valid_sort_fields = ['id', 'username', 'email', 'role', 'account_type', 'is_active']
+        if sort_by not in valid_sort_fields:
+            return Response({"detail": "Invalid sort field."}, status=400)
+        if sort_order == 'asc':
+            users = users.order_by(sort_by)
+        else:
+            users = users.order_by(f'-{sort_by}')
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)

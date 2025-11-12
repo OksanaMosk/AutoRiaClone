@@ -1,7 +1,9 @@
+
+
 .userManagement {
   padding: 20px;
   font-family: 'Inter', sans-serif;
-  background-color: #f9f9f9;
+  background-color: var(--color-white);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   max-width: 1200px;
@@ -12,7 +14,7 @@
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #111;
+  color:var(--color-black);
 }
 
 .filterForm {
@@ -36,12 +38,12 @@
 .filterForm button {
   padding: 6px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-white);
   font-size: 0.95rem;
 }
 
 .filterForm button {
-  background-color: #4f46e5;
+  background-color: var(--color-active);
   color: white;
   border: none;
   cursor: pointer;
@@ -49,7 +51,7 @@
 }
 
 .filterForm button:hover {
-  background-color: #4338ca;
+  background-color: var(--color-border);
 }
 
 .table {
@@ -59,33 +61,52 @@
 }
 
 .table thead tr {
-  background-color: #4f46e5;
+  background-color: var(--color-active);
   color: white;
   text-align: left;
+
+}
+
+.table th, .table td {
+  padding: 12px 16px;
+}
+.table th:last-child{
+    text-align: end;
 }
 
 .table th, .table td {
   padding: 12px 16px;
 }
 
+.table tr {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.table tr:hover {
+  background-color: var(--color-text); /* світло-сірий */
+}
+
 .table tbody tr {
-  background-color: white;
+  background-color:var(--color-white);
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 0.25rem 0.75rem var(--color-text);
   transition: all 0.2s ease;
 }
 
 .table tbody tr:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 0.25rem 0.75rem var(--color-border);
 }
 
 .actions {
   display: flex;
+    justify-content: flex-end;
   gap: 6px;
   flex-wrap: wrap;
 }
-
+.statusActive{
+    color: var(--color-container);
+}
 .actions button {
   padding: 6px 12px;
   border: none;
@@ -96,22 +117,12 @@
   transition: all 0.2s ease;
 }
 
-.blockButton {
-  background-color: #f87171;
-  color: white;
-}
-
 .blockButton:hover {
-  background-color: #ef4444;
-}
-
-.unblockButton {
-  background-color: #34d399;
-  color: white;
+  background-color: var(--color-border);
 }
 
 .unblockButton:hover {
-  background-color: #10b981;
+  background-color: var(--color-border);
 }
 
 .promoteButton {
@@ -124,17 +135,60 @@
 }
 
 .deleteButton {
-  background-color: #fbbf24;
-  color: white;
+  background-color: #ef4444;
+  color: var(--color-white);
 }
 
 .deleteButton:hover {
-  background-color: #f59e0b;
+  background-color:  var(--color-border);
 }
 
 .select {
   border-radius: 12px;
   padding: 5px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-white);
   font-size: 0.95rem;
+}
+
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+     z-index: 1000;
+}
+
+.success {
+  background-color: var(--color-white);
+  color: var(--color-border);
+}
+
+.error {
+  background-color: var(--color-white);
+  color:  #ef4444;
+}
+
+.blockButton {
+  background-color: #9c8611;
+  color: white;
+  border: none;
+   display: flex;
+    justify-content: center;
+    align-items: center;
+width:80px;
+    height: 30px;
+  border-radius: 4px;
+}
+
+.unblockButton {
+  background-color: var(--color-active);
+  color: var(--color-white);
+  border: none;
+  border-radius: 4px;
+     justify-content: center;
+    align-items: center;
+width:80px;
+    height: 30px;
 }

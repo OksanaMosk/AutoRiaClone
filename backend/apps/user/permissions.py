@@ -15,11 +15,13 @@ class IsManager(BasePermission):
     message = "You must be a manager to perform this action."
 
     def has_permission(self, request, view):
-        return bool(
+        is_manager = (
             request.user
             and request.user.is_authenticated
             and request.user.role == request.user.Role.MANAGER
         )
+        return is_manager
+
 
 class IsSeller(BasePermission):
     message = "You must be a seller to perform this action."
@@ -40,14 +42,3 @@ class IsBuyer(BasePermission):
             and request.user.is_authenticated
             and request.user.role == request.user.Role.BUYER
         )
-
-
-
-
-
-#
-#
-# class IsSuperUser(BaseException):
-#     def has_permission(self, request, view):
-#         return bool(request.user and request.user.is_staff and request.user.is_superuser)
-

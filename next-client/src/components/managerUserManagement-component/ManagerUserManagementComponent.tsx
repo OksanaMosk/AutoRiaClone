@@ -7,9 +7,11 @@ import styles from './ManagerUserManagementComponent.module.css';
 import userService from "@/lib/services/userService";
 
 const ManagerUserManagementComponent = () => {
-    const [users, setUsers] = useState<IUser[]>([]);
+    const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+    const [message, setMessage] = useState<string | null>(null);
+const [messageType, setMessageType] = useState<"success" | "error" | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -36,29 +38,64 @@ const ManagerUserManagementComponent = () => {
 
     // Блокування користувача
     const handleBlockUser = async (userId: string) => {
+  try {
+    await userService.block(userId);
+    setUsers(prev =>
+      prev.map(u => u.id && String(u.id) === userId ? { ...u, is_active: false } : u)
+    );
+    showMessage("User has been blocked", "success");
+  } catch (err) {
+    console.error("Error blocking user", err);
+    showMessage("Failed to block user", "error");
+  }
+};
+
+const handleUnblockUser = async (userId: string) => {
+  try {
+    await userService.unblock(userId);
+    setUsers(prev =>
+      prev.map(u => u.id && String(u.id) === userId ? { ...u, is_active: true } : u)
+    );
+    showMessage("User has been unblocked", "success");
+  } catch (err) {
+    console.error("Error unblocking user", err);
+    showMessage("Failed to unblock user", "error");
+  }
+};
+
+
+    // Зміна ролі користувача
+    const handleChangeRole = async (userId: string, role: "buyer" | "seller" | "manager" | "admin") => {
         try {
-            await userService.block(userId);
-            setUsers(prev =>
-                prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, is_active: false} : u))
-            );
+            await userService.changeRole(userId, role);
+            setUsers(prev => prev.map(u =>
+                u.id !== undefined && String(u.id) === userId ? {...u, role} : u
+            ));
         } catch (err) {
-            console.error("Error blocking user", err);
+            console.error("Error changing account type", err);
         }
     };
 
-    // Розблокування користувача
-    const handleUnblockUser = async (userId: string) => {
-        try {
-            await userService.unblock(userId);
-            setUsers(prev =>
-                prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, is_active: true} : u))
-            );
-        } catch (err) {
-            console.error("Error unblocking user", err);
-        }
-    };
+    const handleChangeAccountType = async (userId: string, account_type: string) => {
+  try {
+    const { data } = await userService.changeAccountType(userId, account_type);
+    // Якщо зміна пройшла успішно
+    setUsers(prev => prev.map(u =>
+      u.id !== undefined && String(u.id) === userId ? { ...u, account_type } : u
+    ));
+  } catch (err: any) {
+    if (err.response && err.response.status === 500) {
+      // Виведення повідомлення, якщо сервер повернув помилку 500
+      console.error("Internal Server Error:", err.response.data);
+      alert("Internal server error occurred. Please try again later.");
+    } else {
+      console.error("Error changing account type", err);
+      alert("An error occurred while changing the account type.");
+    }
+  }
+};
 
-
+    // Видалення користувача
     const handleDeleteUser = async (userId: number | undefined) => {
         if (userId === undefined) {
             alert("User ID is undefined");
@@ -74,7 +111,14 @@ const ManagerUserManagementComponent = () => {
             alert('Error deleting user');
         }
     };
-
+    const showMessage = (text: string, type: "success" | "error") => {
+        setMessage(text);
+        setMessageType(type);
+        setTimeout(() => {
+            setMessage(null);
+            setMessageType(null);
+        }, 3000);
+    };
     if (loading) return <div>Loading...</div>;
     if (error) return <p>{error}</p>;
 
@@ -82,7 +126,6 @@ const ManagerUserManagementComponent = () => {
         <section className={styles.userManagement}>
             <h2 className={styles.subtitle}>Manage Users</h2>
 
-            {/* Таблиця користувачів */}
             <table className={styles.table}>
                 <thead>
                 <tr>
@@ -92,7 +135,7 @@ const ManagerUserManagementComponent = () => {
                     <th>Role</th>
                     <th>Account Type</th>
                     <th>Blocked</th>
-                    <th>Delete</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -102,14 +145,33 @@ const ManagerUserManagementComponent = () => {
                         <td className={styles.user}>{user.email}</td>
                         <td className={styles.user}>{user.profile?.name} {user.profile?.surname}</td>
 
-                        <td>{user.is_active ? "Yes" : "No"}</td>
+                        <td>
+                            <select className={styles.select}
+                                value={user.role}
+                                onChange={e => handleChangeRole(String(user.id), e.target.value as "buyer" | "seller" | "manager" | "admin")}
+                            >
+                                <option value="buyer">Buyer</option>
+                                <option value="seller">Seller</option>
+                                <option value="manager">Manager</option>
+                                <option value="admin">Admin</option>
+                            </select>
+
+                        </td>
+                        <td>
+                            <select className={styles.select} defaultValue={user.account_type}
+                                    onChange={e => handleChangeAccountType(String(user.id), e.target.value)}>
+                                <option value="basic">Basic</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </td>
+                        <td className={styles.statusActive}>{user.is_active ? "Yes" : "No"}</td>
                         <td className={styles.actions}>
                             {user.is_active ? (
-                                <button onClick={() => handleUnblockUser(String(user.id))}
-                                        className={styles.unblockButton}>Unblock</button>
-                            ) : (
                                 <button onClick={() => handleBlockUser(String(user.id))}
                                         className={styles.blockButton}>Block</button>
+                            ) : (
+                                <button onClick={() => handleUnblockUser(String(user.id))}
+                                        className={styles.unblockButton}>Unblock</button>
                             )}
                             <button onClick={() => handleDeleteUser(user.id)} className={styles.deleteButton}>Delete
                             </button>
@@ -121,7 +183,6 @@ const ManagerUserManagementComponent = () => {
         </section>
     );
 };
-
 export default ManagerUserManagementComponent;
 
 

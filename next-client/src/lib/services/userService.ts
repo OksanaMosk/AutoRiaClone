@@ -36,8 +36,14 @@ import { urls } from "../constants/urls";
     return data;
   },
 
-  filterUsers: async (filterCriteria: { role?: string, account_type?: string, isBlocked?: boolean }) => {
-    const { data } = await apiService.get(urls.users.filter, { params: filterCriteria });
+ filterSortUsers: async (filterCriteria: {
+    role?: string,
+    account_type?: string,
+    is_active?: boolean,
+    sort_by?: string,
+    sort_order?: 'asc' | 'desc'
+  }) => {
+    const { data } = await apiService.get(urls.users.filterSort, { params: filterCriteria });
     return data;
   },
 };

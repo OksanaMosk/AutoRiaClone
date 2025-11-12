@@ -22,7 +22,7 @@ export const urls = {
         changeAccountType: (id: string) => `${paths.users}/change-account-type/${id}/`,
         changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
         delete: (id: string) => `${paths.users}/${id}/delete/`,
-        filter: `${paths.users}/filter/`,
+        filterSort: `${paths.users}/filter-sort/`,
     },
 
   cars: paths.cars,
