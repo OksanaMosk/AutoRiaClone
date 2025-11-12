@@ -2,14 +2,18 @@
 
 :root {
   --color-disabled: #6b7280;
-  --color-active: #FFD700;
-  --color-border: #947e07;
-  --color-text: #f2e499;
-  --color-badgeId: #bda008;
+  --color-active: #00b8b8;
+  --color-border: #003333;
+  --color-text: #5ff;
+  --color-badgeId: #1e9c9c;
   --color-noposter: #374151;
   --color-white: #ffffff;
   --color-container: #1f2937;
 }
+/*background: radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #003333);*/
+    /*#30CFCF*/
+    /*#00B8B8*/
+
 
 body {
   font-optical-sizing: auto;
@@ -17,24 +21,25 @@ body {
   font-variation-settings: "wdth" 100;
   margin: 0 auto;
   scroll-behavior: smooth;
-  background-size: cover;
-  background-repeat: no-repeat;
   min-height: 100vh;
-  background:linear-gradient(to bottom left, black, #ebe68f);
+
+  background:
+          url("/images/dark-background.jpg") no-repeat center center / cover,
+     linear-gradient(to bottom right, black, #1e9c9c 40%, #003333);
 }
 
+
 html.light {
-
-  body {
-    background:linear-gradient(to bottom left, black, #ebe68f);
-            /*url("/background/light.png") no-repeat top right / auto,*/
-
-  }
+body {
+  background:
+          url("/images/light-background.jpg") no-repeat center center / cover,
+          radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #003333);
+}
 
   .burgerMenu {
     background:
-            /*url("/background/light.png") no-repeat bottom right / auto,*/
-            linear-gradient(to bottom left, black, #ebe68f);
+            url("/images/light-background.jpg") no-repeat center center / cover,
+          radial-gradient(circle at 30% 30%, #5ff, #00b8b8 40%, #003333);
   }
 
   .search-input,
