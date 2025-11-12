@@ -1,13 +1,11 @@
-
-
 .userManagement {
+    margin: 60px auto;
   padding: 20px;
   font-family: 'Inter', sans-serif;
   background-color: var(--color-white);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   max-width: 1200px;
-  margin: 20px auto;
 }
 
 .subtitle {
@@ -108,35 +106,25 @@
     color: var(--color-container);
 }
 .actions button {
-  padding: 6px 12px;
+    color: var(--color-white);
   border: none;
   border-radius: 20px;
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.2s ease;
+    justify-content: center;
+    align-items: center;
+    width:80px;
+    height: 30px;
 }
 
-.blockButton:hover {
+.actions button:hover {
   background-color: var(--color-border);
-}
-
-.unblockButton:hover {
-  background-color: var(--color-border);
-}
-
-.promoteButton {
-  background-color: #60a5fa;
-  color: white;
-}
-
-.promoteButton:hover {
-  background-color: #3b82f6;
 }
 
 .deleteButton {
   background-color: #ef4444;
-  color: var(--color-white);
 }
 
 .deleteButton:hover {
@@ -175,10 +163,7 @@
   color: white;
   border: none;
    display: flex;
-    justify-content: center;
-    align-items: center;
-width:80px;
-    height: 30px;
+
   border-radius: 4px;
 }
 

@@ -15,36 +15,28 @@ const AdminUserManagementComponent = () => {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
     useEffect(() => {
-        const applyFilters = async () => {
-            try {
-                setLoading(true);
-                const token = authService.getRefreshToken();
-                if (!token) {
-                    setError("Please activate your account.");
-                    return;
-                }
+  (async () => {
+    try {
+      setLoading(true);
 
-                const filters = {
-                    role,
-                    account_type,
-                    is_active,
-                    sort_by: sortBy,
-                    sort_order: sortOrder,
-                };
+      const token = authService.getRefreshToken();
+      if (!token) {
+        setError("Please activate your account.");
+        return;
+      }
 
-                const allUsers = await userService.filterSortUsers(filters);
-                setUsers(allUsers);
+      const filters = { role, account_type, is_active, sort_by: sortBy, sort_order: sortOrder };
+      const allUsers = await userService.filterSortUsers(filters);
+      setUsers(allUsers);
 
-            } catch (err) {
-                console.error("Failed to load users:", err);
-                setError("Failed to load user data");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        applyFilters();
-    }, [role, account_type, is_active, sortBy, sortOrder]);
+    } catch (err) {
+      console.error("Failed to load users:", err);
+      setError("Failed to load user data");
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, [role, account_type, is_active, sortBy, sortOrder]);
 
     const handleBlockUser = async (userId: string) => {
         try {
