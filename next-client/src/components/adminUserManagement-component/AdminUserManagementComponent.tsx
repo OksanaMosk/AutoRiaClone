@@ -10,6 +10,8 @@ const AdminUserManagementComponent = () => {
     const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+    const [message, setMessage] = useState<string | null>(null);
+const [messageType, setMessageType] = useState<"success" | "error" | null>(null);
 
     useEffect(() => {
         (async () => {
@@ -36,27 +38,30 @@ const AdminUserManagementComponent = () => {
 
     // Блокування користувача
     const handleBlockUser = async (userId: string) => {
-        try {
-            await userService.block(userId);
-            setUsers(prev =>
-                prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, is_active: false} : u))
-            );
-        } catch (err) {
-            console.error("Error blocking user", err);
-        }
-    };
+  try {
+    await userService.block(userId);
+    setUsers(prev =>
+      prev.map(u => u.id && String(u.id) === userId ? { ...u, is_active: false } : u)
+    );
+    showMessage("User has been blocked", "success");
+  } catch (err) {
+    console.error("Error blocking user", err);
+    showMessage("Failed to block user", "error");
+  }
+};
 
-    // Розблокування користувача
-    const handleUnblockUser = async (userId: string) => {
-        try {
-            await userService.unblock(userId);
-            setUsers(prev =>
-                prev.map(u => (u.id !== undefined && String(u.id) === userId ? {...u, is_active: true} : u))
-            );
-        } catch (err) {
-            console.error("Error unblocking user", err);
-        }
-    };
+const handleUnblockUser = async (userId: string) => {
+  try {
+    await userService.unblock(userId);
+    setUsers(prev =>
+      prev.map(u => u.id && String(u.id) === userId ? { ...u, is_active: true } : u)
+    );
+    showMessage("User has been unblocked", "success");
+  } catch (err) {
+    console.error("Error unblocking user", err);
+    showMessage("Failed to unblock user", "error");
+  }
+};
 
 
     // Зміна ролі користувача
@@ -106,7 +111,14 @@ const AdminUserManagementComponent = () => {
             alert('Error deleting user');
         }
     };
-
+    const showMessage = (text: string, type: "success" | "error") => {
+        setMessage(text);
+        setMessageType(type);
+        setTimeout(() => {
+            setMessage(null);
+            setMessageType(null);
+        }, 3000);
+    };
     if (loading) return <div>Loading...</div>;
     if (error) return <p>{error}</p>;
 
@@ -114,7 +126,6 @@ const AdminUserManagementComponent = () => {
         <section className={styles.userManagement}>
             <h2 className={styles.subtitle}>Manage Users</h2>
 
-            {/* Таблиця користувачів */}
             <table className={styles.table}>
                 <thead>
                 <tr>
@@ -135,7 +146,7 @@ const AdminUserManagementComponent = () => {
                         <td className={styles.user}>{user.profile?.name} {user.profile?.surname}</td>
 
                         <td>
-                            <select
+                            <select className={styles.select}
                                 value={user.role}
                                 onChange={e => handleChangeRole(String(user.id), e.target.value as "buyer" | "seller" | "manager" | "admin")}
                             >
@@ -153,14 +164,14 @@ const AdminUserManagementComponent = () => {
                                 <option value="premium">Premium</option>
                             </select>
                         </td>
-                        <td>{user.is_active ? "Yes" : "No"}</td>
+                        <td className={styles.statusActive}>{user.is_active ? "Yes" : "No"}</td>
                         <td className={styles.actions}>
                             {user.is_active ? (
-                                <button onClick={() => handleUnblockUser(String(user.id))}
-                                        className={styles.unblockButton}>Unblock</button>
-                            ) : (
                                 <button onClick={() => handleBlockUser(String(user.id))}
                                         className={styles.blockButton}>Block</button>
+                            ) : (
+                                <button onClick={() => handleUnblockUser(String(user.id))}
+                                        className={styles.unblockButton}>Unblock</button>
                             )}
                             <button onClick={() => handleDeleteUser(user.id)} className={styles.deleteButton}>Delete
                             </button>
