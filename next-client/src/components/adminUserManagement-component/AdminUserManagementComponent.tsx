@@ -8,10 +8,6 @@ const AdminUserManagementComponent = () => {
     const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
-    const [message, setMessage] = useState<string | null>(null);
-    const [messageType, setMessageType] = useState<"success" | "error" | null>(null);
-
-    // Параметри для фільтрації і сортування
     const [role, setRole] = useState<string | undefined>();
     const [account_type, setAccountType] = useState<string | undefined>();
     const [is_active, setIsActive] = useState<boolean | undefined>();
@@ -50,17 +46,14 @@ const AdminUserManagementComponent = () => {
         applyFilters();
     }, [role, account_type, is_active, sortBy, sortOrder]);
 
-    // Блокування користувача
     const handleBlockUser = async (userId: string) => {
         try {
             await userService.block(userId);
             setUsers(prev =>
                 prev.map(u => u.id && String(u.id) === userId ? { ...u, is_active: false } : u)
             );
-            showMessage("User has been blocked", "success");
         } catch (err) {
             console.error("Error blocking user", err);
-            showMessage("Failed to block user", "error");
         }
     };
 
@@ -70,14 +63,11 @@ const AdminUserManagementComponent = () => {
             setUsers(prev =>
                 prev.map(u => u.id && String(u.id) === userId ? { ...u, is_active: true } : u)
             );
-            showMessage("User has been unblocked", "success");
         } catch (err) {
             console.error("Error unblocking user", err);
-            showMessage("Failed to unblock user", "error");
         }
     };
 
-    // Зміна ролі користувача
     const handleChangeRole = async (userId: string, role: "buyer" | "seller" | "manager" | "admin") => {
         try {
             await userService.changeRole(userId, role);
@@ -91,22 +81,20 @@ const AdminUserManagementComponent = () => {
 
     const handleChangeAccountType = async (userId: string, account_type: string) => {
         try {
-            const { data } = await userService.changeAccountType(userId, account_type);
+            await userService.changeAccountType(userId, account_type);
             setUsers(prev => prev.map(u =>
-                u.id !== undefined && String(u.id) === userId ? { ...u, account_type } : u
+                u.id !== undefined && String(u.id) === userId ? {...u, account_type} : u
             ));
-        } catch (err: any) {
-            if (err.response && err.response.status === 500) {
-                console.error("Internal Server Error:", err.response.data);
+        } catch (err: unknown) {
+            const resStatus = (err as { response?: { status?: number; data?: unknown } })?.response?.status;
+            if (resStatus === 500) {
                 alert("Internal server error occurred. Please try again later.");
             } else {
-                console.error("Error changing account type", err);
                 alert("An error occurred while changing the account type.");
             }
         }
     };
 
-    // Видалення користувача
     const handleDeleteUser = async (userId: number | undefined) => {
         if (userId === undefined) {
             alert("User ID is undefined");
@@ -123,14 +111,6 @@ const AdminUserManagementComponent = () => {
         }
     };
 
-    const showMessage = (text: string, type: "success" | "error") => {
-        setMessage(text);
-        setMessageType(type);
-        setTimeout(() => {
-            setMessage(null);
-            setMessageType(null);
-        }, 3000);
-    };
 
     if (loading) return <div>Loading...</div>;
     if (error) return <p>{error}</p>;
@@ -139,7 +119,6 @@ const AdminUserManagementComponent = () => {
         <section className={styles.userManagement}>
             <h2 className={styles.subtitle}>Manage Users</h2>
 
-            {/* Фільтри */}
             <div className={styles.filters}>
                 <select onChange={e => setRole(e.target.value)} value={role} className={styles.select}>
                     <option value="">All Roles</option>
@@ -153,7 +132,21 @@ const AdminUserManagementComponent = () => {
                     <option value="basic">Basic</option>
                     <option value="premium">Premium</option>
                 </select>
-                <select onChange={e => setIsActive(e.target.value === 'true')} value={is_active ? 'true' : 'false'} className={styles.select}>
+                <select
+                    onChange={e => {
+                        const value = e.target.value;
+                        if (value === "") setIsActive(undefined)
+                        else setIsActive(value === "true");
+                    }}
+                    value={
+                        is_active === null || is_active === undefined
+                            ? ""
+                            : is_active
+                                ? "true"
+                                : "false"
+                    }
+                    className={styles.select}
+                >
                     <option value="">All Users</option>
                     <option value="true">Active</option>
                     <option value="false">Blocked</option>
@@ -177,7 +170,7 @@ const AdminUserManagementComponent = () => {
                         <th>Full Name</th>
                         <th>Role</th>
                         <th>Account Type</th>
-                        <th>Blocked</th>
+                        <th>Active</th>
                         <th>Actions</th>
                     </tr>
                 </thead>

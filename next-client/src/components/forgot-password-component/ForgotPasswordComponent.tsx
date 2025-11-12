@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./ForgotPasswordComponent.module.css";
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 export default function ForgotPasswordComponent() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
+  const router = useRouter();
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -18,7 +20,6 @@ export default function ForgotPasswordComponent() {
     setMessage("");
 
     try {
-
       const url = `${API_BASE_URL}/auth/recovery/`;
       const res = await fetch(url, {
         method: "POST",
@@ -30,7 +31,11 @@ export default function ForgotPasswordComponent() {
 
       if (res.ok) {
         setMessage(data.detail || "Check your email for a recovery link.");
-        // !!треба додати редірект('/')
+
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
+
       } else {
         setMessage(data.detail || "Failed to send recovery email.");
       }
