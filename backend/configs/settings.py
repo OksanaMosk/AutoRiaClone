@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     # my apps
     'core',
     'apps.car',
-    'apps.car_shops',
     'apps.user',
     'apps.auth',
     'apps.chat',

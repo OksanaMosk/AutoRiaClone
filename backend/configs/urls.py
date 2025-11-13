@@ -8,7 +8,6 @@ def home(request):
 urlpatterns = [
     path('', home),
     path('api/cars/', include('apps.car.urls')),
-    path('api/car_shops/', include('apps.car_shops.urls')),
     path('api/auth/', include('apps.auth.urls')),
     path('api/users/', include('apps.user.urls')),
 ]

@@ -1,0 +1,22 @@
+MODELS_BY_BRAND = {
+    "Toyota": ["Corolla", "Camry", "RAV4", "Hilux", "Yaris"],
+    "Volkswagen": ["Golf", "Passat", "T‑Roc", "Tiguan", "Polo", "Jetta"],
+    "BMW": ["X5", "X3", "3 Series", "5 Series", "X1"],
+    "Honda": ["Civic", "CR‑V", "Accord", "HR‑V", "Fit"],
+    "Ford": ["F‑Series", "Focus", "Escape", "Mustang", "Explorer"],
+    "Hyundai": ["Tucson", "Elantra", "Kona", "Santa Fe", "i30"],
+    "Kia": ["Sportage", "Sorento", "Rio", "Ceed", "Stinger"],
+    "Daewoo": ["Lanos", "Nexia", "Matiz", "Leganza", "Espero"],
+    "Chevrolet": ["Cruze", "Malibu", "Equinox", "Spark", "Impala"],
+    "Nissan": ["Sentra", "Altima", "Rogue", "Qashqai", "Leaf"],
+    "Mercedes‑Benz": ["C‑Class", "E‑Class", "GLC", "GLE", "A‑Class"],
+    "Audi": ["A3", "A4", "Q5", "Q3", "A6"],
+    "Mazda": ["Mazda3", "Mazda6", "CX‑5", "CX‑30", "MX‑5"],
+    "Renault": ["Clio", "Megane", "Captur", "Duster", "Talisman"],
+    "Suzuki": ["Swift", "Vitara", "Baleno", "Jimny", "SX4"],
+    "Skoda": ["Octavia", "Karoq", "Superb", "Fabia", "Scala"],
+    "Peugeot": ["208", "301", "308", "3008", "2008", "508"],
+    "Subaru": ["Forester", "Outback", "Impreza", "XV", "BRZ"],
+    "Tesla": ["Model 3", "Model Y", "Model X", "Model S", "Cybertruck"],
+}
+BRANDS = list(MODELS_BY_BRAND.keys())

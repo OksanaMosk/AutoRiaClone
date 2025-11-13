@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('car_shops', '0001_initial'),
+        # ('car_shops', '0001_initial'),
     ]
 
     operations = [
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('day', models.CharField(choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'), ('Sunday', 'Sunday')], max_length=9)),
                 ('time_prepared', models.IntegerField()),
                 ('photo', models.ImageField(blank=True, upload_to=core.services.file_service.upload_car_photo)),
-                ('car_shop', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cars', to='car_shops.carshopmodel')),
+                # ('car_shop', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cars', to='car_shops.carshopmodel')),
             ],
             options={
                 'db_table': 'car',

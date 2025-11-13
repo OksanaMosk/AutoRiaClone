@@ -1,4 +1,8 @@
 from enum import Enum
+import re
+
+from django.core.exceptions import ValidationError
+from profanity_check import predict
 
 
 class RegexEnum(Enum):
@@ -9,3 +13,7 @@ class RegexEnum(Enum):
     def __init__(self, pattern:str,msg:str):
         self.pattern = pattern
         self.msg = msg
+
+    def validate(self, value: str):
+        if not re.match(self.pattern, value):
+            raise ValueError(self.msg)

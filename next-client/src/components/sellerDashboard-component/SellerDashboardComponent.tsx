@@ -1,100 +1,142 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { authService } from "@/lib/services/authService";
-import { IUser } from "@/models/IUser";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
-import styles from "./SellerDashboardComponent.module.css";
+import React, { useState} from "react";
 
-export const SellerDashboardComponent = () => {
-  const [user, setUser] = useState<IUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+import {IUser} from "@/models/IUser";
+import styles from './SellerDashboardComponent.module.css';
 
-  useEffect(() => {
-    const token = document.cookie.split("; ").find((row) => row.startsWith("authToken="))?.split("=")[1];
 
-    (async () => {
-      if (!token) {
-        setError("Please activate your account. No token found.");
-        setLoading(false);
-        return;
-      }
+const SellerDashboardComponent = () => {
+     const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string>("");
+    const [role, setRole] = useState<string | undefined>();
+    const [account_type, setAccountType] = useState<string | undefined>();
+    const [is_active, setIsActive] = useState<boolean | undefined>();
+    const [sortBy, setSortBy] = useState<string>('id');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-      try {
-        const userData: IUser = await authService.getCurrentUser(token);
-        setUser(userData);
-      } catch {
-        setError("Failed to load user data");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
 
-  if (loading) return <LoaderComponent />;
-  if (error) return <p>{error}</p>;
+    return (
+        <section className={styles.userManagement}>
+            <h2 className={styles.subtitle}>Manage Users</h2>
 
-  return (
-    <div className={styles.container}>
-      <h1 className={styles.header}>SELLER DASHBOARD</h1>
-      {user ? (
-        <>
-          <p className={styles.text}>
-            Welcome, {user.profile?.name} {user.profile?.surname}!
-          </p>
-          <p className={styles.text}>Email: {user.email}</p>
-          <p className={styles.text}>Role: {user.role}</p>
-          <p className={styles.text}>Account Type: {user.account_type}</p>
-          {user.profile?.age && <p className={styles.text}>Age: {user.profile.age}</p>}
+            <div className={styles.filters}>
+                <select onChange={e => setRole(e.target.value)} value={role} className={styles.select}>
+                    <option value="">All Roles</option>
+                    <option value="buyer">Buyer</option>
+                    <option value="seller">Seller</option>
+                    <option value="manager">Manager</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <select onChange={e => setAccountType(e.target.value)} value={account_type} className={styles.select}>
+                    <option value="">All Account Types</option>
+                    <option value="basic">Basic</option>
+                    <option value="premium">Premium</option>
+                </select>
+                <select
+                    onChange={e => {
+                        const value = e.target.value;
+                        if (value === "") setIsActive(undefined)
+                        else setIsActive(value === "true");
+                    }}
+                    value={
+                        is_active === null || is_active === undefined
+                            ? ""
+                            : is_active
+                                ? "true"
+                                : "false"
+                    }
+                    className={styles.select}
+                >
+                    <option value="">All Users</option>
+                    <option value="true">Active</option>
+                    <option value="false">Blocked</option>
+                </select>
+                <select onChange={e => setSortBy(e.target.value)} value={sortBy} className={styles.select}>
+                    <option value="id">ID</option>
+                    <option value="email">Email</option>
+                    <option value="role">Role</option>
+                </select>
+                <select onChange={e => setSortOrder(e.target.value as 'asc' | 'desc')} value={sortOrder} className={styles.select}>
+                    <option value="asc">Asc</option>
+                    <option value="desc">Desc</option>
+                </select>
+            </div>
 
-          <section className={styles.accountDetails}>
-            <h2>Account Details</h2>
-            <p>Your account is currently {user.account_type === "premium" ? "Premium" : "Basic"}</p>
-            {user.account_type === "premium" && (
-              <div className={styles.premiumFeatures}>
-                <ul>
-                  <li>Unlimited number of listings</li>
-                  <li>Access to advanced statistics on your listings</li>
-                  <li>Market average prices and views per listing</li>
-                </ul>
-              </div>
-            )}
-            {user.account_type === "basic" && (
-              <div className={styles.basicFeatures}>
-                <ul>
-                  <li>You can post one vehicle for sale</li>
-                  <li>Upgrade to Premium for more listings and features</li>
-                </ul>
-              </div>
-            )}
-          </section>
+            <table className={styles.table}>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Email</th>
+                        <th>Full Name</th>
+                        <th>Role</th>
+                        <th>Account Type</th>
+                        <th>Active</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {Array.isArray(users) && users.length > 0 ? (
+                        users.map(user => (
+                            <tr key={user.id}>
+                                <td className={styles.user}>{user.id}</td>
+                                <td className={styles.user}>{user.email}</td>
+                                <td className={styles.user}>{user.profile?.name} {user.profile?.surname}</td>
 
-          <section className={styles.listingsInfo}>
-            <h2>Your Listings</h2>
-            <p>You can manage your vehicle listings here. As a {user.account_type} user, your posting limits are:</p>
-            <ul>
-              {user.account_type === "basic" ? (
-                <li>One active listing at a time</li>
-              ) : (
-                <li>Unlimited active listings</li>
-              )}
-            </ul>
-            {/* Optionally, include logic to display current listings */}
-          </section>
+                                <td>
+                                    <select
+                                        className={styles.select}
+                                        value={user.role}
+                                        onChange={}>
+                                        <option value="buyer">Buyer</option>
+                                        <option value="seller">Seller</option>
+                                        <option value="manager">Manager</option>
+                                        <option value="admin">Admin</option>
+                                    </select>
+                                </td>
 
-          <section className={styles.createListing}>
-            <h2>Create a New Listing</h2>
-            <p>If you want to sell a car, click here to create a new listing.</p>
-            {/* Button or form to create a new listing */}
-          </section>
-        </>
-      ) : (
-        <p className={styles.text}>No user data available.</p>
-      )}
-    </div>
-  );
+                                <td>
+                                    <select
+                                        className={styles.select}
+                                        value={user.account_type}
+                                        onChange={}
+                                    >
+                                        <option value="basic">Basic</option>
+                                        <option value="premium">Premium</option>
+                                    </select>
+                                </td>
+
+                                <td className={styles.statusActive}>{user.is_active ? "Yes" : "No"}</td>
+                                <td className={styles.actions}>
+                                    {user.is_active ? (
+                                        <button
+                                            onClick={}>
+                                            Block
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={}>
+                                            Unblock
+                                        </button>
+                                    )}
+
+                                    <button
+                                        onClick={}>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr><td colSpan={7}>No users found</td></tr>
+                    )}
+                </tbody>
+            </table>
+        </section>
+    );
 };
 
 export default SellerDashboardComponent;
+
 

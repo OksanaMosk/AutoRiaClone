@@ -1,0 +1,30 @@
+
+
+LOCATIONS = [
+    "Vinnytsia region",
+    "Volyn region",
+    "Dnipropetrovsk region",
+    "Donetsk region",
+    "Zhytomyr region",
+    "Zakarpattia region",
+    "Zaporizhzhia region",
+    "Ivano-Frankivsk region",
+    "Kyiv",
+    "Kyiv region",
+    "Kirovohrad region",
+    "Luhansk region",
+    "Lviv region",
+    "Mykolaiv region",
+    "Odesa region",
+    "Poltava region",
+    "Rivne region",
+    "Sumy region",
+    "Ternopil region",
+    "Kharkiv region",
+    "Kherson region",
+    "Khmelnytskyi region",
+    "Cherkasy region",
+    "Chernivtsi region",
+    "Chernihiv region",
+]
+LOCATION_CHOICES = [(loc, loc) for loc in LOCATIONS]

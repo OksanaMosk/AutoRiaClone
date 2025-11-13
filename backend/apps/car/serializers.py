@@ -1,32 +1,32 @@
+
 from rest_framework import serializers
+from .models import carModel, CarPhoto
 
-from .models import carModel
+class CarPhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarPhoto
+        fields = ('id', 'photo', 'car')
 
+class CarSerializer(serializers.ModelSerializer):
+    photos = CarPhotoSerializer(many=True, read_only=True)
 
-class carSerializer(serializers.ModelSerializer):
     class Meta:
         model = carModel
-        fields = ('id', 'name', 'price', 'size', 'ingredients', 'time_prepared', 'day', 'created_at', 'updated_at')
+        fields = (
+            'id', 'brand', 'model', 'year', 'mileage', 'price', 'currency',
+            'condition', 'max_speed', 'seats_count', 'engine_volume',
+            'has_air_conditioner', 'fuel_type', 'location', 'description',
+            'status', 'views', 'daily_views', 'weekly_views', 'monthly_views',
+            'created_at', 'updated_at', 'edit_attempts', 'photos'  # тут масив фото
+        )
 
-    def create(self, validated_data):
-        return carModel.objects.create(**validated_data, car_shop_id=1)
+class CarStatsSerializer(serializers.Serializer):
+    total_views = serializers.IntegerField()
+    daily_views = serializers.IntegerField()
+    weekly_views = serializers.IntegerField()
+    monthly_views = serializers.IntegerField()
 
-        # extra_kwargs = {
-        #     "car_shop_id": {"read_only": True},
-        # }
-    # def validate_price(self, price):
-    #     if price <= 0:
-    #         raise serializers.ValidationError('Price must be greater than 0')
-    #     return price
-    #
-    # def validate(self, attrs):
-    #     price = attrs.get('price')
-    #     size = attrs.get('size')
-    #     if price == size:
-    #         raise serializers.ValidationError('Price cannot be equal to size')
-    #     return attrs
+class CarAveragePriceSerializer(serializers.Serializer):
+    region = serializers.CharField(required=False)
+    average_price = serializers.DictField(child=serializers.FloatField())
 
-class carPhotoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = carModel
-        fields=('photo',)
