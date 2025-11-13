@@ -1,6 +1,7 @@
 from django.db.models import Avg
 from djangochannelsrestframework.permissions import IsAuthenticated
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.permissions import AllowAny
@@ -22,6 +23,15 @@ class carListCreateView(ListCreateAPIView):
     permission_classes =(IsAuthenticated & (IsSeller | IsAdmin))
     pagination_class = PagePagination
 
+    def perform_create(self, serializer):
+        user = self.request.user
+        if not user.is_authenticated:
+            raise ValidationError("Authentication required")
+
+        if getattr(user, "account_type", None) == "basic" and carModel.objects.filter(seller=user).exists():
+            raise ValidationError("Sorry, update account to Premium")
+
+        serializer.save(seller=user)
 
 class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = CarSerializer
@@ -44,6 +54,10 @@ class CarPhotoDeleteView(DestroyAPIView):
 
 class CarStatsView(APIView):
     def get(self, request, car_id):
+        user = request.user
+        if not user.is_authenticated or user.account_type != 'premium':
+            return Response({"detail": "Premium account required"}, status=status.HTTP_403_FORBIDDEN)
+
         try:
             car = carModel.objects.get(id=car_id)
         except carModel.DoesNotExist:
@@ -58,9 +72,13 @@ class CarStatsView(APIView):
         serializer = CarStatsSerializer(data)
         return Response(serializer.data)
 
-# 2.2. Середня ціна по регіону
+
 class CarAveragePriceByRegionView(APIView):
     def get(self, request):
+        user = request.user
+        if not user.is_authenticated or user.account_type != 'premium':
+            return Response({"detail": "Premium account required"}, status=status.HTTP_403_FORBIDDEN)
+
         region = request.query_params.get("region")
         if not region:
             return Response({"detail": "Region is required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -81,9 +99,13 @@ class CarAveragePriceByRegionView(APIView):
         serializer = CarAveragePriceSerializer(data)
         return Response(serializer.data)
 
-# 2.3. Середня ціна по Україні
+
 class CarAveragePriceCountryView(APIView):
     def get(self, request):
+        user = request.user
+        if not user.is_authenticated or user.account_type != 'premium':
+            return Response({"detail": "Premium account required"}, status=status.HTTP_403_FORBIDDEN)
+
         cars = carModel.objects.all()
         avg_usd = cars.aggregate(avg_price_usd=Avg("price_usd"))["avg_price_usd"] or 0
         avg_eur = cars.aggregate(avg_price_eur=Avg("price_eur"))["avg_price_eur"] or 0
