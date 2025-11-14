@@ -1,18 +1,9 @@
-import React from 'react';
-import CarFormComponent from "@/components/form-car-component/CarFormComponent";
-import CarsComponent from "@/components/cars-component/CarsComponent";
-import ChatComponent from "@/components/chat-component/ChatComponent";
 
-const CarsPage = () => {
-    return (
-        <div>
-           {/*<CarFormComponent/>*/}
-           {/* <hr/>*/}
-           {/* <CarsComponent/>*/}
-           {/* <hr/>*/}
-           {/* <ChatComponent/>*/}
-        </div>
-    );
-};
+import { carService } from "@/lib/services/carService";
 
-export default CarsPage;
+import CarsClientComponent from "@/components/cars-client-component/CarsClientComponent";
+
+export default async function CarsPage() {
+  const carsData = await carService.getAll();
+  return <CarsClientComponent cars={carsData.data} />;
+}

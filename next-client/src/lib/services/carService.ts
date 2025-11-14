@@ -17,9 +17,9 @@ const carService = {
     return apiService.post<ICar>(urls.cars.create, data);
   },
 
-  update(id: string, data: ICar) {
-    return apiService.put<ICar>(urls.cars.action(id), data);
-  },
+ update(id: string, data: Partial<ICar>) {
+  return apiService.put<ICar>(urls.cars.action(id), data);
+},
 
   delete(id: string) {
     return apiService.delete(urls.cars.action(id));

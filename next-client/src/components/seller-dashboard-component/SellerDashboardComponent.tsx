@@ -17,7 +17,7 @@ const SellerDashboardComponent: React.FC = () => {
   const fetchCars = async () => {
     try {
       setLoading(true);
-      const res = await carService.getAll(); // В ідеалі фільтрувати по sellerId на бекенді
+      const res = await carService.getAll();
       setCars(res.data);
     } catch (err) {
       console.error(err);
@@ -34,6 +34,12 @@ const SellerDashboardComponent: React.FC = () => {
     setCars(prev => prev.filter(c => c.id !== carId));
   };
 
+  const handleStatusChange = (carId: string, status: string) => {
+    setCars(prev =>
+      prev.map(car => (car.id === carId ? { ...car, status } : car))
+    );
+  };
+
   const filteredCars = cars.filter(car => {
     if (filter === "all") return true;
     return filter === "active" ? car.status === "active" : car.status !== "active";
@@ -44,32 +50,24 @@ const SellerDashboardComponent: React.FC = () => {
       <h2>My Car Listings</h2>
 
       <div className={styles.filters}>
-        <button onClick={() => setFilter("all")}>All</button>
-        <button onClick={() => setFilter("active")}>Active</button>
-        <button onClick={() => setFilter("inactive")}>Inactive</button>
+        <button onClick={() => setFilter("all")} className={filter === "all" ? styles.activeFilter : ""}>All</button>
+        <button onClick={() => setFilter("active")} className={filter === "active" ? styles.activeFilter : ""}>Active</button>
+        <button onClick={() => setFilter("inactive")} className={filter === "inactive" ? styles.activeFilter : ""}>Inactive</button>
       </div>
 
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Photo</th>
-              <th>Brand</th>
-              <th>Model</th>
-              <th>Year</th>
-              <th>Price</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCars.map(car => (
-              <CarListingComponent key={car.id} car={car} onDelete={handleDelete} />
-            ))}
-          </tbody>
-        </table>
+        <div className={styles.cardsContainer}>
+          {filteredCars.map(car => (
+            <CarComponent
+              key={car.id}
+              car={car}
+              onDelete={handleDelete}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
