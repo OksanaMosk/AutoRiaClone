@@ -1,7 +1,9 @@
+from django.core.exceptions import PermissionDenied
 from django.db.models import Avg
 from djangochannelsrestframework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.views import APIView
@@ -12,14 +14,14 @@ from .models import carModel, get_private_bank_exchange_rate
 from .serializers import CarPhotoSerializer, CarSerializer, CarAveragePriceSerializer, CarStatsSerializer
 from rest_framework.generics import CreateAPIView, DestroyAPIView
 from .models import CarPhoto
-from ..user.permissions import IsSeller, IsAdmin
+from ..user.permissions import IsSeller, IsAdmin, IsManager
 
 
 class carListCreateView(ListCreateAPIView):
     serializer_class = CarSerializer
     queryset = carModel.objects.all()
     filterset_class = CarFilter
-    permission_classes =(IsAuthenticated & (IsSeller | IsAdmin))
+    permission_classes =(AllowAny,)
     pagination_class = PagePagination
 
     def perform_create(self, serializer):
@@ -50,7 +52,7 @@ class CarPhotoCreateView(CreateAPIView):
 class CarPhotoDeleteView(DestroyAPIView):
     serializer_class = CarPhotoSerializer
     queryset = CarPhoto.objects.all()
-    permission_classes =(IsAuthenticated & (IsSeller | IsAdmin))
+    permission_classes =(IsAuthenticated & (IsSeller | IsAdmin | IsManager))
 
 class CarStatsView(APIView):
     def get(self, request, car_id):
@@ -129,3 +131,17 @@ class ExchangeRateView(APIView):
         except ValidationError as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class CarUserListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id, *args, **kwargs):
+        user = request.user
+        if user.is_staff or IsManager().has_permission(request, self):
+            cars = carModel.objects.filter(seller__id=user_id)
+        elif user.id == user_id:
+            cars = carModel.objects.filter(seller__id=user_id)
+        else:
+            raise PermissionDenied("You do not have permission to view this user's listings.")
+        serializer = CarSerializer(cars, many=True)
+        return Response({"cars": serializer.data})

@@ -60,7 +60,7 @@ const SellerDashboardComponent: React.FC = () => {
       ) : (
         <div className={styles.cardsContainer}>
           {filteredCars.map(car => (
-            <CarComponent
+            <CarListingComponent
               key={car.id}
               car={car}
               onDelete={handleDelete}
