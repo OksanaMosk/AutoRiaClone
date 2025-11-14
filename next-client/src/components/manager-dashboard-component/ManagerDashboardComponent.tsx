@@ -6,7 +6,7 @@ import { IUser } from "@/models/IUser";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./ManagerDashboardComponent.module.css";
 import ManagerUserManagementComponent
-    from "@/components/managerUserManagement-component/ManagerUserManagementComponent";
+    from "@/components/manager-user-management-component/ManagerUserManagementComponent";
 
 export const ManagerDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);

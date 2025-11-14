@@ -3,10 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import { carService } from "@/lib/services/carService";
-import styles from './EditCarComponent.module.css';
+import styles from './CarEditComponent.module.css';
 import {useParams} from "next/navigation";
 
-const EditCarComponent = () => {
+const CarEditComponent = () => {
   const { id } = useParams();  // Отримуємо ID машини з параметрів URL
   const router = useRouter();
 
@@ -195,4 +195,4 @@ const EditCarComponent = () => {
   );
 };
 
-export default EditCarComponent;
+export default CarEditComponent;

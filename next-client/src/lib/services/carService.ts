@@ -37,11 +37,11 @@ const carService = {
   },
 
   getAveragePriceByRegion() {
-    return apiService.get(urls.cars.averagePriceRegion);  // Середня ціна по регіону
+    return apiService.get(urls.cars.averagePriceRegion);
   },
 
   getAveragePriceByCountry() {
-    return apiService.get(urls.cars.averagePriceCountry);  // Середня ціна по країні
+    return apiService.get(urls.cars.averagePriceCountry);
   }
 };
 

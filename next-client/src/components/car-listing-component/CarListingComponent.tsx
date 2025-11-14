@@ -3,7 +3,7 @@ import React from "react";
 import styles from './SellerDashboardComponent.module.css';
 import {ICar} from "@/models/ICar";
 import {carService} from "@/lib/services/carService";
-import CreateCarComponent from "@/components/create-car-component/CreateCarComponent";
+import CarCreateComponent from "@/components/car-create-component/CarCreateComponent";
 
 
 interface CarListingProps {
@@ -26,7 +26,7 @@ const CarListingComponent: React.FC<CarListingProps> = ({ car }) => {
 
   return (
       <div>
-          <CreateCarComponent/>
+          <CarCreateComponent/>
           <tr className={styles.tableRow}>
               <td>{car.brand}</td>
               <td>{car.model}</td>

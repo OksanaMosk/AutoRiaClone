@@ -1,4 +1,4 @@
-import SellerDashboardComponent from "@/components/sellerDashboard-component/SellerDashboardComponent";
+import SellerDashboardComponent from "@/components/seller-dashboard-component/SellerDashboardComponent";
 
 const SellerPage = () => {
   return (

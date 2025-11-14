@@ -5,7 +5,7 @@ import { authService } from "@/lib/services/authService";
 import { IUser } from "@/models/IUser";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from './AdminDashboardComponent.module.css';
-import AdminUserManagementComponent from "@/components/adminUserManagement-component/AdminUserManagementComponent";
+import AdminUserManagementComponent from "@/components/admin-user-management-component/AdminUserManagementComponent";
 
 const AdminDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);

@@ -1,5 +1,5 @@
 
-import ManagerDashboardComponent from "@/components/managerDashboard-component/ManagerDashboardComponent";
+import ManagerDashboardComponent from "@/components/manager-dashboard-component/ManagerDashboardComponent";
 
 const Page = () => {
     return <ManagerDashboardComponent/>

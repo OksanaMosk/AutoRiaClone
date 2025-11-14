@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import styles from "@/components/adminUserManagement-component/AdminUserManagementComponent.module.css";
+import styles from "@/components/admin-user-management-component/AdminUserManagementComponent.module.css";
 
 const HomePage = () => {
   const searchParams = useSearchParams();

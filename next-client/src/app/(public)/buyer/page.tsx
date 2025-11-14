@@ -1,5 +1,5 @@
 
-import BuyerDashboardComponent from "@/components/buyerDashboard-component/BuyerDashboardComponent";
+import BuyerDashboardComponent from "@/components/buyer-dashboard-component/BuyerDashboardComponent";
 
 const BuyerPage = () => {
     return <BuyerDashboardComponent/>

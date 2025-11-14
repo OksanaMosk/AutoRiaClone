@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import styles from './SellerDashboardComponent.module.css';
 import { ICar } from "@/models/ICar";
 import { carService } from "@/lib/services/carService";
-import CarListingComponent from "@/components/сarListing-component/CarListingComponent";
+import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
 import { useRouter } from 'next/router';  // Для переходу на іншу сторінку
 
 const SellerDashboardComponent = () => {
