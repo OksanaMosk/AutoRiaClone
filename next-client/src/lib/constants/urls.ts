@@ -30,12 +30,14 @@ export const urls = {
 
     cars: {
         list: `${paths.cars}/`,
+        create: `${paths.cars}/create/`,
         action: (id: string) => `${paths.cars}/${id}/`,
         photos: (carId: string) => `${paths.cars}/${carId}/photos/`,
         deletePhoto: (photoId: string) => `${paths.carPhotos}/${photoId}/`,
         stats: (carId: string) => `${paths.cars}/${carId}/stats/`,
         averagePriceRegion: `${paths.carAveragePrice}/`,
         averagePriceCountry: `${paths.carAveragePrice}/country/`,
+        exchangeRates: `${paths.cars}/exchange-rates/`
     },
 };
 

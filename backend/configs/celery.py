@@ -14,10 +14,4 @@ app.conf.beat_schedule = {
         'task': 'core.tasks.update_exchange_rate',
         'schedule': crontab(hour=0, minute=0),
     },
-
-    # 'send_spam_every_month': {
-    #     'task': 'core.services.email_service.spam',
-    #     'schedule': crontab(minute=0, hour=0, day_of_month=1),
-    #     'args': (),
-    # }
 }

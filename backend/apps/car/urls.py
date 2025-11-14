@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import carListCreateView, carRetrieveUpdateDestroyView, CarPhotoDeleteView, \
-    CarPhotoCreateView, CarStatsView, CarAveragePriceByRegionView, CarAveragePriceCountryView
+    CarPhotoCreateView, CarStatsView, CarAveragePriceByRegionView, CarAveragePriceCountryView, ExchangeRateView
 
 urlpatterns = [
 path('', carListCreateView.as_view()),
@@ -11,4 +11,5 @@ path('photos/<int:pk>/', CarPhotoDeleteView.as_view(), name='car-delete-photo'),
 path('<int:car_id>/stats/', CarStatsView.as_view(), name='car-stats'),
 path('stats/average/', CarAveragePriceByRegionView.as_view(), name='car-average-region'),
 path('stats/average-country/', CarAveragePriceCountryView.as_view(), name='car-average-country'),
+path('api/exchange-rates/', ExchangeRateView.as_view(), name='exchange-rates'),
 ]

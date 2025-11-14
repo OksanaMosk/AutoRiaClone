@@ -4,12 +4,11 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
-from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
 from core.pagination import PagePagination
 from .filter import CarFilter
-from .models import carModel
+from .models import carModel, get_private_bank_exchange_rate
 from .serializers import CarPhotoSerializer, CarSerializer, CarAveragePriceSerializer, CarStatsSerializer
 from rest_framework.generics import CreateAPIView, DestroyAPIView
 from .models import CarPhoto
@@ -121,3 +120,11 @@ class CarAveragePriceCountryView(APIView):
         }
         serializer = CarAveragePriceSerializer(data)
         return Response(serializer.data)
+
+class ExchangeRateView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            rates = get_private_bank_exchange_rate()
+            return Response(rates, status=status.HTTP_200_OK)
+        except ValidationError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)

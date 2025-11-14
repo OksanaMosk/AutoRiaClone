@@ -3,13 +3,14 @@ import React from "react";
 import styles from './SellerDashboardComponent.module.css';
 import {ICar} from "@/models/ICar";
 import {carService} from "@/lib/services/carService";
+import CreateCarComponent from "@/components/create-car-component/CreateCarComponent";
 
 
 interface CarListingProps {
   car: ICar;
 }
 
-const CarListing: React.FC<CarListingProps> = ({ car }) => {
+const CarListingComponent: React.FC<CarListingProps> = ({ car }) => {
   const handleDelete = () => {
     carService.delete(car.id).then(() => {
       alert('Car listing deleted');
@@ -24,19 +25,22 @@ const CarListing: React.FC<CarListingProps> = ({ car }) => {
   };
 
   return (
-    <tr className={styles.tableRow}>
-      <td>{car.brand}</td>
-      <td>{car.model}</td>
-      <td>{car.year}</td>
-      <td className={car.status === 'active' ? styles.statusActive : ''}>
-        {car.status}
-      </td>
-      <td className={styles.actions}>
-        <button className={styles.blockButton} onClick={handleEdit}>Edit</button>
-        <button className={`${styles.deleteButton}`} onClick={handleDelete}>Delete</button>
-      </td>
-    </tr>
+      <div>
+          <CreateCarComponent/>
+          <tr className={styles.tableRow}>
+              <td>{car.brand}</td>
+              <td>{car.model}</td>
+              <td>{car.year}</td>
+              <td className={car.status === 'active' ? styles.statusActive : ''}>
+                  {car.status}
+              </td>
+              <td className={styles.actions}>
+                  <button className={styles.blockButton} onClick={handleEdit}>Edit</button>
+                  <button className={`${styles.deleteButton}`} onClick={handleDelete}>Delete</button>
+              </td>
+          </tr>
+      </div>
   );
 };
 
-export default CarListing;
+export default CarListingComponent;
