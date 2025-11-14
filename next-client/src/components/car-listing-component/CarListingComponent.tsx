@@ -40,7 +40,7 @@ const CarListingComponent: React.FC<Props> = ({ car}) => {
   };
 
   const handleEdit = async () => {
-   await router.push(`/edit-car/${car.id}`);
+   await router.push(`edit/${car.id}`);
   };
 
   return (
