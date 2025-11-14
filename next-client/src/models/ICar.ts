@@ -26,6 +26,16 @@ export interface ICar {
     exchange_rate_id: string;
     last_exchange_update: string | null;
     photos: ICarPhoto[];
+    region_avg_price?: {
+    USD: number;
+    EUR: number;
+    UAH: number;
+  };
+    country_avg_price?: {
+    USD: number;
+    EUR: number;
+    UAH: number;
+  };
 }
 
 export interface ICarPhoto {

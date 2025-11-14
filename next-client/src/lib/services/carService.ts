@@ -37,12 +37,12 @@ const carService = {
    return apiService.delete(urls.cars.deletePhoto(photoId));
   },
 
-  getStats(carId: string) {
-    return apiService.get(urls.cars.stats(carId));
-  },
-
     getExchangeRates() {
     return apiService.get(urls.cars.exchangeRates);
+  },
+
+  getStats(carId: string) {
+    return apiService.get(urls.cars.stats(carId));
   },
 
   getAveragePriceByRegion() {
@@ -52,6 +52,7 @@ const carService = {
   getAveragePriceByCountry() {
     return apiService.get(urls.cars.averagePriceCountry);
   },
+
     getConstants() {
     return apiService.get(urls.cars.constants);
   },
