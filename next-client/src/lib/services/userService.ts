@@ -49,10 +49,3 @@ import { urls } from "../constants/urls";
 };
 
 export default userService
-
-
-
- // promoteToAdmin: async (userId: string) => {
-  //   const { data } = await apiService.patch(urls.users.promoteToAdmin(userId));
-  //   return data;
-  // },

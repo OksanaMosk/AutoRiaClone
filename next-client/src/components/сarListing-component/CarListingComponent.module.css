@@ -1,0 +1,45 @@
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.statusActive {
+  color: var(--color-container);
+}
+
+.actions button {
+  color: var(--color-white);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 30px;
+}
+
+.actions button:hover {
+  background-color: var(--color-border);
+}
+
+.deleteButton {
+  background-color: #ef4444;
+}
+
+.deleteButton:hover {
+  background-color: var(--color-border);
+}
+
+.blockButton {
+  background-color: #9c8611;
+  color: white;
+  border: none;
+  display: flex;
+  border-radius: 4px;
+}

@@ -37,10 +37,11 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = CarSerializer
     queryset = carModel.objects.all()
     http_method_names = ['get', 'put', 'patch', 'delete']
+    permission_classes = (IsAuthenticated & (IsSeller | IsAdmin))
 
 class CarPhotoCreateView(CreateAPIView):
     serializer_class = CarPhotoSerializer
-    permission_classes = (AllowAny,)
+    permission_classes =(IsAuthenticated & (IsSeller | IsAdmin))
 
     def perform_create(self, serializer):
         car_id = self.kwargs['car_id']
@@ -50,7 +51,7 @@ class CarPhotoCreateView(CreateAPIView):
 class CarPhotoDeleteView(DestroyAPIView):
     serializer_class = CarPhotoSerializer
     queryset = CarPhoto.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes =(IsAuthenticated & (IsSeller | IsAdmin))
 
 class CarStatsView(APIView):
     def get(self, request, car_id):

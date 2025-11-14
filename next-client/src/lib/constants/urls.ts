@@ -1,9 +1,12 @@
-// const baseURL = "/api";
+
 
 const paths = {
   auth: "/auth",
   cars: "/cars",
   users: "/users",
+  carPhotos: "/cars/photos",
+  carStats: "/cars/stats",
+  carAveragePrice: "/cars/stats/average",
 };
 
 export const urls = {
@@ -25,8 +28,14 @@ export const urls = {
         filterSort: `${paths.users}/filter-sort/`,
     },
 
-  cars: paths.cars,
+    cars: {
+        list: `${paths.cars}/`,
+        action: (id: string) => `${paths.cars}/${id}/`,
+        photos: (carId: string) => `${paths.cars}/${carId}/photos/`,
+        deletePhoto: (photoId: string) => `${paths.carPhotos}/${photoId}/`,
+        stats: (carId: string) => `${paths.cars}/${carId}/stats/`,
+        averagePriceRegion: `${paths.carAveragePrice}/`,
+        averagePriceCountry: `${paths.carAveragePrice}/country/`,
+    },
 };
- // update: (id: string) => `${paths.users}/${id}/update/`,
- //   promoteToAdmin: (id: string) => `${paths.users}/${id}/to_admin/`,
 
