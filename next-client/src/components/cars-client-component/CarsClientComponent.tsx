@@ -1,10 +1,9 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import CarsComponent from "@/components/cars-component/CarsComponent";
 import { PaginationComponent } from "@/components/pagination-component/PaginationComponent";
 import { ICar } from "@/models/ICar";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 export default function CarsClientComponent() {
   const searchParams = useSearchParams();
@@ -13,32 +12,56 @@ export default function CarsClientComponent() {
   const [cars, setCars] = useState<ICar[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState<Record<string, string | number>>({});
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchCars = async () => {
+  const fetchCars = useCallback(async (page: number, filters: Record<string, string | number>) => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
       params.set("pg", page.toString());
+
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.set(key, value.toString());
+      });
+
       const res = await fetch(`?${params.toString()}`);
+      if (!res.ok) {
+        return new Error(`Failed to fetch cars: ${res.statusText}`);
+      }
+
       const json = await res.json();
-      setCars(json.data);
-      setTotalPages(json.total_pages);
+      setCars(json.data || []);
+      setTotalPages(json.total_pages || 1);
+      setError(null);
     } catch (err) {
       console.error(err);
+      setError("Failed to load cars, please try again later.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchCars();
-  }, [page]);
+    (async () => {
+      try {
+        await fetchCars(page, filters);
+      } catch (err) {
+        console.error("Error during fetch:", err);
+      }
+    })();
+  }, [fetchCars, page, filters]);
 
-  if (loading) return <p>Loading cars...</p>;
+  const handleFilterChange = (newFilters: Record<string, string | number>) => {
+    setFilters(newFilters);
+  };
+
+  if (loading) return <p><LoaderComponent/></p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div>
-      <CarsComponent cars={cars} />
+      <CarsComponent cars={cars} onFilterChange={handleFilterChange} />
       <PaginationComponent totalPages={totalPages} />
     </div>
   );
