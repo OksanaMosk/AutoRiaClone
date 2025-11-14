@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BRANDS, MODELS_BY_BRAND, LOCATION_CHOICES } from "@/lib/constants";
+import { carService } from "@/lib/services/carService";
 
 interface CarSelectsProps {
   brand: string;
@@ -24,57 +24,60 @@ const CarSelectsComponent: React.FC<CarSelectsProps> = ({
   setModel,
   setCondition,
   setFuelType,
-  setLocation
+  setLocation,
 }) => {
-  const [availableModels, setAvailableModels] = useState<string[]>([]);
-
+  const [brands, setBrands] = useState<string[]>([]);
+  const [modelsByBrand, setModelsByBrand] = useState<Record<string, string[]>>({});
+  const [locations, setLocations] = useState<string[]>([]);
   useEffect(() => {
-    const models = MODELS_BY_BRAND[brand] || [];
-    setAvailableModels(models);
-  }, [brand]);
+    carService
+      .getConstants()
+      .then(({ data }) => {
+        setBrands(data.brands);
+        setModelsByBrand(data.models_by_brand);
+        setLocations(data.locations);
+      })
+      .catch((err) => console.error("Failed to load car constants", err));
+  }, []);
+  const availableModels = brand ? modelsByBrand[brand] || [] : [];
+  const handleBrandChange = (value: string) => {
+    setBrand(value);
+    setModel("");
+  };
 
   return (
-    <div>
-      {/* Селект для вибору бренду */}
-      <select name="brand" value={brand} onChange={(e) => setBrand(e.target.value)}>
+    <div className="car-selects">
+      <select value={brand} onChange={(e) => handleBrandChange(e.target.value)}>
         <option value="">Select Brand</option>
-        {BRANDS.map((brandOption) => (
-          <option key={brandOption} value={brandOption}>
-            {brandOption}
+        {brands.map((b) => (
+          <option key={b} value={b}>
+            {b}
           </option>
         ))}
       </select>
-
-      {/* Селект для вибору моделі */}
       {brand && (
-        <select name="model" value={model} onChange={(e) => setModel(e.target.value)}>
+        <select value={model} onChange={(e) => setModel(e.target.value)}>
           <option value="">Select Model</option>
-          {availableModels.map((modelOption) => (
-            <option key={modelOption} value={modelOption}>
-              {modelOption}
+          {availableModels.map((m) => (
+            <option key={m} value={m}>
+              {m}
             </option>
           ))}
         </select>
       )}
-
-      {/* Селект для вибору стану автомобіля */}
-      <select name="condition" value={condition} onChange={(e) => setCondition(e.target.value)}>
+      <select value={condition} onChange={(e) => setCondition(e.target.value)}>
         <option value="new">New</option>
         <option value="used">Used</option>
       </select>
-
-      {/* Селект для вибору типу пального */}
-      <select name="fuel_type" value={fuel_type} onChange={(e) => setFuelType(e.target.value)}>
+      <select value={fuel_type} onChange={(e) => setFuelType(e.target.value)}>
         <option value="petrol">Petrol</option>
         <option value="diesel">Diesel</option>
         <option value="electric">Electric</option>
         <option value="hybrid">Hybrid</option>
       </select>
-
-      {/* Селект для вибору локації */}
-      <select name="location" value={location} onChange={(e) => setLocation(e.target.value)}>
+      <select value={location} onChange={(e) => setLocation(e.target.value)}>
         <option value="">Select Location</option>
-        {LOCATION_CHOICES.map(([loc]) => (
+        {locations.map((loc) => (
           <option key={loc} value={loc}>
             {loc}
           </option>
@@ -84,6 +87,4 @@ const CarSelectsComponent: React.FC<CarSelectsProps> = ({
   );
 };
 
-
 export default CarSelectsComponent;
-

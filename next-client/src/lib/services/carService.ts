@@ -9,13 +9,22 @@ const carService = {
     return apiService.get(urls.cars.list);
   },
 
-  create(data: ICar) {
-    return apiService.post(urls.cars.create, data);
+  get(id: string) {
+    return apiService.get<ICar>(urls.cars.action(id));
   },
 
-  update: (id: string, data: ICar) => apiService.put(carService.action(id), data),
+  create(data: ICar) {
+    return apiService.post<ICar>(urls.cars.create, data);
+  },
 
-  delete: (id: string) => apiService.delete(carService.action(id)),
+  update(id: string, data: ICar) {
+    return apiService.put<ICar>(urls.cars.action(id), data);
+  },
+
+  delete(id: string) {
+    return apiService.delete(urls.cars.action(id));
+  },
+
 
   addPhoto(carId: string, photoData: ICarPhoto[]) {
     if (photoData.length > 5) {
@@ -42,7 +51,10 @@ const carService = {
 
   getAveragePriceByCountry() {
     return apiService.get(urls.cars.averagePriceCountry);
-  }
+  },
+    getConstants() {
+    return apiService.get(urls.cars.constants);
+  },
 };
 
 export { carService };

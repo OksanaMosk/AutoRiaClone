@@ -128,3 +128,4 @@ class ExchangeRateView(APIView):
             return Response(rates, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+

@@ -37,7 +37,8 @@ export const urls = {
         stats: (carId: string) => `${paths.cars}/${carId}/stats/`,
         averagePriceRegion: `${paths.carAveragePrice}/`,
         averagePriceCountry: `${paths.carAveragePrice}/country/`,
-        exchangeRates: `${paths.cars}/exchange-rates/`
+        exchangeRates: `${paths.cars}/exchange-rates/`,
+        constants: `${paths.cars}/constants/`,
     },
 };
 

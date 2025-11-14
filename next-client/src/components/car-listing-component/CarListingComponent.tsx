@@ -1,46 +1,51 @@
 import React from "react";
-
+import { ICar } from "@/models/ICar";
+import { carService } from "@/lib/services/carService";
+import { useRouter } from "next/router";
 import styles from './SellerDashboardComponent.module.css';
-import {ICar} from "@/models/ICar";
-import {carService} from "@/lib/services/carService";
-import CarCreateComponent from "@/components/car-create-component/CarCreateComponent";
+import Image from "next/image";
 
-
-interface CarListingProps {
+interface Props {
   car: ICar;
+  onDelete?: (id: string) => void;
 }
 
-const CarListingComponent: React.FC<CarListingProps> = ({ car }) => {
-  const handleDelete = () => {
-    carService.delete(car.id).then(() => {
-      alert('Car listing deleted');
-    }).catch(err => {
-      alert('Error deleting car');
-    });
+const CarListingComponent: React.FC<Props> = ({ car, onDelete }) => {
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    try {
+      await carService.delete(car.id);
+      onDelete?.(car.id);
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting car");
+    }
   };
 
-  const handleEdit = () => {
-    // Логіка для редагування машини
-    console.log('Edit car', car.id);
+  const handleEdit = async () => {
+   await router.push(`/cars/edit/${car.id}`);
   };
 
   return (
-      <div>
-          <CarCreateComponent/>
-          <tr className={styles.tableRow}>
-              <td>{car.brand}</td>
-              <td>{car.model}</td>
-              <td>{car.year}</td>
-              <td className={car.status === 'active' ? styles.statusActive : ''}>
-                  {car.status}
-              </td>
-              <td className={styles.actions}>
-                  <button className={styles.blockButton} onClick={handleEdit}>Edit</button>
-                  <button className={`${styles.deleteButton}`} onClick={handleDelete}>Delete</button>
-              </td>
-          </tr>
-      </div>
+    <tr className={styles.tableRow}>
+      <td>
+        {car.photos[0] && <Image src={car.photos[0].photo_url} alt="" width={50} />}
+      </td>
+      <td>{car.brand}</td>
+      <td>{car.model}</td>
+      <td>{car.year}</td>
+      <td>{car.price}</td>
+      <td className={car.status === "active" ? styles.statusActive : ""}>
+        {car.status}
+      </td>
+      <td>
+        <button onClick={handleEdit}>Edit</button>
+        <button onClick={handleDelete}>Delete</button>
+      </td>
+    </tr>
   );
 };
 
 export default CarListingComponent;
+

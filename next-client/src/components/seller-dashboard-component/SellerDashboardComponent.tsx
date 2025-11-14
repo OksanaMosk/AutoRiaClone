@@ -1,61 +1,78 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import styles from './SellerDashboardComponent.module.css';
-import { ICar } from "@/models/ICar";
+import React, { useEffect, useState } from "react";
 import { carService } from "@/lib/services/carService";
-import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
-import { useRouter } from 'next/router';  // Для переходу на іншу сторінку
+import { ICar } from "@/models/ICar";
 
-const SellerDashboardComponent = () => {
+import styles from './SellerDashboardComponent.module.css';
+import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
+
+type StatusFilter = "all" | "active" | "inactive";
+
+const SellerDashboardComponent: React.FC = () => {
   const [cars, setCars] = useState<ICar[]>([]);
-  const router = useRouter();
+  const [filter, setFilter] = useState<StatusFilter>("all");
+  const [loading, setLoading] = useState(true);
+
+  const fetchCars = async () => {
+    try {
+      setLoading(true);
+      const res = await carService.getAll(); // В ідеалі фільтрувати по sellerId на бекенді
+      setCars(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    carService.getAll().then((response) => {
-      setCars(response.data);
-    });
+    fetchCars();
   }, []);
 
-  const handleAddCar = async () => {
-  try {
-    await router.push('/create');
-  } catch (error) {
-    console.error("Navigation error:", error);
-  }
-};
+  const handleDelete = (carId: string) => {
+    setCars(prev => prev.filter(c => c.id !== carId));
+  };
 
+  const filteredCars = cars.filter(car => {
+    if (filter === "all") return true;
+    return filter === "active" ? car.status === "active" : car.status !== "active";
+  });
 
   return (
-    <section className={styles.userManagement}>
-      <h2 className={styles.subtitle}>Manage Your Listings</h2>
+    <div className={styles.dashboard}>
+      <h2>My Car Listings</h2>
 
-      <button className={styles.blockButton} onClick={handleAddCar}>
-        Add New Car
-      </button>
+      <div className={styles.filters}>
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("active")}>Active</button>
+        <button onClick={() => setFilter("inactive")}>Inactive</button>
+      </div>
 
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Brand</th>
-            <th>Model</th>
-            <th>Year</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cars.map((car) => (
-            <CarListingComponent key={car.id} car={car} />
-          ))}
-        </tbody>
-      </table>
-    </section>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Brand</th>
+              <th>Model</th>
+              <th>Year</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredCars.map(car => (
+              <CarListingComponent key={car.id} car={car} onDelete={handleDelete} />
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 };
 
 export default SellerDashboardComponent;
-
-
-
-
