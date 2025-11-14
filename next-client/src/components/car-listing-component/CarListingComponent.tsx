@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ICar } from "@/models/ICar";
 import { carService } from "@/lib/services/carService";
 import { useRouter } from "next/router";
 import styles from './SellerDashboardComponent.module.css';
 import Image from "next/image";
-import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 
 interface Props {
   car: ICar;
   onDelete?: (id: string) => void;
 }
 
-const CarListingComponent: React.FC<Props> = ({ car, onDelete }) => {
+const CarListingComponent: React.FC<Props> = ({ car}) => {
   const router = useRouter();
   const [status, setStatus] = useState<string>(car.status); // Зберігаємо статус автомобіля в state
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,8 +38,8 @@ const CarListingComponent: React.FC<Props> = ({ car, onDelete }) => {
     }
   };
 
-  const handleEdit = () => {
-    router.push(`/edit-car/${car.id}`);
+  const handleEdit = async () => {
+   await router.push(`/edit-car/${car.id}`);
   };
 
   return (
