@@ -64,7 +64,7 @@ const SellerDashboardComponent: React.FC = () => {
               key={car.id}
               car={car}
               onDelete={handleDelete}
-              onStatusChange={handleStatusChange}
+              onStatusChange={handleStatusChange}  // передаємо onStatusChange
             />
           ))}
         </div>

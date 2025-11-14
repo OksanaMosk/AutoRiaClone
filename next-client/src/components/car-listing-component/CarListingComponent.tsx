@@ -8,6 +8,7 @@ import Image from "next/image";
 interface Props {
   car: ICar;
   onDelete?: (id: string) => void;
+   onStatusChange: (carId: string, status: string) => void;
 }
 
 const CarListingComponent: React.FC<Props> = ({ car}) => {

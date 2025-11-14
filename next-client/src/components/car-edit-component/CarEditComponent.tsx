@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import CarSelectsComponent from "@/components/car-selects-component/CarSelectsComponent";
 import { ICar, ICarPhoto } from "@/models/ICar";
 import Image from "next/image";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 type Currency = "UAH" | "USD" | "EUR";
 
@@ -166,7 +167,7 @@ const CarEditComponent: React.FC = () => {
     }
   };
 
-  if (loading) return <p>Loading car data...</p>;
+  if (loading) return <p><LoaderComponent/></p>;
 
   return (
     <section className={styles.editCarSection}>
