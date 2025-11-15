@@ -1,69 +1,182 @@
-.createCarSection {
+.userManagement {
+    margin: 60px auto;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  background:  radial-gradient(circle at 10% 50%, #5ff, #00b8b8 40%, #003333);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  max-width: 700px;
+}
+.editCarForm{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.createCarForm {
+.inputSection{
+    /*width: 300px;*/
+}
+
+.filterForm {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
 }
 
-.inputField{
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+/*.filterForm label {*/
+/*  font-weight: 500;*/
+/*  margin-right: 6px;*/
+/*}*/
+
+/*.user{*/
+/*    color: var(--color-border);*/
+/*}*/
+
+/*.filterForm select,*/
+/*.filterForm button {*/
+/*  padding: 6px 12px;*/
+/*  border-radius: 8px;*/
+/*  border: 1px solid var(--color-white);*/
+/*  font-size: 0.95rem;*/
+/*}*/
+
+/*.filterForm button {*/
+/*  color: white;*/
+/*  border: none;*/
+/*  cursor: pointer;*/
+/*  transition: all 0.2s ease;*/
+/*}*/
+
+.filterForm button:hover {
+  background-color: var(--color-badgeId);
 }
 
-.submitButton {
-  padding: 10px 15px;
-  background-color: #4caf50;
-  color: white;
+/*.table {*/
+/*  width: 100%;*/
+/*  border-collapse: separate;*/
+/*  border-spacing: 0 8px;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 12px;*/
+/*}*/
+
+/*.table thead tr {*/
+/*  background-color: var(--color-active);*/
+/*  color: white;*/
+/*  text-align: left;*/
+
+/*}*/
+
+/*.table th, .table td {*/
+/*  padding: 12px 16px;*/
+/*}*/
+/*.table th:last-child{*/
+/*    text-align: end;*/
+/*}*/
+
+/*.table th, .table td {*/
+/*  padding: 12px 16px;*/
+/*}*/
+
+/*.table tr {*/
+/*  transition: background-color 0.2s ease, transform 0.1s ease;*/
+/*}*/
+
+/*.table tr:hover {*/
+/*  background-color: var(--color-text);*/
+/*    cursor: pointer;*/
+/*}*/
+
+/*.table tbody tr {*/
+/*  background-color:var(--color-white);*/
+/*  border-radius: 10px;*/
+/*  box-shadow: 0 0.25rem 0.75rem var(--color-text);*/
+/*  transition: all 0.2s ease;*/
+/*}*/
+
+/*.table tbody tr:hover {*/
+/*  transform: translateY(-2px);*/
+/*  box-shadow: 0 0.25rem 0.75rem var(--color-border);*/
+/*}*/
+
+/*.actions {*/
+/*  display: flex;*/
+/*    justify-content: flex-end;*/
+/*  gap: 6px;*/
+/*  flex-wrap: wrap;*/
+/*}*/
+/*.statusActive{*/
+/*    color: var(--color-container);*/
+/*}*/
+
+.actions button {
+    color: var(--color-white);
   border: none;
-  border-radius: 4px;
+  border-radius: 20px;
   cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+    justify-content: center;
+    align-items: center;
+    width:80px;
+    height: 30px;
 }
 
-.submitButton:hover {
-  background-color: #45a049;
+.actions button:hover {
+  background-color: var(--color-border);
 }
+
+.deleteButton {
+  background-color: #ef4444;
+}
+
+.deleteButton:hover {
+  background-color:  var(--color-border);
+}
+
+.select,
+.label {
+    outline: none;
+  border-radius: 12px;
+  padding: 5px 10px;
+  border: 1px solid var(--color-white);
+  font-size: 0.95rem;
+    background-color: var(--color-badgeId);
+}
+
 
 .errorMessage {
-  color: var(--color-badgeId);
-  font-weight: bold;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+     z-index: 1000;
+    color: var(--color-white);
 }
 
-.currencyDisplay {
-  font-size: 14px;
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #e8f4e8;
+
+.blockButton {
+  background-color: #9c8611;
+  color: white;
+  border: none;
+   display: flex;
   border-radius: 4px;
 }
 
-.photoPreview {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.photoItem {
-  position: relative;
-}
-
-.deletePhotoButton {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: red;
-  color: white;
+.unblockButton {
+  background-color: var(--color-active);
+  color: var(--color-white);
   border: none;
-  padding: 5px;
-  cursor: pointer;
+  border-radius: 4px;
+     justify-content: center;
+    align-items: center;
+width:80px;
+    height: 30px;
 }
-
-.deletePhotoButton:hover {
-  background-color: #d32f2f;
+.textarea{
+    width: 100%;
 }
