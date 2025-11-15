@@ -17,7 +17,7 @@ class CarSerializer(serializers.ModelSerializer):
             'condition', 'max_speed', 'seats_count', 'engine_volume',
             'has_air_conditioner', 'fuel_type', 'location', 'description',
             'status', 'views', 'daily_views', 'weekly_views', 'monthly_views',
-            'created_at', 'updated_at', 'edit_attempts', 'photos'  # тут масив фото
+            'created_at', 'updated_at', 'edit_attempts', 'photos'
         )
 
 class CarStatsSerializer(serializers.Serializer):

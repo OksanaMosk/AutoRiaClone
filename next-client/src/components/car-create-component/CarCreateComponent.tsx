@@ -168,7 +168,7 @@ const CarCreateComponent = () => {
     }
   };
 
- const handleAddPhotos = async (e: React.FormEvent) => {
+  const handleAddPhotos = async (e: React.FormEvent) => {
   e.preventDefault();
 
   if (!newCar.id) {
@@ -176,25 +176,20 @@ const CarCreateComponent = () => {
     return;
   }
 
-  if (newCar.photos.length === 0) {
-    alert("No photos to upload.");
-    return;
-  }
-
   try {
-    const formData = new FormData();
+    const photoArray: ICarPhoto[] = newCar.photos.map((photo) => ({
+      id: `${Date.now()}-${Math.random()}`, // Генерація унікального ID для кожної фотографії
+      car_id: newCar.id,
+      photo_url: photo.photo_url,
+    }));
 
-    for (const photo of newCar.photos) {
-      if (photo.photo_url instanceof Blob) {
-        formData.append("photos", photo.photo_url, `photo-${photo.id}.jpg`);
-      } else {
-        const response = await fetch(photo.photo_url);
-        const blob = await response.blob();
-        formData.append("photos", blob, `photo-${photo.id}.jpg`);
-      }
+    if (photoArray.length === 0) {
+      alert("No photos to upload.");
+      return;
     }
 
-    await carService.addPhoto(newCar.id, formData);
+    console.log(photoArray);
+    await carService.addPhoto(newCar.id, photoArray);
 
     alert("Photos added to car listing successfully!");
   } catch (err) {
@@ -202,7 +197,6 @@ const CarCreateComponent = () => {
     setError("Error adding photos");
   }
 };
-
 
   return (
     <section className={styles.createCarSection}>
