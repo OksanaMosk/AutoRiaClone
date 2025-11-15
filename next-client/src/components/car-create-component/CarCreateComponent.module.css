@@ -1,20 +1,8 @@
-
 .createCarSection {
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  width: 60%;
-  margin: 0 auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
-.createCarSection h2 {
-  text-align: center;
-  font-size: 24px;
-  margin-bottom: 20px;
-  color: #333;
-}
-
 
 .createCarForm {
   display: flex;
@@ -22,37 +10,60 @@
   gap: 15px;
 }
 
-.createCarForm input,
-.createCarForm select,
-.createCarForm textarea {
+.inputField{
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
-.createCarForm button {
-  background-color: #4CAF50;
+.submitButton {
+  padding: 10px 15px;
+  background-color: #4caf50;
   color: white;
   border: none;
-  padding: 12px;
-  font-size: 16px;
-  cursor: pointer;
   border-radius: 4px;
-  transition: background-color 0.3s;
+  cursor: pointer;
 }
 
-.createCarForm button:hover {
+.submitButton:hover {
   background-color: #45a049;
 }
 
 .errorMessage {
   color: red;
-  font-size: 14px;
-  margin-bottom: 15px;
+  font-weight: bold;
 }
-.priceItem{
-    color: var(--color-border);
+
+.currencyDisplay {
+  font-size: 14px;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #e8f4e8;
+  border-radius: 4px;
+}
+
+.photoPreview {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.photoItem {
+  position: relative;
+}
+
+.deletePhotoButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.deletePhotoButton:hover {
+  background-color: #d32f2f;
 }
