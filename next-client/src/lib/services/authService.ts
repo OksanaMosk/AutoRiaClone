@@ -52,29 +52,19 @@ const authService = {
 
   async getCurrentUser(token: string | null) {
     if (!token) return null;
-
     try {
       const { data } = await apiService.get(urls.auth.me, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
-      // Зберігаємо userId у localStorage, якщо є
       if (data?.id && typeof window !== "undefined") {
         localStorage.setItem("userId", data.id.toString());
       }
-
-      console.log("Current user data:", data);
       return data;
-
     } catch (error: unknown) {
       const axiosError = error as AxiosError;
-
       if (axiosError.response?.status === 401) {
-        console.warn("Unauthorized token, returning null");
         return null;
       }
-
-      console.error("Get current user error:", axiosError.response || axiosError.message);
       throw error;
     }
 },

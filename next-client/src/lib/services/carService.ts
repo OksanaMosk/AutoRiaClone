@@ -29,9 +29,7 @@ const carService = {
 
     addPhoto(carId: string, formData: FormData) {
     return apiService.post(urls.cars.photos(carId), formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
+        withCredentials: true,
     });
 },
     deletePhoto(photoId: string) {
