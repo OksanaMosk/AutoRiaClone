@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
 from rest_framework.views import APIView
-
+from rest_framework.exceptions import PermissionDenied
 from core.pagination import PagePagination
 from .filter import CarFilter
 from .models import carModel, get_private_bank_exchange_rate
@@ -124,18 +124,13 @@ class CarAveragePriceCountryView(APIView):
         return Response(serializer.data)
 
 class ExchangeRateView(APIView):
+    permission_classes =(AllowAny,)
     def get(self, request, *args, **kwargs):
         try:
             rates = get_private_bank_exchange_rate()
             return Response(rates, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 
 class CarUserListView(APIView):

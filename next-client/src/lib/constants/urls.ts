@@ -31,7 +31,7 @@ export const urls = {
 
     cars: {
         list: `${paths.cars}/`,
-        create: `${paths.cars}/create/`,
+        create: `${paths.cars}/`,
         action: (id: string) => `${paths.cars}/${id}/`,
         photos: (carId: string) => `${paths.cars}/${carId}/photos/`,
         deletePhoto: (photoId: string) => `${paths.carPhotos}/${photoId}/`,

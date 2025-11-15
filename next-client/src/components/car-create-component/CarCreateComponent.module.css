@@ -53,3 +53,6 @@
   font-size: 14px;
   margin-bottom: 15px;
 }
+.priceItem{
+    color: var(--color-border);
+}

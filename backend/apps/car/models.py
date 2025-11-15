@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from better_profanity import profanity
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 from django.db import models
 from rest_framework.exceptions import ValidationError
 import requests
@@ -42,8 +43,8 @@ class carModel(models.Model):
     mileage = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     currency = models.CharField(max_length=3, choices=[('USD', 'USD'), ('EUR', 'EUR'), ('UAH', 'UAH')])
-    price_usd = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=1)
-    price_eur = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=1)
+    price_usd = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True, default=1)
+    price_eur = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True, default=1)
     condition = models.CharField(max_length=10, choices=[('new', 'New'), ('used', 'Used')])
     max_speed = models.PositiveIntegerField(help_text="Max speed km/h", default=1)
     seats_count = models.PositiveIntegerField(help_text="Number of seats", default=1)
@@ -83,14 +84,16 @@ class carModel(models.Model):
         self.exchange_rate_id = f"Privatbank_{current_date}"
 
         if self.currency == 'USD':
-            self.price_usd = Decimal(self.price)
-            self.price_eur = Decimal(self.price) * Decimal(rates['EUR']) / Decimal(rates['USD'])
+            self.price_usd = Decimal(self.price).quantize(Decimal('0.01'))
+            self.price_eur = (Decimal(self.price) * Decimal(rates['EUR']) / Decimal(rates['USD'])).quantize(
+                Decimal('0.01'))
         elif self.currency == 'EUR':
-            self.price_eur = Decimal(self.price)
-            self.price_usd = Decimal(self.price) * Decimal(rates['USD']) / Decimal(rates['EUR'])
+            self.price_eur = Decimal(self.price).quantize(Decimal('0.01'))
+            self.price_usd = (Decimal(self.price) * Decimal(rates['USD']) / Decimal(rates['EUR'])).quantize(
+                Decimal('0.01'))
         else:
-            self.price_usd = Decimal(self.price) / Decimal(rates['USD'])
-            self.price_eur = Decimal(self.price) / Decimal(rates['EUR'])
+            self.price_usd = (Decimal(self.price) / Decimal(rates['USD'])).quantize(Decimal('0.01'))
+            self.price_eur = (Decimal(self.price) / Decimal(rates['EUR'])).quantize(Decimal('0.01'))
 
         self.last_exchange_update = current_date
 
@@ -105,18 +108,27 @@ class carModel(models.Model):
         return self.photos.all()
 
     def clean(self):
-        if self.model not in MODELS_BY_BRAND.get(self.brand, []):
-            raise ValidationError(f"Model {self.model} is not valid for brand {self.brand}.")
+        print(f"Clean method called with {self.__dict__}")
         if profanity.contains_profanity(self.description):
             self.status = 'pending'
             if self.edit_attempts >= 3:
                 self.status = 'inactive'
-
+                self.notify_manager()
+                raise ValidationError("You have failed to edit your description 3 times. The ad has been deactivated.")
             else:
                 self.edit_attempts += 1
                 raise ValidationError("Description contains prohibited words. Please edit.")
+
         else:
             self.status = 'active'
+
+    def notify_manager(self):
+        send_mail(
+            subject="Car listing needs attention",
+            message=f"The car listing with ID {self.id} has failed the profanity check 3 times.",
+            from_email="no-reply@platform.com",
+            recipient_list=["manager@example.com"]
+        )
 
     def save(self, *args, **kwargs):
         self.update_prices()
