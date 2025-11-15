@@ -1,5 +1,5 @@
 export interface ICar {
-    id: string;
+    id?: string;
     brand: string;
     model: string;
     year: number;
@@ -16,13 +16,13 @@ export interface ICar {
     fuel_type: string;
     location: string;
     description: string;
-    status: string;
+    status?: string;
     views: number;
     daily_views: number;
     weekly_views: number;
     monthly_views: number;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
     exchange_rate_id: string;
     last_exchange_update: string | null;
     photos: ICarPhoto[];
