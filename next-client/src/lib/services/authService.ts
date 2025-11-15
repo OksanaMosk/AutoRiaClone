@@ -13,12 +13,11 @@ interface IRegisterUser {
 const authService = {
   async login(user: { email: string; password: string }): Promise<string> {
     try {
-      const { data: { access, refresh, role, id  } } = await apiService.post(urls.auth.login, user);
+      const { data: { access, refresh, role } } = await apiService.post(urls.auth.login, user);
       if (typeof document !== "undefined") {
         document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
         document.cookie = `refreshToken=${refresh}; path=/; max-age=${30 * 24 * 60 * 60}; sameSite=strict`;
-        // localStorage.setItem("userId", id);
-// (console.log(id))
+
       }
 
       if (typeof window !== "undefined") {
@@ -58,7 +57,15 @@ const authService = {
       const { data } = await apiService.get(urls.auth.me, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      // Зберігаємо userId у localStorage, якщо є
+      if (data?.id && typeof window !== "undefined") {
+        localStorage.setItem("userId", data.id.toString());
+      }
+
+      console.log("Current user data:", data);
       return data;
+
     } catch (error: unknown) {
       const axiosError = error as AxiosError;
 
@@ -70,7 +77,8 @@ const authService = {
       console.error("Get current user error:", axiosError.response || axiosError.message);
       throw error;
     }
-  },
+},
+
 
   getRefreshToken(): string | null {
     if (typeof document === "undefined") return null;
