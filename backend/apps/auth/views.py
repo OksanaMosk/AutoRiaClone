@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework.generics import  get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from core.services.email_service import EmailService
 from core.services.jwt_service import RecoveryToken, SocketToken
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
@@ -114,8 +114,10 @@ class LoginAPIView(APIView):
             print(f"User role: {user.role}")
             role = user.role
             token = JWTService.create_token(user=user, token_class=AccessToken)
+            refresh_token = JWTService.create_token(user=user, token_class=RefreshToken)
             return Response({
                 "access": str(token),
+                "refresh": str(refresh_token),
                 "role": role
             }, status=status.HTTP_200_OK)
         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)

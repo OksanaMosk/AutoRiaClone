@@ -11,29 +11,50 @@ const BuyerDashboardComponent = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("authToken="))
-      ?.split("=")[1];
 
-    (async () => {
-      if (!token) {
-        setError("Please activate your account.");
-        setLoading(false);
-        return;
-      }
+ useEffect(() => {
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("authToken="))
+    ?.split("=")[1];
 
-      try {
-        const userData: IUser = await authService.getCurrentUser(token);
-        setUser(userData);
-      } catch {
-        setError("Please activate your account.");
-      } finally {
-        setLoading(false);
+  (async () => {
+    if (!token) {
+      setError("Please activate your account.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const userData: IUser = await authService.getCurrentUser(token);
+      setUser(userData);
+    } catch (e) {
+        console.log(e);
+        setError("There was an error fetching user data.");
+      const refreshToken = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("refreshToken="))
+        ?.split("=")[1];
+
+      if (refreshToken) {
+        try {
+          const access = await authService.refreshToken(refreshToken);
+          document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
+          const userData: IUser = await authService.getCurrentUser(access);
+          setUser(userData);
+        } catch (refreshError) {
+          console.error("Failed to refresh token:", refreshError);
+          setError("Your session has expired. Please log in again.");
+        }
+      } else {
+        setError("Please log in again.");
       }
-    })();
-  }, []);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
+
 
   if (loading) return <LoaderComponent />;
   if (error) return <p className={styles.errorText}>{error}</p>;

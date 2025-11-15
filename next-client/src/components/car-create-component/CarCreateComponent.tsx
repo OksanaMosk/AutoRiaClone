@@ -169,27 +169,35 @@ const CarCreateComponent = () => {
   };
 
   const handleAddPhotos = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCar.id) {
-      alert("Please create a car first before adding photos.");
+  e.preventDefault();
+
+  if (!newCar.id) {
+    alert("Please create a car first before adding photos.");
+    return;
+  }
+
+  try {
+    const photoArray: ICarPhoto[] = newCar.photos.map((photo) => ({
+      id: `${Date.now()}-${Math.random()}`, // Генерація унікального ID для кожної фотографії
+      car_id: newCar.id,
+      photo_url: photo.photo_url,
+    }));
+
+    // Перевірка масиву фотографій
+    if (photoArray.length === 0) {
+      alert("No photos to upload.");
       return;
     }
 
-    try {
-      const photoArray: ICarPhoto[] = newCar.photos.map((photo) => ({
-        id: `${Date.now()}-${Math.random()}`,
-        car_id: newCar.id,
-        photo_url: photo.photo_url,
-      }));
+    // Додавання фотографій до автомобіля
+    await carService.addPhoto(newCar.id, photoArray);
 
-      await carService.addPhoto(newCar.id, photoArray);
-
-      alert("Photos added to car listing successfully!");
-    } catch (err) {
-      console.error("Error adding photos:", err);
-      setError("Error adding photos");
-    }
-  };
+    alert("Photos added to car listing successfully!");
+  } catch (err) {
+    console.error("Error adding photos:", err);
+    setError("Error adding photos");
+  }
+};
 
   return (
     <section className={styles.createCarSection}>

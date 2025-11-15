@@ -1,6 +1,5 @@
 from django.core.exceptions import PermissionDenied
 from django.db.models import Avg
-from djangochannelsrestframework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
@@ -14,7 +13,7 @@ from .models import carModel, get_private_bank_exchange_rate
 from .serializers import CarPhotoSerializer, CarSerializer, CarAveragePriceSerializer, CarStatsSerializer
 from rest_framework.generics import CreateAPIView, DestroyAPIView
 from .models import CarPhoto
-from ..user.permissions import IsSeller, IsAdmin, IsManager
+from ..user.permissions import IsSeller, IsAdmin, IsManager, IsSellerOrAdminOrManager, IsSellerOrAdmin
 
 
 class carListCreateView(ListCreateAPIView):
@@ -38,11 +37,11 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = CarSerializer
     queryset = carModel.objects.all()
     http_method_names = ['get', 'put', 'patch', 'delete']
-    permission_classes = (IsAuthenticated, IsSeller | IsAdmin)
+    permission_classes = [IsSellerOrAdmin]
 
 class CarPhotoCreateView(CreateAPIView):
     serializer_class = CarPhotoSerializer
-    permission_classes =(IsAuthenticated, IsSeller | IsAdmin)
+    permission_classes = [IsSellerOrAdmin]
 
     def perform_create(self, serializer):
         car_id = self.kwargs['car_id']
@@ -52,7 +51,7 @@ class CarPhotoCreateView(CreateAPIView):
 class CarPhotoDeleteView(DestroyAPIView):
     serializer_class = CarPhotoSerializer
     queryset = CarPhoto.objects.all()
-    permission_classes =(IsAuthenticated, IsSeller | IsAdmin | IsManager)
+    permission_classes = [IsSellerOrAdminOrManager]
 
 class CarStatsView(APIView):
     def get(self, request, car_id):
@@ -134,7 +133,7 @@ class ExchangeRateView(APIView):
 
 
 class CarUserListView(APIView):
-    permission_classes = [IsManager | IsSeller | IsAdmin]
+    permission_classes = [IsSellerOrAdminOrManager]
     def get(self, request, user_id, *args, **kwargs):
         user = request.user
 

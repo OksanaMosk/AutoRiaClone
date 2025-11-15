@@ -13,7 +13,7 @@ from rest_framework.exceptions import PermissionDenied
 
 from apps.user.models import Dealership
 from apps.user.serializers import UserSerializer
-from apps.user.permissions import IsAdmin, IsManager
+from apps.user.permissions import IsAdmin, IsManager, IsAdminOrManager
 
 UserModel = get_user_model()
 
@@ -25,7 +25,7 @@ class UserListCreateAPIView(ListCreateAPIView):
 class BlockUserAPIView(RetrieveUpdateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdmin | IsManager]
+    permission_classes = [IsAdminOrManager]
     lookup_field = "pk"
 
     def patch(self, request, *args, **kwargs):
@@ -38,7 +38,7 @@ class BlockUserAPIView(RetrieveUpdateAPIView):
 class UnblockUserAPIView(RetrieveUpdateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdmin | IsManager]
+    permission_classes = [IsAdminOrManager]
     lookup_field = "pk"
 
     def patch(self, request, *args, **kwargs):
