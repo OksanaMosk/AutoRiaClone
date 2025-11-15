@@ -7,6 +7,7 @@ import Image from "next/image";
 import { ICar, ICarPhoto } from "@/models/ICar";
 import CarSelectsComponent from "@/components/car-selects-component/CarSelectsComponent";
 import userService from "@/lib/services/userService";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 type Currency = "UAH" | "USD" | "EUR";
 
@@ -202,7 +203,7 @@ const CarCreateComponent = () => {
 
   return (
     <section className={styles.userManagement}>
-      <h2 className={styles.subtitle}>Create New Car</h2>
+      <h3 className={styles.subtitle}>Create New Car</h3>
 
       {message && <div className={styles.errorMessage}>{message}</div>}
 
@@ -220,17 +221,49 @@ const CarCreateComponent = () => {
           setLocation={(location) => setNewCar((p) => ({ ...p, location }))}
         />
 
-          <div className={styles.inputSection}>
-              <label className={styles.label}>Year*</label>
-              <input type="number" name="year" value={newCar.year || ""} onChange={handleInputChange} required
-                     className={styles.select}/>
-          </div>
+          <div className={styles.topSection}>
+              <div className={styles.choiceSection}>
+                  <div className={styles.inputSection}>
+                      <label className={styles.label}>Year*</label>
+                      <input type="number" name="year" value={newCar.year || ""} onChange={handleInputChange} required
+                             className={styles.select}/>
+                  </div>
 
-          <div className={styles.inputSection}>
-              <label className={styles.label}>Mileage*</label>
-              <input type="number" name="mileage" value={newCar.mileage || ""} onChange={handleInputChange} required
-                     className={styles.select}/>
+                  <div className={styles.inputSection}>
+                      <label className={styles.label}>Mileage*</label>
+                      <input type="number" name="mileage" value={newCar.mileage || ""} onChange={handleInputChange}
+                             required
+                             className={styles.select}/>
+                  </div>
+                  <div className={styles.inputSection}>
+                      <label className={styles.label}>Seats Count*</label>
+                      <input type="number" name="seats_count" value={newCar.seats_count || ""}
+                             onChange={handleInputChange}
+                             required className={styles.select}/>
+                  </div>
+              </div>
+              <div className={styles.choiceSection}>
+                  <div className={styles.inputSection}>
+                      <label className={styles.label}>Max Speed*</label>
+                      <input type="number" name="max_speed" value={newCar.max_speed || ""} onChange={handleInputChange}
+                             required
+                             className={styles.select}/>
+                  </div>
+
+                  <div className={styles.inputSection}>
+                      <label className={styles.label}>Engine Volume*</label>
+                      <input type="number" name="engine_volume" value={newCar.engine_volume || ""}
+                             onChange={handleInputChange}
+                             required className={styles.select}/>
+                  </div>
+                  <label className={styles.label}>
+                      Air Conditioner:
+                      <input type="checkbox" name="has_air_conditioner" checked={newCar.has_air_conditioner}
+                             onChange={handleInputChange} className={styles.select}/>
+                  </label>
+              </div>
           </div>
+          
           <div className={styles.inputSection}>
               <label className={styles.label}>Price*</label>
               <input type="number" name="price" value={newCar.price || ""} onChange={handleInputChange} required
@@ -248,26 +281,9 @@ const CarCreateComponent = () => {
           Price in UAH: {convertedPrices.UAH.toFixed(2)} | USD: {convertedPrices.USD.toFixed(2)} | EUR: {convertedPrices.EUR.toFixed(2)}
         </div>
 
-          <div className={styles.inputSection}>
-              <label className={styles.label}>Max Speed*</label>
-              <input type="number" name="max_speed" value={newCar.max_speed || ""} onChange={handleInputChange} required
-                     className={styles.select}/>
-          </div>
-          <div className={styles.inputSection}>
-              <label className={styles.label}>Seats Count*</label>
-              <input type="number" name="seats_count" value={newCar.seats_count || ""} onChange={handleInputChange}
-                     required className={styles.select}/>
-          </div>
-          <div className={styles.inputSection}>
-              <label className={styles.label}>Engine Volume*</label>
-              <input type="number" name="engine_volume" value={newCar.engine_volume || ""} onChange={handleInputChange}
-                     required className={styles.select}/>
-          </div>
+         
 
-        <label className={styles.label}>
-          Air Conditioner:
-          <input type="checkbox" name="has_air_conditioner" checked={newCar.has_air_conditioner} onChange={handleInputChange} className={styles.select} />
-        </label>
+      
 
           <div className={styles.textarea}>
               <label className={styles.label}>Description*</label>
@@ -278,7 +294,7 @@ const CarCreateComponent = () => {
 
 
         <button type="submit" disabled={loadingCar} className={styles.submitButton}>
-          {loadingCar ? "Creating..." : "Create Car Without Photos"}
+          {loadingCar ? <LoaderComponent/> : "Save"}
         </button>
       </form>
 
@@ -299,7 +315,7 @@ const CarCreateComponent = () => {
 
         {newCar.id && (
           <button type="submit" disabled={loadingPhotos} className={styles.submitButton}>
-            {loadingPhotos ? "Uploading..." : "Add Photos"}
+            {loadingPhotos ? <LoaderComponent/> : "Add Photos"}
           </button>
         )}
       </form>
