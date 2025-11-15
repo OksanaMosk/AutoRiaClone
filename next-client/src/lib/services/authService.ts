@@ -13,10 +13,12 @@ interface IRegisterUser {
 const authService = {
   async login(user: { email: string; password: string }): Promise<string> {
     try {
-      const { data: { access, refresh, role } } = await apiService.post(urls.auth.login, user);
+      const { data: { access, refresh, role, id  } } = await apiService.post(urls.auth.login, user);
       if (typeof document !== "undefined") {
         document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
         document.cookie = `refreshToken=${refresh}; path=/; max-age=${30 * 24 * 60 * 60}; sameSite=strict`;
+        // localStorage.setItem("userId", id);
+// (console.log(id))
       }
 
       if (typeof window !== "undefined") {

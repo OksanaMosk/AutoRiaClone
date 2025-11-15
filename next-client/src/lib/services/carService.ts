@@ -1,6 +1,6 @@
 import {urls, urls as paths} from "../constants/urls";
 import {apiService} from "./apiService";
-import {ICar, ICarPhoto} from "@/models/ICar";
+import {ICar} from "@/models/ICar";
 
 const carService = {
     action: (id: string) => `${paths.cars}/${id}/`,
@@ -27,13 +27,13 @@ const carService = {
         return apiService.delete(urls.cars.action(id));
     },
 
-    addPhoto(carId: string, photoData: ICarPhoto[]) {
-        if (photoData.length > 5) {
-            throw new Error("You can only upload up to 5 photos.");
-        }
-        return apiService.post(urls.cars.photos(carId), photoData);
-    },
-
+    addPhoto(carId: string, formData: FormData) {
+    return apiService.post(urls.cars.photos(carId), formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+},
     deletePhoto(photoId: string) {
         return apiService.delete(urls.cars.deletePhoto(photoId));
     },
