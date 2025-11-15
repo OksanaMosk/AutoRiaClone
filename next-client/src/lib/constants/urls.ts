@@ -26,6 +26,7 @@ export const urls = {
         changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
         delete: (id: string) => `${paths.users}/${id}/delete/`,
         filterSort: `${paths.users}/filter-sort/`,
+        userCars: (userId: string) => `${paths.users}/${userId}/cars/`,
     },
 
     cars: {
@@ -39,7 +40,7 @@ export const urls = {
         averagePriceCountry: `${paths.carAveragePrice}/country/`,
         exchangeRates: `${paths.cars}/exchange-rates/`,
         constants: `${paths.cars}/constants/`,
-        userCars: (userId: string) => `${paths.cars}/users/${userId}/cars/`,
+        // userCars: (userId: string) => `${paths.users}/${userId}/cars/`,
     },
 };
 

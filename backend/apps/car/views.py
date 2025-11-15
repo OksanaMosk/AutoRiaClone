@@ -38,11 +38,11 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = CarSerializer
     queryset = carModel.objects.all()
     http_method_names = ['get', 'put', 'patch', 'delete']
-    permission_classes = (IsAuthenticated & (IsSeller | IsAdmin))
+    permission_classes = (IsAuthenticated, IsSeller | IsAdmin)
 
 class CarPhotoCreateView(CreateAPIView):
     serializer_class = CarPhotoSerializer
-    permission_classes =(IsAuthenticated & (IsSeller | IsAdmin))
+    permission_classes =(IsAuthenticated, IsSeller | IsAdmin)
 
     def perform_create(self, serializer):
         car_id = self.kwargs['car_id']
@@ -52,7 +52,7 @@ class CarPhotoCreateView(CreateAPIView):
 class CarPhotoDeleteView(DestroyAPIView):
     serializer_class = CarPhotoSerializer
     queryset = CarPhoto.objects.all()
-    permission_classes =(IsAuthenticated & (IsSeller | IsAdmin | IsManager))
+    permission_classes =(IsAuthenticated, IsSeller | IsAdmin | IsManager)
 
 class CarStatsView(APIView):
     def get(self, request, car_id):
@@ -132,16 +132,23 @@ class ExchangeRateView(APIView):
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CarUserListView(APIView):
-    permission_classes = [IsAuthenticated]
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+
+class CarUserListView(APIView):
+    permission_classes = [IsManager | IsSeller | IsAdmin]
     def get(self, request, user_id, *args, **kwargs):
         user = request.user
-        if user.is_staff or IsManager().has_permission(request, self):
-            cars = carModel.objects.filter(seller__id=user_id)
-        elif user.id == user_id:
+
+        for permission in self.permission_classes:
+            if not permission().has_permission(request, self):
+                raise PermissionDenied("You do not have permission to view this user's listings.")
+        if user.is_staff or user.id == user_id:
             cars = carModel.objects.filter(seller__id=user_id)
         else:
-            raise PermissionDenied("You do not have permission to view this user's listings.")
+            cars = carModel.objects.filter(seller__id=user_id)
         serializer = CarSerializer(cars, many=True)
         return Response({"cars": serializer.data})

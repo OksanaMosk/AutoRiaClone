@@ -1,4 +1,6 @@
 from django.urls import path
+
+from apps.car.views import CarUserListView
 from apps.user.views import (
     BlockUserAPIView,
     SendEmailTestAPIView,
@@ -18,5 +20,6 @@ urlpatterns = [
     path('<int:pk>/delete/', DeleteUserAPIView.as_view(), name='user_delete'),
     path('<int:user_id>/change-dealership/', ChangeUserDealershipAPIView.as_view(), name='change-user-dealership'),
     path('test/', SendEmailTestAPIView.as_view(), name='test_email'),
-    path('filter-sort/', UserFilterSortAPIView.as_view(), name='filter_sort')
+    path('filter-sort/', UserFilterSortAPIView.as_view(), name='filter_sort'),
+    path('<int:user_id>/cars/', CarUserListView.as_view(), name='user_car_list'),
 ]

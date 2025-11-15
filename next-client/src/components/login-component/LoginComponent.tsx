@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const LoginComponent = () => {
-  const [email, setEmail] = useState("");  // Заміна username на email
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);

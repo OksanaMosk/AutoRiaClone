@@ -43,7 +43,6 @@ const CarCreateComponent = () => {
   });
   const [exchangeRates, setExchangeRates] = useState<{ USD: number; EUR: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   useEffect(() => {
     (async () => {
       try {
@@ -126,13 +125,12 @@ const CarCreateComponent = () => {
         await carService.addPhoto(carId, photoArray);
       }
       alert("New car listing created!");
-      await router.push("/");
+        // router.push("/seller");
     } catch (err) {
       console.error(err);
       setError("Error creating car listing");
     }
   };
-
   return (
     <section className={styles.createCarSection}>
       <h2>Create a New Car Listing</h2>

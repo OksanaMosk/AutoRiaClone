@@ -55,9 +55,8 @@ const carService = {
     getConstants() {
         return apiService.get(urls.cars.constants);
     },
-    getUserCars(userId: string) {
-        return apiService.get<ICar[]>(urls.cars.userCars(userId));
-    },
+
+
 };
 
 export {carService};

@@ -15,6 +15,4 @@ path('stats/average/', CarAveragePriceByRegionView.as_view(), name='car-average-
 path('stats/average-country/', CarAveragePriceCountryView.as_view(), name='car-average-country'),
 path('exchange-rates/', ExchangeRateView.as_view(), name='exchange-rates'),
 path('constants/', car_constants, name='car-constants'),
-path('api/users/<int:user_id>/cars/', CarUserListView.as_view(), name='user_car_list'),
-
 ]

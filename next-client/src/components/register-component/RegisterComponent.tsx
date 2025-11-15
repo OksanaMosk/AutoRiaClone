@@ -64,7 +64,6 @@ const RegisterComponent = () => {
 
      } catch (err: unknown) {
          if (err instanceof Error) {
-             // Перевіряємо повідомлення помилки від сервера
              if (err.message.includes("already exists")) {
                  setErrorMsg("A user with this email already exists.");
              } else {
@@ -74,7 +73,7 @@ const RegisterComponent = () => {
              setErrorMsg("An unknown error occurred.");
          }
      } finally {
-         setIsSubmitting(false); // Завжди виконується, незалежно від того, була помилка чи ні
+         setIsSubmitting(false);
      }
  };
 

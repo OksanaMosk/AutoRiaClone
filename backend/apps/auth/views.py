@@ -142,18 +142,3 @@ class CurrentUserAPIView(APIView):
             } if profile else None
         }
         return Response(data)
-
-
-
-
-# class LoginAPIView(GenericAPIView):
-#     permission_classes = (AllowAny,)
-#
-#     def post(self, request, *args, **kwargs):
-#         username = request.data.get('username') or request.data.get('email')
-#         password = request.data.get('password')
-#         user = authenticate(username=username, password=password)
-#         if user:
-#             token = JWTService.create_token(user=user, token_class=AccessToken)
-#             return Response({"access": str(token)}, status=status.HTTP_200_OK)
-#         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)

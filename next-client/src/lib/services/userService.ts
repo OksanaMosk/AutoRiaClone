@@ -1,5 +1,6 @@
 import { apiService } from "./apiService";
 import { urls } from "../constants/urls";
+import {ICar} from "@/models/ICar";
 
  const userService = {
 
@@ -35,6 +36,9 @@ import { urls } from "../constants/urls";
     const { data } = await apiService.delete(urls.users.delete(userId));
     return data;
   },
+   getUserCars(userId: string) {
+       return apiService.get<ICar[]>(urls.users.userCars(userId));
+   },
 
  filterSortUsers: async (filterCriteria: {
     role?: string,

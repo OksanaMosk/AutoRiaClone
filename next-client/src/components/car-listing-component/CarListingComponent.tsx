@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ICar } from "@/models/ICar";
 import { carService } from "@/lib/services/carService"; // Assuming carService exists
 import { useRouter } from "next/router";
-import styles from './SellerDashboardComponent.module.css';
+import styles from './CarListingComponent.module.css';
 import Image from "next/image";
 
 // Extend the ICar interface for the stats

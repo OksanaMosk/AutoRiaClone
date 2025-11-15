@@ -44,9 +44,7 @@ body {
   .movieInfoWrapper {
     background-color: var(--color-white);
   }
-    .registerMessage{
-    color: var(--color-border);
-}
+
 
   .search-button,
   .search-input,

@@ -103,3 +103,6 @@
   width: 80px;
   height: 30px;
 }
+.errorText{
+    color: var(--color-border);
+}
