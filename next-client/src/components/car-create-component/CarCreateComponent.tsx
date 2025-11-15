@@ -160,16 +160,20 @@ const CarCreateComponent = () => {
 };
 
 
-  const handleAddPhotos = async (e: React.FormEvent) => {
+const handleAddPhotos = async (e: React.FormEvent) => {
   e.preventDefault();
   if (!newCar.id) return alert("Create a car first.");
 
   try {
-    const formData = new FormData();
-    localPhotos.forEach((p) => formData.append("photo", p.file)); // ✅ точно "photo"
+    for (const p of localPhotos) { // по одному файлу
+      const formData = new FormData();
+      formData.append("photo", p.file);       // файл
+      formData.append("car", newCar.id.toString()); // id машини, як рядок
 
-    await carService.addPhoto(newCar.id, formData); // withCredentials = true
-    alert("Photos uploaded successfully!");
+      await carService.addPhoto(newCar.id, formData);
+    }
+
+    setMessage("Photos uploaded successfully!");
     setLocalPhotos([]);
   } catch (err) {
     console.error("Upload error:", err);
