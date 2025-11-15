@@ -50,7 +50,7 @@ const CarCreateComponent = () => {
   const [localPhotos, setLocalPhotos] = useState<ILocalPhoto[]>([]);
   const [exchangeRates, setExchangeRates] = useState<{ USD: number; EUR: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+    const [message, setMessage] = useState("");
   useEffect(() => {
     (async () => {
       try {
@@ -94,7 +94,7 @@ const CarCreateComponent = () => {
     if (!e.target.files) return;
     const files = Array.from(e.target.files);
     if (localPhotos.length + files.length > 5) {
-      setError("You can upload up to 5 photos.");
+      setMessage("You can upload up to 5 photos.");
       return;
     }
     const newPhotos: ILocalPhoto[] = files.map((file) => ({
@@ -114,11 +114,11 @@ const CarCreateComponent = () => {
   try {
       const userId = localStorage.getItem("userId")
      const response = await userService.getUserCars(userId!)
-      const cars:ICar[] = response.data.cars
-      if (cars.length >= 1) {
-          setError("Sorry, update account to Premium");
-          return;
-      }
+      const cars:ICar[] = response.data
+     if (cars.length >= 1) {
+    setMessage("Sorry, update account to Premium");
+    return;
+}
 
     const carStatus = newCar.status || "pending";
 
@@ -155,7 +155,7 @@ const CarCreateComponent = () => {
     alert("Car created without photos. You can add photos now.");
   } catch (err: any) {
     console.error(err);
-    setError(err.response?.data || "Error creating car listing");
+    setMessage(err.response?.data || "Error creating car listing");
   }
 };
 
@@ -174,7 +174,7 @@ const CarCreateComponent = () => {
       setLocalPhotos([]);
     } catch (err) {
       console.error(err);
-      setError("Error uploading photos");
+      setMessage("Error uploading photos");
     }
   };
 
@@ -182,6 +182,8 @@ const CarCreateComponent = () => {
     <section className={styles.createCarSection}>
       <h2>Create a New Car Listing</h2>
       {error && <div className={styles.errorMessage}>{error}</div>}
+        {message && <div className={styles.errorMessage}>{message}</div>}
+
 
       <form className={styles.createCarForm} onSubmit={handleCreateCarWithoutPhotos}>
         <CarSelectsComponent
