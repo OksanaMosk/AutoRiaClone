@@ -251,15 +251,20 @@ const CarCreateComponent = () => {
                   </div>
 
                   <div className={styles.inputSection}>
-                      <label className={styles.label}>Engine Volume*</label>
+                      <label className={styles.label}>Engine*</label>
                       <input type="number" name="engine_volume" value={newCar.engine_volume || ""}
                              onChange={handleInputChange}
                              required className={styles.input}/>
                   </div>
                   <label className={styles.label}>
-                      Air Conditioner:
-                      <input type="checkbox" name="has_air_conditioner" checked={newCar.has_air_conditioner}
-                             onChange={handleInputChange} className={styles.input} />
+                      AC
+                      <input
+                          type="checkbox"
+                          name="has_air_conditioner"
+                          checked={newCar.has_air_conditioner}
+                          onChange={handleInputChange}
+                          className={styles.checkbox}
+                      />
                   </label>
               </div>
           </div>
@@ -282,27 +287,21 @@ const CarCreateComponent = () => {
               </div>
           </div>
 
-          <div className={styles.select}>
+          <div className={styles.rate}>
               Exchange rates:
               1 USD = {exchangeRates?.USD} UAH |
               1 EUR = {exchangeRates?.EUR} UAH
           </div>
 
-
-          <div className={styles.select}>
+          <div className={styles.rate}>
           Price in UAH: {convertedPrices.UAH.toFixed(2)} | USD: {convertedPrices.USD.toFixed(2)} | EUR: {convertedPrices.EUR.toFixed(2)}
         </div>
 
-         
-
-      
-
-          <div className={styles.textarea}>
+          <div className={styles.textareaWrapper}>
               <label className={styles.label}>Description*</label>
               <textarea name="description" value={newCar.description} onChange={handleInputChange} required
-                        className={styles.input}/>
+                        className={styles.textarea}/>
           </div>
-
 
 
         <button type="submit" disabled={loadingCar} className={styles.submitButton}>
@@ -313,15 +312,17 @@ const CarCreateComponent = () => {
         </button>
       </form>
 
-      <form onSubmit={handleAddPhotos}>
-        <label className={styles.label}>Upload Photos (Max 5)*</label>
-        <input type="file" multiple onChange={handlePhotoChange} disabled={loadingPhotos || localPhotos.length >= 5} className={styles.input}/>
+      <form onSubmit={handleAddPhotos} className={styles.photoWrapper}>
+              <label className={styles.photoLabel}>Upload Photos (Max 5)*</label>
+          <input type="file" multiple onChange={handlePhotoChange}
+                 disabled={loadingPhotos || localPhotos.length >= 5} className={styles.input}/>
 
-        {localPhotos.length > 0 && (
-          <div className={styles.table}>
-            {localPhotos.map((photo, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Image src={photo.preview_url} alt="" width={100} height={70} />
+          <div className={styles.photoContainer}>
+              {localPhotos.length > 0 && (
+                  <div className={styles.load}>
+                      {localPhotos.map((photo, i) => (
+                          <div className={styles.photoArray} key={i}>
+                              <Image className={styles.photoImage} src={photo.preview_url} alt="" width={140} height={100} />
                 <button type="button" onClick={() => handleDeletePhoto(i)} className={styles.deleteButton}>Delete</button>
               </div>
             ))}
@@ -336,7 +337,7 @@ const CarCreateComponent = () => {
             </div>
                 : "Add Photos"}
           </button>
-        )}
+        )}  </div>
       </form>
     </section>
   );
