@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { carService } from "@/lib/services/carService";
@@ -25,9 +25,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState("");
 
-  // ------------------------------------------------------------------------
-  // 1) LOAD CAR DATA
-  // ------------------------------------------------------------------------
   useEffect(() => {
     if (!carId) return;
 
@@ -35,7 +32,7 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
       try {
         const carResponse = await carService.get(carId);
         const data: ICar = carResponse.data;
-
+ console.log(data)
         setForm(data);
         setPhotos(data.photos || []);
 
@@ -49,9 +46,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     })();
   }, [carId]);
 
-  // ------------------------------------------------------------------------
-  // 2) PRICE CONVERSION (same logic as in Create)
-  // ------------------------------------------------------------------------
   const convertedPrices = useMemo(() => {
     if (!form || !exchangeRates || isNaN(Number(form.price))) {
       return { UAH: 0, USD: 0, EUR: 0 };
@@ -74,10 +68,7 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     };
   }, [form?.price, form?.currency, exchangeRates]);
 
-  // ------------------------------------------------------------------------
-  // 3) INPUT HANDLER
-  // ------------------------------------------------------------------------
-  const handleInputChange = (e: React.ChangeEvent<any>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : value;
 
@@ -87,9 +78,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     }));
   };
 
-  // ------------------------------------------------------------------------
-  // 4) SUBMIT EDIT
-  // ------------------------------------------------------------------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form) return;
@@ -129,15 +117,15 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
 
       <form className={styles.form} onSubmit={handleSubmit}>
         {/* SELECTS */}
-        <CarSelectsComponent
-          brand={form.brand}
-          model={form.model}
-          condition={form.condition}
-          fuel_type={form.fuel_type}
-          location={form.location}
-          setBrand={(brand) => setForm((p) => ({ ...p!, brand }))}
-          setModel={(model) => setForm((p) => ({ ...p!, model }))}
-          setCondition={(condition) => setForm((p) => ({ ...p!, condition }))}
+          <CarSelectsComponent
+              brand={form.brand ?? ""}
+              model={form.model ?? ""}
+              condition={form.condition ?? ""}
+              fuel_type={form.fuel_type ?? ""}
+              location={form.location ?? ""}
+              setBrand={(brand) => setForm((p) => ({...p!, brand}))}
+              setModel={(model) => setForm((p) => ({...p!, model}))}
+              setCondition={(condition) => setForm((p) => ({ ...p!, condition }))}
           setFuelType={(fuel_type) => setForm((p) => ({ ...p!, fuel_type }))}
           setLocation={(location) => setForm((p) => ({ ...p!, location }))}
         />
@@ -184,7 +172,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
           </div>
         </div>
 
-        {/* PRICE */}
         <div className={styles.priceSection}>
           <div className={styles.inputSection}>
             <label className={styles.label}>Price*</label>
@@ -213,7 +200,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
           EUR: {convertedPrices.EUR.toFixed(2)}
         </div>
 
-        {/* DESCRIPTION */}
         <div className={styles.textareaWrapper}>
           <label className={styles.label}>Description*</label>
           <textarea name="description" value={form.description} onChange={handleInputChange} className={styles.textarea} />
@@ -224,12 +210,20 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
         </button>
       </form>
 
-      {/* EXISTING PHOTOS (read-only for now) */}
-      <div className={styles.photoContainer}>
-        {photos.map((photo) => (
-          <Image key={photo.id} src={photo.photo} width={150} height={100} alt="" className={styles.photoImage} />
-        ))}
-      </div>
+
+            <div className={styles.photoContainer}>
+                {photos && photos.map((p) => (
+                    <Image
+                        key={p.id}
+                        src={`http://localhost:8888${p.photo_url}`}
+                        alt="car photo"
+                        width={140}
+                        height={100}
+                    />
+                ))}
+
+            </div>
+
     </section>
   );
 };

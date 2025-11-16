@@ -5,6 +5,17 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8888",
+        pathname: "/api/media/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
