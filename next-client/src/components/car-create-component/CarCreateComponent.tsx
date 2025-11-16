@@ -202,12 +202,12 @@ const CarCreateComponent = () => {
   };
 
   return (
-    <section className={styles.userManagement}>
+    <section className={styles.wrapper}>
       <h3 className={styles.subtitle}>Create New Car</h3>
 
       {message && <div className={styles.errorMessage}>{message}</div>}
 
-      <form onSubmit={handleCreateCarWithoutPhotos}>
+      <form className={styles.form} onSubmit={handleCreateCarWithoutPhotos}>
         <CarSelectsComponent
           brand={newCar.brand}
           model={newCar.model}
@@ -226,20 +226,20 @@ const CarCreateComponent = () => {
                   <div className={styles.inputSection}>
                       <label className={styles.label}>Year*</label>
                       <input type="number" name="year" value={newCar.year || ""} onChange={handleInputChange} required
-                             className={styles.select}/>
+                             className={styles.input}/>
                   </div>
 
                   <div className={styles.inputSection}>
                       <label className={styles.label}>Mileage*</label>
                       <input type="number" name="mileage" value={newCar.mileage || ""} onChange={handleInputChange}
                              required
-                             className={styles.select}/>
+                             className={styles.input}/>
                   </div>
                   <div className={styles.inputSection}>
                       <label className={styles.label}>Seats Count*</label>
                       <input type="number" name="seats_count" value={newCar.seats_count || ""}
                              onChange={handleInputChange}
-                             required className={styles.select}/>
+                             required className={styles.input}/>
                   </div>
               </div>
               <div className={styles.choiceSection}>
@@ -247,37 +247,49 @@ const CarCreateComponent = () => {
                       <label className={styles.label}>Max Speed*</label>
                       <input type="number" name="max_speed" value={newCar.max_speed || ""} onChange={handleInputChange}
                              required
-                             className={styles.select}/>
+                             className={styles.input}/>
                   </div>
 
                   <div className={styles.inputSection}>
                       <label className={styles.label}>Engine Volume*</label>
                       <input type="number" name="engine_volume" value={newCar.engine_volume || ""}
                              onChange={handleInputChange}
-                             required className={styles.select}/>
+                             required className={styles.input}/>
                   </div>
                   <label className={styles.label}>
                       Air Conditioner:
                       <input type="checkbox" name="has_air_conditioner" checked={newCar.has_air_conditioner}
-                             onChange={handleInputChange} className={styles.select}/>
+                             onChange={handleInputChange} className={styles.input} />
                   </label>
               </div>
           </div>
-          
-          <div className={styles.inputSection}>
-              <label className={styles.label}>Price*</label>
-              <input type="number" name="price" value={newCar.price || ""} onChange={handleInputChange} required
-                     className={styles.select}/>
+
+          <div className={styles.priceSection}>
+              <div className={styles.inputSection}>
+                  <label className={styles.label}>Price*</label>
+                  <input type="number" name="price" value={newCar.price || ""} onChange={handleInputChange} required
+                         className={styles.input}/>
+              </div>
+
+              <div className={styles.inputSection}>
+                  <label className={styles.label}>Currency*</label>
+                  <select name="currency" value={newCar.currency} onChange={handleInputChange} required
+                          className={styles.select}>
+                      <option value="UAH">UAH</option>
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                  </select>
+              </div>
           </div>
 
-        <label className={styles.label}>Currency*</label>
-        <select name="currency" value={newCar.currency} onChange={handleInputChange} required className={styles.select}>
-          <option value="UAH">UAH</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
+          <div className={styles.select}>
+              Exchange rates:
+              1 USD = {exchangeRates?.USD} UAH |
+              1 EUR = {exchangeRates?.EUR} UAH
+          </div>
 
-        <div className={styles.select}>
+
+          <div className={styles.select}>
           Price in UAH: {convertedPrices.UAH.toFixed(2)} | USD: {convertedPrices.USD.toFixed(2)} | EUR: {convertedPrices.EUR.toFixed(2)}
         </div>
 
@@ -288,19 +300,22 @@ const CarCreateComponent = () => {
           <div className={styles.textarea}>
               <label className={styles.label}>Description*</label>
               <textarea name="description" value={newCar.description} onChange={handleInputChange} required
-                        className={styles.select}/>
+                        className={styles.input}/>
           </div>
 
 
 
         <button type="submit" disabled={loadingCar} className={styles.submitButton}>
-          {loadingCar ? <LoaderComponent/> : "Save"}
+          {loadingCar ?
+              <div className={`authButton ${styles.loaderWrapper}`}>
+              <LoaderComponent />
+            </div> : "Save"}
         </button>
       </form>
 
       <form onSubmit={handleAddPhotos}>
         <label className={styles.label}>Upload Photos (Max 5)*</label>
-        <input type="file" multiple onChange={handlePhotoChange} disabled={loadingPhotos || localPhotos.length >= 5} className={styles.select} />
+        <input type="file" multiple onChange={handlePhotoChange} disabled={loadingPhotos || localPhotos.length >= 5} className={styles.input}/>
 
         {localPhotos.length > 0 && (
           <div className={styles.table}>
@@ -315,7 +330,11 @@ const CarCreateComponent = () => {
 
         {newCar.id && (
           <button type="submit" disabled={loadingPhotos} className={styles.submitButton}>
-            {loadingPhotos ? <LoaderComponent/> : "Add Photos"}
+            {loadingPhotos ?
+                <div className={`authButton ${styles.loaderWrapper}`}>
+              <LoaderComponent />
+            </div>
+                : "Add Photos"}
           </button>
         )}
       </form>

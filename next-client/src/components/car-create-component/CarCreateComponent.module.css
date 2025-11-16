@@ -1,4 +1,4 @@
-.userManagement {
+.wrapper{
     margin: 60px auto;
   font-family: 'Inter', sans-serif;
   /*background:  radial-gradient(circle at 10% 50%, #5ff, #00b8b8 40%, #003333);*/
@@ -9,38 +9,36 @@
     align-items: center;
     background-color: inherit;
     padding: 1rem;
+    gap: 1.5rem;
     border-radius: 1.5rem;
-    height: 500px;
     box-shadow: 0 0 12px white;
 }
 
-.editCarForm{
+.form{
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+
 
 }
 .subtitle{
    margin-bottom: 1.5rem;
 }
 .inputSection {
+    display: flex;
+    gap: 1.5rem;
     /*width: 300px;*/
 }
 
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
-  align-items: center;
-}
-
-
-.filterForm button:hover {
-  background-color: var(--color-badgeId);
-}
-
+/*.label :hover {*/
+/*  background-color: var(--color-badgeId);*/
+/*}*/
+/*.label:focus {*/
+/*    background-color: rgba(255, 255, 255, 0.3);*/
+/*}*/
 
 .select {
+
     outline: none;
   border-radius: 12px;
   padding: 5px 10px;
@@ -49,16 +47,30 @@
     background-color:inherit;
 }
 .label {
-    width: 50%;
-
+    padding: 5px 10px;
+  width: 150px;
     outline: none;
   border-radius: 12px;
-  padding: 5px 10px;
+ display: flex;
+    justify-content: center;
+    align-items: center;
   border: 1px solid var(--color-white);
   font-size: 0.95rem;
     background-color: var(--color-badgeId);
 }
+.input {
 
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: 1.5rem;
+    color: var(--color-white);
+    border: 1px solid var(--color-white);
+    outline: none;
+    background-color: transparent;
+    box-sizing: border-box;
+}
+.input:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+}
 .errorMessage {
   margin-bottom: 15px;
   padding: 10px;
@@ -71,34 +83,32 @@
 
 
 
-.inputField {
-  width: 100%;
-  padding: 6px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--color-white);
-  background-color: var(--color-badgeId);
-  font-size: 0.95rem;
-  outline: none;
-}
+/*.inputField {*/
+/*  border-radius: 12px;*/
+/*  border: 1px solid var(--color-white);*/
+/*  background-color: var(--color-badgeId);*/
+/*  font-size: 0.95rem;*/
+/*  outline: none;*/
+/*}*/
 
 .textareaField {
-  width: 100%;
   padding: 6px 12px;
   border-radius: 12px;
   border: 1px solid var(--color-white);
   background-color: var(--color-badgeId);
   font-size: 0.95rem;
   outline: none;
-  min-height: 80px;
+  min-height: 200px;
 }
 
 .inputSection {
-  margin-bottom: 15px; /* відступ між полями */
+  margin-bottom: 1.5rem;
   display: flex;
 }
 
 .topSection{
-    gap: 80px;
+    width: 100%;
+    gap: 40px;
     justify-content: space-between;
     display: flex;
 
@@ -107,7 +117,15 @@
     width: 50%;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 }
+.priceSection{
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
 .submitButton{
     display: flex;
     justify-content: center;
@@ -123,6 +141,13 @@
 }
 .submitButton:hover {
     background-color:  var(--color-border);
-
     color:  var(--color-white);
+}
+.loaderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    transform: scale(0.2);
 }
