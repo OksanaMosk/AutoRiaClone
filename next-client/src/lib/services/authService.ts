@@ -17,7 +17,6 @@ const authService = {
       if (typeof document !== "undefined") {
         document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
         document.cookie = `refreshToken=${refresh}; path=/; max-age=${30 * 24 * 60 * 60}; sameSite=strict`;
-
       }
 
       if (typeof window !== "undefined") {
@@ -57,7 +56,10 @@ const authService = {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data?.id && typeof window !== "undefined") {
+          console.log('API Response:', data);
         localStorage.setItem("userId", data.id.toString());
+        localStorage.setItem("accountType", data.accountType.toString());
+
       }
       return data;
     } catch (error: unknown) {
@@ -75,7 +77,7 @@ const authService = {
     return document.cookie.split("; ").find(row => row.startsWith("refreshToken="))?.split("=")[1] || null;
   },
 
-  // Доданий метод для оновлення токена
+
   async refreshToken(refreshToken: string) {
     try {
       const { data } = await apiService.post<{ access: string }>(

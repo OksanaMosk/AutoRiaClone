@@ -129,7 +129,9 @@ const CarCreateComponent = () => {
     try {
       const userId = localStorage.getItem("userId");
       const response = await userService.getUserCars(userId!);
-      const cars: ICar[] = response.data;
+
+        const cars: ICar[] = response.data.cars;
+
       if (cars.length >= 1) {
         setMessage("Sorry, update account to Premium");
         setLoadingCar(false);

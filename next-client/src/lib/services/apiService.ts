@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosError,AxiosHeaders, AxiosRequestConfig } from "axios";
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const apiService = axios.create({ baseURL });
 
@@ -8,12 +8,17 @@ if (typeof window !== "undefined") {
       .split("; ")
       .find((row) => row.startsWith("authToken="))
       ?.split("=")[1];
-    if (token && req.headers) {
-      req.headers.Authorization = `Bearer ${token}`;
+    if (!req.headers) {
+      req.headers = new AxiosHeaders();
+    }
+    if (token) {
+      req.headers.set("Authorization", `Bearer ${token}`);
     }
     return req;
   });
 }
+
+
 
 apiService.interceptors.response.use(
   (response) => response,
@@ -21,18 +26,15 @@ apiService.interceptors.response.use(
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
       const refreshToken = document.cookie
         .split("; ")
         .find((row) => row.startsWith("refreshToken="))
         ?.split("=")[1];
-
       if (refreshToken) {
         try {
           const response = await axios.post(`${baseURL}/api/refresh-token/`, {
             refreshToken
           });
-
           const { access } = response.data;
           if (originalRequest.headers) {
             document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict; HttpOnly; Secure`;

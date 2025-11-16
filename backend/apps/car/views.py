@@ -54,6 +54,7 @@ class CarPhotoDeleteView(DestroyAPIView):
     permission_classes = [IsSellerOrAdminOrManager]
 
 class CarStatsView(APIView):
+    permission_classes = [IsSellerOrAdmin]
     def get(self, request, car_id):
         user = request.user
         if not user.is_authenticated or user.account_type != 'premium':
@@ -75,6 +76,7 @@ class CarStatsView(APIView):
 
 
 class CarAveragePriceByRegionView(APIView):
+    permission_classes = [IsSellerOrAdmin]
     def get(self, request):
         user = request.user
         if not user.is_authenticated or user.account_type != 'premium':
@@ -102,6 +104,7 @@ class CarAveragePriceByRegionView(APIView):
 
 
 class CarAveragePriceCountryView(APIView):
+    permission_classes = [IsSellerOrAdmin]
     def get(self, request):
         user = request.user
         if not user.is_authenticated or user.account_type != 'premium':

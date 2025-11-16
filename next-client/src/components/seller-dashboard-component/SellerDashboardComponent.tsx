@@ -16,23 +16,47 @@ const SellerDashboardComponent: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const token = authService.getRefreshToken();
-        if (!token) {
-          setError("Please activate your account.");
-          return;
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("authToken="))
+    ?.split("=")[1];
+
+  (async () => {
+    if (!token) {
+      setError("Please activate your account.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const userData: IUser = await authService.getCurrentUser(token);
+      setUser(userData);
+    } catch (e) {
+        console.log(e);
+        setError("There was an error fetching user data.");
+      const refreshToken = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("refreshToken="))
+        ?.split("=")[1];
+
+      if (refreshToken) {
+        try {
+          const access = await authService.refreshToken(refreshToken);
+          document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
+          const userData: IUser = await authService.getCurrentUser(access);
+          setUser(userData);
+        } catch (refreshError) {
+          console.error("Failed to refresh token:", refreshError);
+          setError("Your session has expired. Please log in again.");
         }
-        const userData = await authService.getCurrentUser(token);
-        setUser(userData);
-      } catch (err) {
-        console.error("Failed to load user data:", err);
-        setError("Failed to load user data");
-      } finally {
-        setLoading(false);
+      } else {
+        setError("Please log in again.");
       }
-    })();
-  }, []);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");

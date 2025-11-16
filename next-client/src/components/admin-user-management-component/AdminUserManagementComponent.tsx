@@ -3,10 +3,10 @@ import { authService } from "@/lib/services/authService";
 import { IUser } from "@/models/IUser";
 import styles from './AdminUserManagementComponent.module.css';
 import userService from "@/lib/services/userService";
-import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+
 
 const AdminUserManagementComponent = () => {
-    const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
+    const [users, setUsers] = useState<IUser[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
     const [role, setRole] = useState<string | undefined>();

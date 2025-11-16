@@ -41,22 +41,23 @@ const carService = {
     },
 
     getStats(carId: string) {
-        return apiService.get(urls.cars.stats(carId));
+        const url = urls.cars.stats(carId);
+        return apiService.get(url);
     },
 
-    getAveragePriceByRegion() {
-        return apiService.get(urls.cars.averagePriceRegion);
+    getAveragePriceByRegion: (region: string) => {
+        const url = `${urls.cars.averagePriceRegion}?region=${encodeURIComponent(region)}`;
+        return apiService.get(url);
     },
 
-    getAveragePriceByCountry() {
-        return apiService.get(urls.cars.averagePriceCountry);
+    getAveragePriceByCountry: () => {
+        const url = urls.cars.averagePriceCountry;
+        return apiService.get(url);
     },
 
     getConstants() {
         return apiService.get(urls.cars.constants);
     },
-
-
 };
 
 export {carService};

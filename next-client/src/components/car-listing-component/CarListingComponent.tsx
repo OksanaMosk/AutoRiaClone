@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { ICar } from "@/models/ICar";
 import { carService } from "@/lib/services/carService";
 import Link from "next/link";
 import styles from "./CarListingComponent.module.css";
+import axios from "axios";
 
 interface CarStats {
   total_views: number;
@@ -19,37 +20,62 @@ interface AveragePrice {
   UAH: number;
 }
 
+interface IUser {
+  account_type: string;
+  email?: string;
+}
+
 interface Props {
   car: ICar;
+  user?: IUser;
   onDelete?: (id: string) => void;
   onStatusChange?: (carId: string, status: string) => void;
 }
 
-const CarListingComponent: React.FC<Props> = ({ car, onDelete, onStatusChange }) => {
+const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusChange }) => {
   const [status, setStatus] = useState<string>(car.status);
   const [stats, setStats] = useState<CarStats | null>(null);
   const [regionAvgPrice, setRegionAvgPrice] = useState<AveragePrice | null>(null);
   const [countryAvgPrice, setCountryAvgPrice] = useState<AveragePrice | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Ініціалізуємо користувача одразу з localStorage
+  const storedUser: IUser | null = useMemo(() => {
+    const accountType = localStorage.getItem("accountType");
+    if (accountType === "premium") return { account_type: "premium" };
+    if (accountType === "basic") return { account_type: "basic" };
+    return null;
+  }, []);
+
+  const activeUser = storedUser || user;
+
+  // Завантаження статистики та середніх цін
   useEffect(() => {
+    if (!activeUser || activeUser.account_type !== "premium") return;
+
     const fetchData = async () => {
       try {
+        setError(null);
+
         const statsRes = await carService.getStats(car.id);
         setStats(statsRes.data);
+
         const regionRes = await carService.getAveragePriceByRegion(car.location);
-        setRegionAvgPrice(regionRes.data);
-        const countryRes = await carService.getAveragePriceByCountry(car.location);
-        setCountryAvgPrice(countryRes.data);
+        setRegionAvgPrice(regionRes.data.average_price);
+
+        const countryRes = await carService.getAveragePriceByCountry();
+        setCountryAvgPrice(countryRes.data.average_price);
+
       } catch (err) {
-        console.error(err);
+        console.error("UNKNOWN ERROR:", err);
         setError("Error loading stats and prices");
       }
     };
 
     fetchData();
-  }, [car.id, car.location]);
+  }, [car.id, car.location, activeUser]);
 
+  // Зміна статусу автомобіля
   const handleStatusChange = async () => {
     try {
       const newStatus = status === "active" ? "inactive" : "active";
@@ -57,11 +83,16 @@ const CarListingComponent: React.FC<Props> = ({ car, onDelete, onStatusChange })
       setStatus(newStatus);
       onStatusChange?.(car.id, newStatus);
     } catch (err) {
-      console.error(err);
+      if (axios.isAxiosError(err)) {
+        console.error("BACKEND ERROR:", err.response?.data);
+      } else {
+        console.error("UNKNOWN ERROR:", err);
+      }
       alert("Error updating status");
     }
   };
 
+  // Видалення автомобіля
   const handleDelete = async () => {
     try {
       await carService.delete(car.id);
@@ -91,7 +122,6 @@ const CarListingComponent: React.FC<Props> = ({ car, onDelete, onStatusChange })
         </thead>
         <tbody>
           <tr key={car.id} className={styles.tableRow}>
-            <td className={styles.user}></td>
             <td className={styles.user}>{car.brand}</td>
             <td className={styles.user}>{car.model}</td>
             <td className={styles.user}>{car.year}</td>
@@ -109,37 +139,49 @@ const CarListingComponent: React.FC<Props> = ({ car, onDelete, onStatusChange })
               <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>
             </td>
             <td className={styles.user}>
-              {stats ? (
-                <>
-                  <p>Views: {stats.total_views}</p>
-                  <p>Daily: {stats.daily_views}</p>
-                  <p>Weekly: {stats.weekly_views}</p>
-                  <p>Monthly: {stats.monthly_views}</p>
-                </>
+              {activeUser?.account_type === "premium" ? (
+                stats ? (
+                  <>
+                    <p>Views: {stats.total_views}</p>
+                    <p>Daily: {stats.daily_views}</p>
+                    <p>Weekly: {stats.weekly_views}</p>
+                    <p>Monthly: {stats.monthly_views}</p>
+                  </>
+                ) : (
+                  <p>Loading stats...</p>
+                )
               ) : (
-                <p>Loading stats...</p>
+                <p>Premium required</p>
               )}
             </td>
             <td className={styles.user}>
-              {regionAvgPrice ? (
-                <>
-                  <p>USD: {regionAvgPrice.USD}</p>
-                  <p>EUR: {regionAvgPrice.EUR}</p>
-                  <p>UAH: {regionAvgPrice.UAH}</p>
-                </>
+              {activeUser?.account_type === "premium" ? (
+                regionAvgPrice ? (
+                  <>
+                    <p>USD: {regionAvgPrice.USD}</p>
+                    <p>EUR: {regionAvgPrice.EUR}</p>
+                    <p>UAH: {regionAvgPrice.UAH}</p>
+                  </>
+                ) : (
+                  <p>Loading region prices...</p>
+                )
               ) : (
-                <p>Loading region prices...</p>
+                <p>Premium required</p>
               )}
             </td>
             <td className={styles.user}>
-              {countryAvgPrice ? (
-                <>
-                  <p>USD: {countryAvgPrice.USD}</p>
-                  <p>EUR: {countryAvgPrice.EUR}</p>
-                  <p>UAH: {countryAvgPrice.UAH}</p>
-                </>
+              {activeUser?.account_type === "premium" ? (
+                countryAvgPrice ? (
+                  <>
+                    <p>USD: {countryAvgPrice.USD}</p>
+                    <p>EUR: {countryAvgPrice.EUR}</p>
+                    <p>UAH: {countryAvgPrice.UAH}</p>
+                  </>
+                ) : (
+                  <p>Loading country prices...</p>
+                )
               ) : (
-                <p>Loading country prices...</p>
+                <p>Premium required</p>
               )}
             </td>
           </tr>
@@ -150,7 +192,3 @@ const CarListingComponent: React.FC<Props> = ({ car, onDelete, onStatusChange })
 };
 
 export default CarListingComponent;
-
-
-
-
