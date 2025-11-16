@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { ICar } from "@/models/ICar";
 import { carService } from "@/lib/services/carService";
-import { useRouter } from "next/router";
-import Image from "next/image";
+import Link from "next/link";
 import styles from "./CarListingComponent.module.css";
 
 interface CarStats {
@@ -23,46 +22,34 @@ interface AveragePrice {
 interface Props {
   car: ICar;
   onDelete?: (id: string) => void;
-  onStatusChange: (carId: string, status: string) => void;
+  onStatusChange?: (carId: string, status: string) => void;
 }
 
 const CarListingComponent: React.FC<Props> = ({ car, onDelete, onStatusChange }) => {
-  const router = useRouter();
   const [status, setStatus] = useState<string>(car.status);
   const [stats, setStats] = useState<CarStats | null>(null);
   const [regionAvgPrice, setRegionAvgPrice] = useState<AveragePrice | null>(null);
   const [countryAvgPrice, setCountryAvgPrice] = useState<AveragePrice | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch car stats
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       try {
-        const res = await carService.getStats(car.id);
-        setStats(res.data);
-      } catch (err) {
-        console.error("Error loading car stats:", err);
-        setError("Error loading car stats");
-      }
-    })();
-  }, [car.id]);
-
-  // Fetch average prices
-  useEffect(() => {
-    (async () => {
-      try {
-        const regionRes = await carService.getAveragePriceByRegion();
+        const statsRes = await carService.getStats(car.id);
+        setStats(statsRes.data);
+        const regionRes = await carService.getAveragePriceByRegion(car.location);
         setRegionAvgPrice(regionRes.data);
-        const countryRes = await carService.getAveragePriceByCountry();
+        const countryRes = await carService.getAveragePriceByCountry(car.location);
         setCountryAvgPrice(countryRes.data);
       } catch (err) {
-        console.error("Error loading prices:", err);
-        setError("Error loading prices");
+        console.error(err);
+        setError("Error loading stats and prices");
       }
-    })();
-  }, [car.location]);
+    };
 
-  // Update status
+    fetchData();
+  }, [car.id, car.location]);
+
   const handleStatusChange = async () => {
     try {
       const newStatus = status === "active" ? "inactive" : "active";
@@ -70,12 +57,11 @@ const CarListingComponent: React.FC<Props> = ({ car, onDelete, onStatusChange })
       setStatus(newStatus);
       onStatusChange?.(car.id, newStatus);
     } catch (err) {
-      console.error("Error updating status:", err);
+      console.error(err);
       alert("Error updating status");
     }
   };
 
-  // Delete
   const handleDelete = async () => {
     try {
       await carService.delete(car.id);
@@ -86,61 +72,85 @@ const CarListingComponent: React.FC<Props> = ({ car, onDelete, onStatusChange })
     }
   };
 
-  // Edit
-  const handleEdit = () => router.push(`edit/${car.id}`);
-
   return (
-    <tr className={styles.tableRow}>
-      <td>{car.photos[0] && <Image src={car.photos[0].photo_url} alt="Car photo" width={50} height={50} />}</td>
-      <td>{car.brand}</td>
-      <td>{car.model}</td>
-      <td>{car.year}</td>
-      <td>{car.price}</td>
-      <td className={status === "active" ? styles.statusActive : styles.statusInactive}>{status}</td>
-      <td>
-        <button onClick={handleStatusChange} className={styles.statusButton}>
-          {status === "active" ? "Deactivate" : "Activate"}
-        </button>
-        <button onClick={handleEdit} className={styles.editButton}>Edit</button>
-        <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>
-      </td>
-      <td>
-        {stats ? (
-          <>
-            <p>Views: {stats.total_views}</p>
-            <p>Daily: {stats.daily_views}</p>
-            <p>Weekly: {stats.weekly_views}</p>
-            <p>Monthly: {stats.monthly_views}</p>
-          </>
-        ) : (
-          <p>Loading stats...</p>
-        )}
-      </td>
-      <td>
-        {regionAvgPrice ? (
-          <>
-            <p>USD: {regionAvgPrice.USD}</p>
-            <p>EUR: {regionAvgPrice.EUR}</p>
-            <p>UAH: {regionAvgPrice.UAH}</p>
-          </>
-        ) : (
-          <p>Loading region prices...</p>
-        )}
-      </td>
-      <td>
-        {countryAvgPrice ? (
-          <>
-            <p>USD: {countryAvgPrice.USD}</p>
-            <p>EUR: {countryAvgPrice.EUR}</p>
-            <p>UAH: {countryAvgPrice.UAH}</p>
-          </>
-        ) : (
-          <p>Loading country prices...</p>
-        )}
-      </td>
-      {error && <td className={styles.error}>{error}</td>}
-    </tr>
+    <div>
+      {error && <p className={styles.error}>{error}</p>}
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+            <th>Stats</th>
+            <th>Region Avg Price</th>
+            <th>Country Avg Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr key={car.id} className={styles.tableRow}>
+            <td className={styles.user}></td>
+            <td className={styles.user}>{car.brand}</td>
+            <td className={styles.user}>{car.model}</td>
+            <td className={styles.user}>{car.year}</td>
+            <td className={styles.user}>{car.price}</td>
+            <td className={status === "active" ? styles.statusActive : styles.statusInactive}>
+              {status}
+            </td>
+            <td className={styles.actions}>
+              <button onClick={handleStatusChange} className={styles.statusButton}>
+                {status === "active" ? "Deactivate" : "Activate"}
+              </button>
+              <Link href={`/edit/${car.id}`} passHref>
+                <button className={styles.editButton}>Edit</button>
+              </Link>
+              <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>
+            </td>
+            <td className={styles.user}>
+              {stats ? (
+                <>
+                  <p>Views: {stats.total_views}</p>
+                  <p>Daily: {stats.daily_views}</p>
+                  <p>Weekly: {stats.weekly_views}</p>
+                  <p>Monthly: {stats.monthly_views}</p>
+                </>
+              ) : (
+                <p>Loading stats...</p>
+              )}
+            </td>
+            <td className={styles.user}>
+              {regionAvgPrice ? (
+                <>
+                  <p>USD: {regionAvgPrice.USD}</p>
+                  <p>EUR: {regionAvgPrice.EUR}</p>
+                  <p>UAH: {regionAvgPrice.UAH}</p>
+                </>
+              ) : (
+                <p>Loading region prices...</p>
+              )}
+            </td>
+            <td className={styles.user}>
+              {countryAvgPrice ? (
+                <>
+                  <p>USD: {countryAvgPrice.USD}</p>
+                  <p>EUR: {countryAvgPrice.EUR}</p>
+                  <p>UAH: {countryAvgPrice.UAH}</p>
+                </>
+              ) : (
+                <p>Loading country prices...</p>
+              )}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 };
 
 export default CarListingComponent;
+
+
+
+

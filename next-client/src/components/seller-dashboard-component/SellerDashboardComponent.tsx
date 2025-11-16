@@ -23,7 +23,6 @@ const SellerDashboardComponent: React.FC = () => {
           setError("Please activate your account.");
           return;
         }
-
         const userData = await authService.getCurrentUser(token);
         setUser(userData);
       } catch (err) {
@@ -36,47 +35,38 @@ const SellerDashboardComponent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-  if (!user?.id) return;
-
-  const userId = user.id;
-
-  (async () => {
-    setLoading(true);
-    try {
-       const userId = localStorage.getItem("userId");
-      const response = await userService.getUserCars(userId!);
-      const cars: ICar[] = response.data;
-      setCars(cars);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load cars.");
-    } finally {
-      setLoading(false);
-    }
-  })();
-}, [user]);
-
-  // Видалення автомобіля
-  const handleDelete = (carId: string) => {
-    setCars((prev) => prev.filter((c) => c.id !== carId));
-  };
-
-  // Зміна статусу автомобіля
-  const handleStatusChange = (carId: string, status: string) => {
-    setCars((prev) =>
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+      (async () => {
+          setLoading(true);
+          try {
+              const response = await userService.getUserCars(userId);
+              console.log("User cars response:", response);
+              const cars = response.data.cars;
+              setCars(cars);
+          } catch (err) {
+              console.error("Failed to load cars:", err);
+              setError("Failed to load cars.");
+          } finally {
+              setLoading(false);
+          }
+      })();
+  }, [user]);
+    const handleDelete = (carId: string) => {
+        setCars((prev) => prev.filter((c) => c.id !== carId));
+    };
+    const handleStatusChange = (carId: string, status: string) => {
+        setCars((prev) =>
       prev.map((car) => (car.id === carId ? { ...car, status } : car))
     );
   };
-
   if (loading)
     return (
       <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
         <LoaderComponent />
       </div>
     );
-
   if (error) return <p className={styles.errorText}>{error}</p>;
-
   return (
     <div className={styles.dashboard}>
       <h2>My Car Listings</h2>
@@ -99,5 +89,3 @@ const SellerDashboardComponent: React.FC = () => {
 };
 
 export default SellerDashboardComponent;
-
-

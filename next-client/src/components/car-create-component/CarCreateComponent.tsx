@@ -305,9 +305,9 @@ const CarCreateComponent = () => {
                         className={styles.textarea}/>
           </div>
 
-
-        <button type="submit" disabled={loadingCar} className={styles.submitButton}>
-          {loadingCar ?
+          {message && <p className={styles.success}>{message}</p>}
+          <button type="submit" disabled={loadingCar} className={styles.submitButton}>
+              {loadingCar ?
               <div className={`authButton ${styles.loaderWrapper}`}>
               <LoaderComponent />
             </div> : "Save"}
@@ -339,9 +339,7 @@ const CarCreateComponent = () => {
             </div>
                 : "Add Photos"}
           </button>
-        )}
-          </div>
-          {message && <div className={styles.errorMessage}>{message}</div>}
+        )}  </div>
       </form>
     </section>
   );

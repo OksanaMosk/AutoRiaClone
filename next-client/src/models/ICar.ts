@@ -43,3 +43,6 @@ export interface ICarPhoto {
     car_id: string;
     photo_url: string;
 }
+export interface GetUserCarsResponse {
+  cars: ICar[];
+}
