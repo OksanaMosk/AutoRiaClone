@@ -1,238 +1,237 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { carService } from "@/lib/services/carService";
-import styles from './CarEditComponent.module.css';
-import { useParams } from "next/navigation";
-import { useRouter } from "next/router";
-import CarSelectsComponent from "@/components/car-selects-component/CarSelectsComponent";
-import { ICar, ICarPhoto } from "@/models/ICar";
+import { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import { carService } from "@/lib/services/carService";
+import CarSelectsComponent from "@/components/car-selects-component/CarSelectsComponent";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import { ICar, ICarPhoto } from "@/models/ICar";
+import styles from "./CarEditComponent.module.css";
 
-type Currency = "UAH" | "USD" | "EUR";
+interface CarEditComponentProps {
+  carId: string;
+}
 
-const CarEditComponent: React.FC = () => {
-  const { carId } = useParams<{ carId: string }>();
+const CarEditComponent = ({ carId }: CarEditComponentProps) => {
   const router = useRouter();
 
-  const [form, setForm] = useState<Partial<ICar>>({
-    brand: "",
-    model: "",
-    year: 0,
-    mileage: 0,
-    price: 0,
-    currency: "UAH",
-    price_usd: 0,
-    price_eur: 0,
-    condition: "new",
-    max_speed: 0,
-    seats_count: 0,
-    engine_volume: 0,
-    has_air_conditioner: false,
-    fuel_type: "petrol",
-    location: "",
-    description: "",
-  });
-
+  const [form, setForm] = useState<Partial<ICar> | null>(null);
   const [photos, setPhotos] = useState<ICarPhoto[]>([]);
   const [exchangeRates, setExchangeRates] = useState<{ USD: number; EUR: number } | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
 
-  // Завантаження авто
+  // ------------------------------------------------------------------------
+  // 1) LOAD CAR DATA
+  // ------------------------------------------------------------------------
   useEffect(() => {
     if (!carId) return;
 
-    setLoading(true);
-    carService.get(carId)
-      .then(res => {
-        const data: ICar = res.data;
-        setForm({
-          brand: data.brand,
-          model: data.model,
-          year: data.year,
-          mileage: data.mileage,
-          price: data.price,
-          currency: data.currency,
-          price_usd: data.price_usd,
-          price_eur: data.price_eur,
-          condition: data.condition,
-          max_speed: data.max_speed,
-          seats_count: data.seats_count,
-          engine_volume: data.engine_volume,
-          has_air_conditioner: data.has_air_conditioner,
-          fuel_type: data.fuel_type,
-          location: data.location,
-          description: data.description,
-        });
-        setPhotos(data.photos || []);
-      })
-      .catch(err => console.error("Failed to load car:", err))
-      .finally(() => setLoading(false));
-  }, [carId]);
-
-  // Завантаження курсів валют
-  useEffect(() => {
     (async () => {
       try {
-        const res = await carService.getExchangeRates();
-        setExchangeRates(res.data);
+        const carResponse = await carService.get(carId);
+        const data: ICar = carResponse.data;
+
+        setForm(data);
+        setPhotos(data.photos || []);
+
+        const rates = await carService.getExchangeRates();
+        setExchangeRates(rates.data);
       } catch (err) {
-        console.error("Failed to load exchange rates:", err);
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     })();
-  }, []);
+  }, [carId]);
 
-  // Конвертація цін
-  const convertedPrices = React.useMemo(() => {
-    if (!exchangeRates) return { UAH: 0, USD: 0, EUR: 0 };
+  // ------------------------------------------------------------------------
+  // 2) PRICE CONVERSION (same logic as in Create)
+  // ------------------------------------------------------------------------
+  const convertedPrices = useMemo(() => {
+    if (!form || !exchangeRates || isNaN(Number(form.price))) {
+      return { UAH: 0, USD: 0, EUR: 0 };
+    }
+
+    const price = Number(form.price);
+    const currency = form.currency || "UAH";
+
     const baseUAH =
-      form.currency === "UAH"
-        ? form.price || 0
-        : form.currency === "USD"
-        ? (form.price || 0) * exchangeRates.USD
-        : (form.price || 0) * exchangeRates.EUR;
+      currency === "UAH"
+        ? price
+        : currency === "USD"
+        ? price * exchangeRates.USD
+        : price * exchangeRates.EUR;
+
     return {
       UAH: baseUAH,
       USD: baseUAH / exchangeRates.USD,
       EUR: baseUAH / exchangeRates.EUR,
     };
-  }, [form.price, form.currency, exchangeRates]);
+  }, [form?.price, form?.currency, exchangeRates]);
 
-  // Зміни у формі
-  const handleChange = (
-    field: keyof ICar,
-    value: string | number | boolean
-  ) => {
-    setForm(prev => ({ ...prev, [field]: value }));
-  };
+  // ------------------------------------------------------------------------
+  // 3) INPUT HANDLER
+  // ------------------------------------------------------------------------
+  const handleInputChange = (e: React.ChangeEvent<any>) => {
+    const { name, value, type, checked } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
 
-  // Додавання фото
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const files = Array.from(e.target.files);
-    if (files.length + photos.length > 5) {
-      setError("You can upload up to 5 photos.");
-      return;
-    }
-    const newPhotos = files.map((file, i) => ({
-      id: `temp-${Date.now()}-${i}`,
-      car_id: carId || "",
-      photo_url: URL.createObjectURL(file),
+    setForm((prev) => ({
+      ...prev!,
+      [name]: type === "number" ? Number(newValue) : newValue,
     }));
-    setPhotos(prev => [...prev, ...newPhotos]);
-    setError(null);
   };
 
-  const handleDeletePhoto = async (photo: ICarPhoto, index: number) => {
-    try {
-      if (!photo.id.startsWith("temp-")) {
-        await carService.deletePhoto(photo.id);
-      }
-      setPhotos(prev => prev.filter((_, i) => i !== index));
-    } catch (err) {
-      console.error("Failed to delete photo:", err);
-      setError("Failed to delete photo");
-    }
-  };
+  // ------------------------------------------------------------------------
+  // 4) SUBMIT EDIT
+  // ------------------------------------------------------------------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
-    try {
-      if (!carId) return;
+    if (!form) return;
 
-      const carToSend: ICar = {
+    setSaving(true);
+    setError(null);
+
+    try {
+      const updated: ICar = {
         ...form,
-        price: convertedPrices[form.currency as Currency],
+        price: convertedPrices[form.currency as keyof typeof convertedPrices],
         price_usd: convertedPrices.USD,
         price_eur: convertedPrices.EUR,
-        photos: [],
       } as ICar;
 
-      await carService.update(carId, carToSend);
-
-      const newPhotos = photos.filter(p => p.id.startsWith("temp-"));
-      if (newPhotos.length > 0) {
-        await carService.addPhoto(carId, newPhotos);
-      }
-
-      await router.push("/");
+      await carService.update(carId, updated);
+      router.push("/cars");
     } catch (err) {
       console.error(err);
-      setError("Failed to save car");
+      setError("Failed to save changes");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
-            <LoaderComponent />
-        </div>;
+  // ------------------------------------------------------------------------
+  // UI
+  // ------------------------------------------------------------------------
+  if (loading || !form) return <LoaderComponent />;
 
   return (
-    <section className={styles.editCarSection}>
-      <h2>Edit Car Listing</h2>
-      {error && <div className={styles.errorMessage}>{error}</div>}
-      <form className={styles.editCarForm} onSubmit={handleSubmit}>
+    <section className={styles.wrapper}>
+      <h3 className={styles.subtitle}>Edit Car #{carId}</h3>
+
+      {error && <p className={styles.error}>{error}</p>}
+      {message && <p className={styles.success}>{message}</p>}
+
+      <form className={styles.form} onSubmit={handleSubmit}>
+        {/* SELECTS */}
         <CarSelectsComponent
-          brand={form.brand || ""}
-          model={form.model || ""}
-          condition={form.condition || "new"}
-          fuel_type={form.fuel_type || "petrol"}
-          location={form.location || ""}
-          setBrand={(v) => handleChange("brand", v)}
-          setModel={(v) => handleChange("model", v)}
-          setCondition={(v) => handleChange("condition", v)}
-          setFuelType={(v) => handleChange("fuel_type", v)}
-          setLocation={(v) => handleChange("location", v)}
+          brand={form.brand}
+          model={form.model}
+          condition={form.condition}
+          fuel_type={form.fuel_type}
+          location={form.location}
+          setBrand={(brand) => setForm((p) => ({ ...p!, brand }))}
+          setModel={(model) => setForm((p) => ({ ...p!, model }))}
+          setCondition={(condition) => setForm((p) => ({ ...p!, condition }))}
+          setFuelType={(fuel_type) => setForm((p) => ({ ...p!, fuel_type }))}
+          setLocation={(location) => setForm((p) => ({ ...p!, location }))}
         />
 
-        <input type="number" value={form.year || 0} placeholder="Year" onChange={e => handleChange("year", Number(e.target.value))} />
-        <input type="number" value={form.mileage || 0} placeholder="Mileage" onChange={e => handleChange("mileage", Number(e.target.value))} />
-        <input type="number" value={form.price || 0} placeholder="Price" onChange={e => handleChange("price", Number(e.target.value))} />
+        <div className={styles.topSection}>
+          <div className={styles.choiceSection}>
+            <div className={styles.inputSection}>
+              <label className={styles.label}>Year*</label>
+              <input name="year" type="number" value={form.year} onChange={handleInputChange} className={styles.input} />
+            </div>
 
-        <select value={form.currency} onChange={e => handleChange("currency", e.target.value)}>
-          <option value="UAH">UAH</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
+            <div className={styles.inputSection}>
+              <label className={styles.label}>Mileage*</label>
+              <input name="mileage" type="number" value={form.mileage} onChange={handleInputChange} className={styles.input} />
+            </div>
 
-        <p>Price in UAH: {convertedPrices.UAH.toFixed(2)}</p>
-        <p>Price in USD: {convertedPrices.USD.toFixed(2)}</p>
-        <p>Price in EUR: {convertedPrices.EUR.toFixed(2)}</p>
+            <div className={styles.inputSection}>
+              <label className={styles.label}>Seats Count*</label>
+              <input name="seats_count" type="number" value={form.seats_count} onChange={handleInputChange} className={styles.input} />
+            </div>
+          </div>
 
-        <input type="number" value={form.max_speed || 0} placeholder="Max Speed" onChange={e => handleChange("max_speed", Number(e.target.value))} />
-        <input type="number" value={form.seats_count || 0} placeholder="Seats Count" onChange={e => handleChange("seats_count", Number(e.target.value))} />
-        <input type="number" value={form.engine_volume || 0} placeholder="Engine Volume" onChange={e => handleChange("engine_volume", Number(e.target.value))} />
+          <div className={styles.choiceSection}>
+            <div className={styles.inputSection}>
+              <label className={styles.label}>Max Speed*</label>
+              <input name="max_speed" type="number" value={form.max_speed} onChange={handleInputChange} className={styles.input} />
+            </div>
 
-        <label>
-          Air Conditioner:
-          <input type="checkbox" checked={form.has_air_conditioner || false} onChange={e => handleChange("has_air_conditioner", e.target.checked)} />
-        </label>
+            <div className={styles.inputSection}>
+              <label className={styles.label}>Engine*</label>
+              <input name="engine_volume" type="number" value={form.engine_volume} onChange={handleInputChange} className={styles.input} />
+            </div>
 
-        <textarea value={form.description || ""} placeholder="Description" onChange={e => handleChange("description", e.target.value)} />
+            <label className={styles.label}>
+              AC
+              <input
+                type="checkbox"
+                name="has_air_conditioner"
+                checked={Boolean(form.has_air_conditioner)}
+                onChange={handleInputChange}
+                className={styles.checkbox}
+              />
+            </label>
+          </div>
+        </div>
 
-        <input type="file" multiple onChange={handlePhotoChange} />
-        {photos.length > 0 && (
-          <div className={styles.photoPreview}>
-            {photos.map((photo, i) => (
-              <div key={i} className={styles.photoItem}>
-                <Image src={photo.photo_url} alt="" width={150} height={100} />
-                <button type="button" onClick={() => handleDeletePhoto(photo, i)}>Delete</button>
-              </div>
-            ))}
+        {/* PRICE */}
+        <div className={styles.priceSection}>
+          <div className={styles.inputSection}>
+            <label className={styles.label}>Price*</label>
+            <input name="price" type="number" value={form.price} onChange={handleInputChange} className={styles.input} />
+          </div>
+
+          <div className={styles.inputSection}>
+            <label className={styles.label}>Currency*</label>
+            <select name="currency" value={form.currency} onChange={handleInputChange} className={styles.select}>
+              <option value="UAH">UAH</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+        </div>
+
+        {exchangeRates && (
+          <div className={styles.rate}>
+            1 USD = {exchangeRates.USD} UAH | 1 EUR = {exchangeRates.EUR} UAH
           </div>
         )}
 
-        <button type="submit" disabled={saving}>
-          {saving ? "Saving..." : "Save Car"}
+        <div className={styles.rate}>
+          Price in UAH: {convertedPrices.UAH.toFixed(2)} |
+          USD: {convertedPrices.USD.toFixed(2)} |
+          EUR: {convertedPrices.EUR.toFixed(2)}
+        </div>
+
+        {/* DESCRIPTION */}
+        <div className={styles.textareaWrapper}>
+          <label className={styles.label}>Description*</label>
+          <textarea name="description" value={form.description} onChange={handleInputChange} className={styles.textarea} />
+        </div>
+
+        <button type="submit" disabled={saving} className={styles.submitButton}>
+          {saving ? <LoaderComponent /> : "Save Changes"}
         </button>
       </form>
+
+      {/* EXISTING PHOTOS (read-only for now) */}
+      <div className={styles.photoContainer}>
+        {photos.map((photo) => (
+          <Image key={photo.id} src={photo.photo} width={150} height={100} alt="" className={styles.photoImage} />
+        ))}
+      </div>
     </section>
   );
 };
 
 export default CarEditComponent;
-

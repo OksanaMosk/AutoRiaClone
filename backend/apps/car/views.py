@@ -39,6 +39,10 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     http_method_names = ['get', 'put', 'patch', 'delete']
     permission_classes = [IsSellerOrAdmin]
 
+    def get_serializer(self, *args, **kwargs):
+        kwargs['partial'] = True
+        return super().get_serializer(*args, **kwargs)
+
 class CarPhotoCreateView(CreateAPIView):
     serializer_class = CarPhotoSerializer
     permission_classes = [IsSellerOrAdmin]

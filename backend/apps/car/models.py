@@ -108,7 +108,6 @@ class carModel(models.Model):
         return self.photos.all()
 
     def clean(self):
-        print(f"Clean method called with {self.__dict__}")
         if profanity.contains_profanity(self.description):
             self.status = 'pending'
             if self.edit_attempts >= 3:
@@ -118,9 +117,9 @@ class carModel(models.Model):
             else:
                 self.edit_attempts += 1
                 raise ValidationError("Description contains prohibited words. Please edit.")
-
         else:
-            self.status = 'active'
+            if not hasattr(self, '_status_from_request'):
+                self.status = 'active'
 
     def notify_manager(self):
         send_mail(

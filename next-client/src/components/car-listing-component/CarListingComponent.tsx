@@ -51,48 +51,45 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
 
   // Завантаження статистики та середніх цін
   useEffect(() => {
-    if (!activeUser || activeUser.account_type !== "premium") return;
+  if (!activeUser || activeUser.account_type !== "premium") return;
 
-    const fetchData = async () => {
-      try {
-        setError(null);
-
-        const statsRes = await carService.getStats(car.id);
-        setStats(statsRes.data);
-
-        const regionRes = await carService.getAveragePriceByRegion(car.location);
-        setRegionAvgPrice(regionRes.data.average_price);
-
-        const countryRes = await carService.getAveragePriceByCountry();
-        setCountryAvgPrice(countryRes.data.average_price);
-
-      } catch (err) {
-        console.error("UNKNOWN ERROR:", err);
-        setError("Error loading stats and prices");
-      }
-    };
-
-    fetchData();
-  }, [car.id, car.location, activeUser]);
-
-  // Зміна статусу автомобіля
-  const handleStatusChange = async () => {
+  (async () => {
     try {
-      const newStatus = status === "active" ? "inactive" : "active";
-      await carService.update(car.id, { status: newStatus });
-      setStatus(newStatus);
-      onStatusChange?.(car.id, newStatus);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.error("BACKEND ERROR:", err.response?.data);
-      } else {
-        console.error("UNKNOWN ERROR:", err);
-      }
-      alert("Error updating status");
-    }
-  };
+      setError(null);
 
-  // Видалення автомобіля
+      const statsRes = await carService.getStats(car.id);
+      setStats(statsRes.data);
+
+      const regionRes = await carService.getAveragePriceByRegion(car.location);
+      setRegionAvgPrice(regionRes.data.average_price);
+
+      const countryRes = await carService.getAveragePriceByCountry();
+      setCountryAvgPrice(countryRes.data.average_price);
+
+    } catch (err) {
+      console.error("UNKNOWN ERROR:", err);
+      setError("Error loading stats and prices");
+    }
+  })();
+}, [car.id, car.location, activeUser]);
+
+
+  const handleStatusChange = async () => {
+  try {
+    const newStatus = status === "active" ? "inactive" : "active";
+    await carService.update(car.id, { status: newStatus });
+    setStatus(newStatus);
+    onStatusChange?.(car.id, newStatus);
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      console.error("BACKEND ERROR:", err.response?.data);
+    } else {
+      console.error("UNKNOWN ERROR:", err);
+    }
+    alert("Error updating status");
+  }
+};
+
   const handleDelete = async () => {
     try {
       await carService.delete(car.id);
@@ -130,10 +127,10 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
               {status}
             </td>
             <td className={styles.actions}>
-              <button onClick={handleStatusChange} className={styles.statusButton}>
-                {status === "active" ? "Deactivate" : "Activate"}
-              </button>
-              <Link href={`/edit/${car.id}`} passHref>
+             <button onClick={handleStatusChange}>
+  {status === "active" ? "Deactivate" : "Activate"}
+</button>
+             <Link href={`/cars/edit/${car.id}`} passHref>
                 <button className={styles.editButton}>Edit</button>
               </Link>
               <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>

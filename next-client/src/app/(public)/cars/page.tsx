@@ -1,9 +1,11 @@
+import React from 'react';
 
-import { carService } from "@/lib/services/carService";
+const Page = () => {
+    return (
+        <div>
+            
+        </div>
+    );
+};
 
-import CarsClientComponent from "@/components/cars-client-component/CarsClientComponent";
-
-export default async function CarsPage() {
-  const carsData = await carService.getAll();
-  return <CarsClientComponent cars={carsData.data} />;
-}
+export default Page;
