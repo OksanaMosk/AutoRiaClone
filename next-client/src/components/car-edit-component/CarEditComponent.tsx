@@ -26,25 +26,31 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!carId) return;
+  if (!carId) return;
 
-    (async () => {
-      try {
-        const carResponse = await carService.get(carId);
-        const data: ICar = carResponse.data;
- console.log(data)
-        setForm(data);
-        setPhotos(data.photos || []);
-
-        const rates = await carService.getExchangeRates();
-        setExchangeRates(rates.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
+  (async () => {
+    try {
+      const carResponse = await carService.get(carId);
+      const data: ICar = carResponse.data;
+      const userId = localStorage.getItem("userId");
+      if (data.seller_id !== userId) {
+        setError("You cannot edit this car. It does not belong to you.");
         setLoading(false);
+        return;
       }
-    })();
-  }, [carId]);
+      setForm(data);
+      setPhotos(data.photos || []);
+      const rates = await carService.getExchangeRates();
+      setExchangeRates(rates.data);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load car");
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, [carId]);
+
 
   const convertedPrices = useMemo(() => {
     if (!form || !exchangeRates || isNaN(Number(form.price))) {
@@ -103,10 +109,10 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     }
   };
 
-  // ------------------------------------------------------------------------
-  // UI
-  // ------------------------------------------------------------------------
-  if (loading || !form) return <LoaderComponent />;
+
+  if (loading || !form) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;;
 
   return (
     <section className={styles.wrapper}>
@@ -215,10 +221,11 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
                 {photos && photos.map((p) => (
                     <Image
                         key={p.id}
-                        src={`http://localhost:8888${p.photo_url}`}
+                        src={`${p.photo}`}
                         alt="car photo"
                         width={140}
                         height={100}
+                         unoptimized={true}
                     />
                 ))}
 

@@ -31,6 +31,7 @@ export interface ICar {
     EUR: number;
     UAH: number;
   };
+    seller_id?:string;
     country_avg_price?: {
     USD: number;
     EUR: number;
@@ -41,7 +42,7 @@ export interface ICar {
 export interface ICarPhoto {
     id: string;
     car_id: string;
-    photo_url: string;
+    photo: string;
 }
 export interface GetUserCarsResponse {
   cars: ICar[];
