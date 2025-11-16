@@ -105,9 +105,7 @@ const AdminUserManagementComponent = () => {
     };
 
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
-            <LoaderComponent />
-        </div>;
+    if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
     return (

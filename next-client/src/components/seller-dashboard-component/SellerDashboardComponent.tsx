@@ -15,49 +15,46 @@ const SellerDashboardComponent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Отримуємо користувача
   useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("authToken="))
-      ?.split("=")[1];
-
-    if (!token) {
-      setError("Please log in.");
-      setLoading(false);
-      return;
-    }
-
     (async () => {
       try {
-        const userData: IUser = await authService.getCurrentUser(token);
+        const token = authService.getRefreshToken();
+        if (!token) {
+          setError("Please activate your account.");
+          return;
+        }
+
+        const userData = await authService.getCurrentUser(token);
         setUser(userData);
-      } catch (e) {
-        console.error(e);
-        setError("Error fetching user data.");
+      } catch (err) {
+        console.error("Failed to load user data:", err);
+        setError("Failed to load user data");
       } finally {
         setLoading(false);
       }
     })();
   }, []);
 
-  // Отримуємо автомобілі користувача
   useEffect(() => {
-    if (!user?.id) return;
+  if (!user?.id) return;
 
-    (async () => {
-      setLoading(true);
-      try {
-        const res = await userService.getUserCars(user.id.toString());
-        setCars(res.data);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load cars.");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [user]);
+  const userId = user.id;
+
+  (async () => {
+    setLoading(true);
+    try {
+       const userId = localStorage.getItem("userId");
+      const response = await userService.getUserCars(userId!);
+      const cars: ICar[] = response.data;
+      setCars(cars);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load cars.");
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, [user]);
 
   // Видалення автомобіля
   const handleDelete = (carId: string) => {
