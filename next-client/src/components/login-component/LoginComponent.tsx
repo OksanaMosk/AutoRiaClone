@@ -41,9 +41,7 @@ const LoginComponent = () => {
         <h2 className={styles.title}>Sign In</h2>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="email" className="sr-only">
-            Email
-          </label>
+
           <input
             id="email"
             type="email"
@@ -65,9 +63,6 @@ const LoginComponent = () => {
         </div>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="password" className="sr-only">
-            Password
-          </label>
           <input
             id="password"
             type={showPassword ? "text" : "password"}

@@ -79,7 +79,7 @@ const RegisterComponent = () => {
 
   return (
     <div className={styles.centerContainer}>
-      <form onSubmit={handleSubmit} className={`auth ${styles.form}`}>
+    <form onSubmit={handleSubmit} className={`auth ${styles.form}`}>
         <h2 className={styles.title}>Sign Up</h2>
 
         <div className={styles.inputGroup}>
@@ -92,7 +92,7 @@ const RegisterComponent = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
           <div className={styles.icon}>
-            <Image src="/images/user.png" alt="user icon" width={24} height={24} />
+            <Image src="/images/user.png" alt="user icon" width={24} height={24} className={styles.img}/>
           </div>
           {errorFields.email && <p className={styles.error}>{errorFields.email}</p>}
         </div>
@@ -147,19 +147,23 @@ const RegisterComponent = () => {
 
         <div className={styles.roleSelection}>
           <button type="button" className={styles.roleButton} onClick={() => setRole("buyer")}>
-            <Image src="/images/user.png" alt="Buyer" width={30} height={30} />
+            <Image src="/images/user.png" alt="Buyer" width={20} height={20} />
             <span>Buyer</span>
           </button>
 
           <button type="button" className={styles.roleButton} onClick={() => setRole("seller")}>
-            <Image src="/images/user.png" alt="Seller" width={30} height={30} />
+            <Image src="/images/user.png" alt="Seller" width={20} height={20} />
             <span>Seller</span>
           </button>
         </div>
 
         {errorMsg && <p className={styles.error}>{errorMsg}</p>}
         <button type="submit" className={styles.button} disabled={isSubmitting}>
-          {isSubmitting ? <LoaderComponent /> : "Sign Up"}
+          {isSubmitting ?
+              <div className={`authButton ${styles.loaderWrapper}`}>
+              <LoaderComponent />
+            </div> : "Sign Up"
+          }
         </button>
 
         <div className={styles.bottomContainer}>

@@ -34,6 +34,8 @@
 
 }
 
+
+
 .logoLink:hover {
     color: var(--color-active);
 }
@@ -68,15 +70,14 @@
 
 .menuItem:hover {
     color: #f2e499;
-    text-decoration: underline;
+
 }
 
 .activeLink {
-    color: #FFD700;
-    text-decoration: underline;
+    color: var(--color-text);
 }
 .activeLink:hover {
-    color: var(--color-active);
+    color: var(--color-badgeId);
 }
 .rightBlock {
     justify-content: flex-end;

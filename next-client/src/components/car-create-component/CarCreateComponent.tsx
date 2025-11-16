@@ -8,6 +8,7 @@ import { ICar, ICarPhoto } from "@/models/ICar";
 import CarSelectsComponent from "@/components/car-selects-component/CarSelectsComponent";
 import userService from "@/lib/services/userService";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import axios from "axios";
 
 type Currency = "UAH" | "USD" | "EUR";
 
@@ -170,10 +171,14 @@ const CarCreateComponent = () => {
       }
 
       setMessage("Car created successfully! You can add photos now.");
-    } catch (err: any) {
-      console.error(err);
-      setMessage(err.response?.data || "Error creating car listing");
-    } finally {
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            setMessage(err.response?.data || "Sorry, You cant add photos now...");
+        } else {
+            setMessage("Unexpected error");
+        }
+    }
+    finally {
       setLoadingCar(false);
     }
   };
@@ -204,9 +209,6 @@ const CarCreateComponent = () => {
   return (
     <section className={styles.wrapper}>
       <h3 className={styles.subtitle}>Create New Car</h3>
-
-      {message && <div className={styles.errorMessage}>{message}</div>}
-
       <form className={styles.form} onSubmit={handleCreateCarWithoutPhotos}>
         <CarSelectsComponent
           brand={newCar.brand}
@@ -337,7 +339,9 @@ const CarCreateComponent = () => {
             </div>
                 : "Add Photos"}
           </button>
-        )}  </div>
+        )}
+          </div>
+          {message && <div className={styles.errorMessage}>{message}</div>}
       </form>
     </section>
   );
