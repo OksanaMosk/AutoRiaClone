@@ -53,7 +53,9 @@ const CarsClientComponent:React.FC<CarsClientComponentProps> = ({ cars }) => {
         setFilters(newFilters);
     };
 
-    if (loading) return <p><LoaderComponent/></p>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
     if (error) return <p>{error}</p>;
 
     return (

@@ -2,7 +2,7 @@
 
 import styles from "./LoaderComponent.module.css"
 
-export const LoaderComponent = ({ fillColor = "#FFD700", centerColor = "#1f2937" }) => {
+export const LoaderComponent = ({ fillColor = "#00b8b8", centerColor = "#003333" }) => {
     return (
         <div className={styles.container}>
             <svg width="200" height="200" viewBox="0 0 200 200">

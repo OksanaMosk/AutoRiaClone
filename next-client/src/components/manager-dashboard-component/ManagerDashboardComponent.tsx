@@ -56,7 +56,9 @@ export const ManagerDashboardComponent = () => {
   })();
 }, []);
 
-  if (loading) return <LoaderComponent />;
+  if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
   if (error) return <p className={styles.error}>{error}</p>;
 
   return (

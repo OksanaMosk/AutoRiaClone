@@ -2,140 +2,105 @@
 
 import React, { useEffect, useState } from "react";
 import { ICar } from "@/models/ICar";
-import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
-import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
-import {IUser} from "@/models/IUser";
-import {authService} from "@/lib/services/authService";
-import styles from "./SellerDashboardComponent.module.css";
+import { IUser } from "@/models/IUser";
+import { authService } from "@/lib/services/authService";
 import userService from "@/lib/services/userService";
-type StatusFilter = "all" | "active" | "inactive";
+import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
+import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
+import styles from "./SellerDashboardComponent.module.css";
 
 const SellerDashboardComponent: React.FC = () => {
   const [user, setUser] = useState<IUser | null>(null);
   const [cars, setCars] = useState<ICar[]>([]);
-  const [filter, setFilter] = useState<StatusFilter>("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Отримуємо користувача
+  useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("authToken="))
+      ?.split("=")[1];
 
-    useEffect(() => {
-        if (!user) return; // Замість цього використовуйте умовну перевірку в середині функції
-        (async () => {
-            try {
-                setLoading(true);
-                if (!user?.id) {
-                    setError("User ID is not available.");
-                    return;
-                }
-                const res = await userService.getUserCars(user.id.toString());
-                console.log(res);
-
-                setCars(res.data);
-            } catch (err) {
-                console.error("Failed to load cars:", err);
-                setError("Failed to load car data");
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, [user]);
-
-     useEffect(() => {
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("authToken="))
-    ?.split("=")[1];
-
-  (async () => {
     if (!token) {
-      setError("Please activate your account.");
+      setError("Please log in.");
       setLoading(false);
       return;
     }
 
-    try {
-      const userData: IUser = await authService.getCurrentUser(token);
-      setUser(userData);
-    } catch (e) {
-        console.log(e);
-        setError("There was an error fetching user data.");
-      const refreshToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("refreshToken="))
-        ?.split("=")[1];
-
-      if (refreshToken) {
-        try {
-          const access = await authService.refreshToken(refreshToken);
-          document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
-          const userData: IUser = await authService.getCurrentUser(access);
-          setUser(userData);
-        } catch (refreshError) {
-          console.error("Failed to refresh token:", refreshError);
-          setError("Your session has expired. Please log in again.");
-        }
-      } else {
-        setError("Please log in again.");
+    (async () => {
+      try {
+        const userData: IUser = await authService.getCurrentUser(token);
+        setUser(userData);
+      } catch (e) {
+        console.error(e);
+        setError("Error fetching user data.");
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  })();
-}, []);
+    })();
+  }, []);
 
-    if (loading) return <LoaderComponent/>;
-    if (error) return <p className={styles.errorText}>{error}</p>;
+  // Отримуємо автомобілі користувача
+  useEffect(() => {
+    if (!user?.id) return;
 
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await userService.getUserCars(user.id.toString());
+        setCars(res.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load cars.");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [user]);
 
-    const handleDelete = (carId: string) => {
-        setCars(prev => prev.filter(c => c.id !== carId));
-    };
+  // Видалення автомобіля
+  const handleDelete = (carId: string) => {
+    setCars((prev) => prev.filter((c) => c.id !== carId));
+  };
 
-    const handleStatusChange = (carId: string, status: string) => {
-        setCars(prev =>
-            prev.map(car => (car.id === carId ? {...car, status} : car))
-        );
-    };
-
-
-
-  const filteredCars = (Array.isArray(cars) ? cars : []).filter(car => {
-    if (filter === "all") return true;
-    return filter === "active" ? car.status === "active" : car.status !== "active";
-});
-
-
-    return (
-        <div className={styles.dashboard}>
-            <h2>My Car Listings</h2>
-            {error && <p className={styles.errorMessage}>{error}</p>}
-            <div className={styles.filters}>
-                <button onClick={() => setFilter("all")} className={filter === "all" ? styles.activeFilter : ""}>All
-                </button>
-                <button onClick={() => setFilter("active")}
-                        className={filter === "active" ? styles.activeFilter : ""}>Active
-                </button>
-                <button onClick={() => setFilter("inactive")}
-                        className={filter === "inactive" ? styles.activeFilter : ""}>Inactive
-                </button>
-            </div>
-            {loading ? (
-                <p><LoaderComponent/></p>
-            ) : (
-                <div className={styles.cardsContainer}>
-                    {filteredCars.map(car => (
-                        <CarListingComponent
-                            key={car.id}
-                            car={car}
-                            onDelete={handleDelete}
-                            onStatusChange={handleStatusChange}
-                        />
-                    ))}
-                </div>
-            )}
-        </div>
+  // Зміна статусу автомобіля
+  const handleStatusChange = (carId: string, status: string) => {
+    setCars((prev) =>
+      prev.map((car) => (car.id === carId ? { ...car, status } : car))
     );
+  };
+
+  if (loading)
+    return (
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+        <LoaderComponent />
+      </div>
+    );
+
+  if (error) return <p className={styles.errorText}>{error}</p>;
+
+  return (
+    <div className={styles.dashboard}>
+      <h2>My Car Listings</h2>
+      <div className={styles.cardsContainer}>
+        {cars.length > 0 ? (
+          cars.map((car) => (
+            <CarListingComponent
+              key={car.id}
+              car={car}
+              onDelete={handleDelete}
+              onStatusChange={handleStatusChange}
+            />
+          ))
+        ) : (
+          <p>No cars found.</p>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default SellerDashboardComponent;
+
 

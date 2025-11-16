@@ -56,7 +56,9 @@ const BuyerDashboardComponent = () => {
 }, []);
 
 
-  if (loading) return <LoaderComponent />;
+  if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
   if (error) return <p className={styles.errorText}>{error}</p>;
 
   return (

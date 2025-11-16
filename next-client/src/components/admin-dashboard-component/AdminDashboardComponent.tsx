@@ -6,6 +6,7 @@ import { IUser } from "@/models/IUser";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from './AdminDashboardComponent.module.css';
 import AdminUserManagementComponent from "@/components/admin-user-management-component/AdminUserManagementComponent";
+import Loading from "@/app/(public)/cars/loading";
 
 const AdminDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -33,7 +34,9 @@ const AdminDashboardComponent = () => {
     })();
   }, []);
 
-  if (loading) return <LoaderComponent />;
+  if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
   if (error) return <p>{error}</p>;
 
   return (

@@ -5,6 +5,7 @@ import {authService} from "@/lib/services/authService";
 import {IUser} from "@/models/IUser";
 import styles from './ManagerUserManagementComponent.module.css';
 import userService from "@/lib/services/userService";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 const ManagerUserManagementComponent = () => {
      const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
@@ -107,7 +108,9 @@ const ManagerUserManagementComponent = () => {
     };
 
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
     if (error) return <p>{error}</p>;
 
     return (

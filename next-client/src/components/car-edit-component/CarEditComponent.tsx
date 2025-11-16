@@ -167,7 +167,9 @@ const CarEditComponent: React.FC = () => {
     }
   };
 
-  if (loading) return <p><LoaderComponent/></p>;
+  if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
 
   return (
     <section className={styles.editCarSection}>
