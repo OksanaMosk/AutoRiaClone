@@ -109,13 +109,13 @@ class carModel(models.Model):
 
     def clean(self):
         if profanity.contains_profanity(self.description):
-            self.status = 'pending'
             if self.edit_attempts >= 3:
                 self.status = 'inactive'
                 self.notify_manager()
                 raise ValidationError("You have failed to edit your description 3 times. The ad has been deactivated.")
             else:
-                self.edit_attempts += 1
+                self.edit_attempts += 1  # інкремент перед ValidationError
+                self.status = 'pending'
                 raise ValidationError("Description contains prohibited words. Please edit.")
         else:
             if not hasattr(self, '_status_from_request'):
@@ -140,3 +140,17 @@ class CarPhoto(models.Model):
 
     class Meta:
         db_table = "car_photos"
+
+    # def clean(self):
+    #     if profanity.contains_profanity(self.description):
+    #         self.status = 'pending'
+    #         if self.edit_attempts >= 3:
+    #             self.status = 'inactive'
+    #             self.notify_manager()
+    #             raise ValidationError("You have failed to edit your description 3 times. The ad has been deactivated.")
+    #         else:
+    #             self.edit_attempts += 1
+    #             raise ValidationError("Description contains prohibited words. Please edit.")
+    #     else:
+    #         if not hasattr(self, '_status_from_request'):
+    #             self.status = 'active'

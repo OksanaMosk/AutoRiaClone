@@ -23,30 +23,34 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
+  const [message] = useState("");
 
   useEffect(() => {
   if (!carId) return;
 
+  setLoading(true);
   (async () => {
     try {
-      const carResponse = await carService.get(carId);
+      const [carResponse, ratesResponse] = await Promise.all([
+        carService.get(carId),
+        carService.getExchangeRates(),
+      ]);
+
       const data: ICar = carResponse.data;
       const userId = localStorage.getItem("userId");
-      if (data.seller_id !== userId) {
-        setError("You cannot edit this car. It does not belong to you.");
-        setLoading(false);
-        return;
-      }
-      setForm(data);
-      setPhotos(data.photos || []);
-      const rates = await carService.getExchangeRates();
-      setExchangeRates(rates.data);
+
+      // if ("seller_id" in data && data.seller_id !== userId) {
+      //   setError("You cannot edit this car. It does not belong to you.");
+      // } else {
+        setForm(data);
+        setPhotos(data.photos || []);
+        setExchangeRates(ratesResponse.data);
+      // }
     } catch (err) {
       console.error(err);
       setError("Failed to load car");
     } finally {
-      setLoading(false);
+      setLoading(false); // завжди виконуємо
     }
   })();
 }, [carId]);
@@ -72,17 +76,26 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
       USD: baseUAH / exchangeRates.USD,
       EUR: baseUAH / exchangeRates.EUR,
     };
-  }, [form?.price, form?.currency, exchangeRates]);
+  }, [form, exchangeRates]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    const newValue = type === "checkbox" ? checked : value;
+  const handleInputChange = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+) => {
+  const target = e.target;
+  const { name } = target;
+  let newValue: string | number | boolean = target.value;
+  if (target instanceof HTMLInputElement && target.type === "checkbox") {
+    newValue = target.checked;
+  }
+  if (target instanceof HTMLInputElement && target.type === "number") {
+    newValue = Number(newValue);
+  }
+  setForm((prev) => ({
+    ...prev!,
+    [name]: newValue,
+  }));
+};
 
-    setForm((prev) => ({
-      ...prev!,
-      [name]: type === "number" ? Number(newValue) : newValue,
-    }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,7 +125,7 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
 
   if (loading || !form) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
             <LoaderComponent />
-        </div>;;
+        </div>;
 
   return (
     <section className={styles.wrapper}>
@@ -210,9 +223,11 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
           <label className={styles.label}>Description*</label>
           <textarea name="description" value={form.description} onChange={handleInputChange} className={styles.textarea} />
         </div>
-
+        {message && <p className={styles.success}>{message}</p>}
         <button type="submit" disabled={saving} className={styles.submitButton}>
-          {saving ? <LoaderComponent /> : "Save Changes"}
+          {saving ?  <div className={`authButton ${styles.loaderWrapper}`}>
+              <LoaderComponent />
+            </div> : "Save Changes"}
         </button>
       </form>
 
