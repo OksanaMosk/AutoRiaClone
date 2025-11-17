@@ -85,13 +85,26 @@ const CarCreateComponent = () => {
   }, [newCar.price, newCar.currency, exchangeRates]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
-    let newValue = value;
-    if (type === "number" || name === "year") newValue = value.replace(/[^0-9]/g, "");
-    setNewCar((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : newValue }));
-  };
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+) => {
+  const target = e.target;
+  const name = target.name;
+
+  let value: string | number | boolean = target.value;
+
+  if (target instanceof HTMLInputElement) {
+    if (target.type === "checkbox") {
+      value = target.checked;
+    } else if (target.type === "number") {
+      value = Number(target.value);
+    }
+  }
+
+  setNewCar(prev => ({
+    ...prev,
+    [name]: value
+  }));
+};
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -112,78 +125,88 @@ const CarCreateComponent = () => {
   };
 
   const handleCreateCarWithoutPhotos = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const requiredFields = [
-      "brand", "model", "year", "mileage", "price", "currency",
-      "condition", "max_speed", "seats_count", "engine_volume", "fuel_type", "location", "description"
-    ] as const;
-    for (const field of requiredFields) {
-      if (!newCar[field]) {
-        setMessage(`Field "${field}" is required.`);
-        return;
-      }
+  const requiredFields = [
+    "brand", "model", "year", "mileage", "price", "currency",
+    "condition", "max_speed", "seats_count", "engine_volume", "fuel_type", "location", "description"
+  ] as const;
+
+  for (const field of requiredFields) {
+    if (!newCar[field]) {
+      setMessage(`Field "${field}" is required.`);
+      return;
     }
+  }
 
-    setLoadingCar(true);
-    try {
-      const userId = localStorage.getItem("userId");
-      const response = await userService.getUserCars(userId!);
+  setLoadingCar(true);
 
-        const cars: ICar[] = response.data.cars;
+  try {
+    const userId = localStorage.getItem("userId");
+    const accountType = localStorage.getItem("accountType");
+    const response = await userService.getUserCars(userId!);
+    const cars: ICar[] = response.data.cars;
 
-      if (cars.length >= 1) {
-        setMessage("Sorry, update account to Premium");
-        setLoadingCar(false);
-        return;
-      }
-
-      const carStatus = newCar.status || "pending";
-
-      const carToSend: ICar = {
-        ...newCar,
-        status: carStatus,
-        year: Number(newCar.year),
-        mileage: Number(newCar.mileage),
-        price: Number(convertedPrices[newCar.currency as Currency]),
-        price_usd: Number(convertedPrices.USD),
-        price_eur: Number(convertedPrices.EUR),
-        engine_volume: Number(newCar.engine_volume),
-        max_speed: Number(newCar.max_speed),
-        seats_count: Number(newCar.seats_count),
-        last_exchange_update: newCar.last_exchange_update
-          ? new Date(newCar.last_exchange_update).toISOString().split("T")[0]
-          : null,
-        photos: [],
-      };
-
-      const createdCar = await carService.create(carToSend);
-      setNewCar((prev) => ({ ...prev, id: createdCar.data.id }));
-
-      if (createdCar.data.status === "pending") {
-        setMessage("Your car listing contains inappropriate language. Please edit the description.");
-        setLoadingCar(false);
-        return;
-      }
-
-      if (createdCar.data.status === "inactive") {
-        setMessage("You have failed to edit your description 3 times. The ad has been deactivated.");
-        setLoadingCar(false);
-        return;
-      }
-
-      setMessage("Car created successfully! You can add photos now.");
-    } catch (err) {
-        if (axios.isAxiosError(err)) {
-            setMessage(err.response?.data || "Sorry, You cant add photos now...");
-        } else {
-            setMessage("Unexpected error");
-        }
-    }
-    finally {
+    if (accountType !== "premium" && cars.length >= 1) {
+      setMessage("Sorry, update account to Premium");
       setLoadingCar(false);
+      return;
     }
-  };
+
+    const carStatus = newCar.status || "pending";
+
+    const carToSend: ICar = {
+      ...newCar,
+      status: carStatus,
+      year: Number(newCar.year),
+      mileage: Number(newCar.mileage),
+      price: Number(convertedPrices[newCar.currency as Currency]),
+      price_usd: Number(convertedPrices.USD),
+      price_eur: Number(convertedPrices.EUR),
+      engine_volume: Number(newCar.engine_volume),
+      max_speed: Number(newCar.max_speed),
+      seats_count: Number(newCar.seats_count),
+      last_exchange_update: newCar.last_exchange_update
+        ? new Date(newCar.last_exchange_update).toISOString().split("T")[0]
+        : null,
+      photos: [],
+    };
+
+    // Логування всього payload перед відправкою
+    console.log("Payload to send:", JSON.stringify(carToSend, null, 2));
+
+    const createdCar = await carService.create(carToSend);
+
+    // Логування відповіді сервера
+    console.log("Server response:", createdCar.data);
+
+    setNewCar((prev) => ({ ...prev, id: createdCar.data.id }));
+
+    if (createdCar.data.status === "pending") {
+      setMessage("Your car listing contains inappropriate language. Please edit the description.");
+      setLoadingCar(false);
+      return;
+    }
+
+    if (createdCar.data.status === "inactive") {
+      setMessage("You have failed to edit your description 3 times. The ad has been deactivated.");
+      setLoadingCar(false);
+      return;
+    }
+
+    setMessage("Car created successfully! You can add photos now.");
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      console.error("Axios error response:", err.response?.data);
+      setMessage(err.response?.data || "Sorry, you can't add photos now...");
+    } else {
+      console.error("Unexpected error:", err);
+      setMessage("Unexpected error");
+    }
+  } finally {
+    setLoadingCar(false);
+  }
+};
 
   const handleAddPhotos = async (e: React.FormEvent) => {
     e.preventDefault();

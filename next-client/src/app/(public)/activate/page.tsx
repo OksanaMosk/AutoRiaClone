@@ -4,6 +4,7 @@ const ActivatePage = () => {
   return (
     <div>
       Activate
+
     </div>
   );
 };

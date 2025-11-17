@@ -32,7 +32,13 @@ class carListCreateView(ListCreateAPIView):
         if getattr(user, "account_type", None) == "basic" and carModel.objects.filter(seller=user).exists():
             raise ValidationError("Sorry, update account to Premium")
 
-        serializer.save(seller=user)
+        description = serializer.validated_data.get('description', '')
+        if description and profanity.contains_profanity(description):
+            serializer.save(seller=user, status="pending")
+        else:
+            serializer.save(seller=user, status="active")
+
+
 
 class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = CarSerializer
@@ -48,20 +54,27 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        new_edit_attempts = instance.edit_attempts + 1
-        serializer.save(edit_attempts=new_edit_attempts)
+
         description = serializer.validated_data.get('description')
-        if description and profanity.contains_profanity(description):
-            instance.status = "pending"
-            if new_edit_attempts >= 3:
-                instance.status = "inactive"
-                instance.save(update_fields=['status'])
-                instance.notify_manager()
-                raise ValidationError(
-                    "You have failed to edit your description 3 times. The ad has been deactivated."
-                )
-            instance.save(update_fields=['status'])
-            raise ValidationError("Description contains prohibited words. Please edit.")
+        if description:
+            # Перевірка лайки
+            if profanity.contains_profanity(description):
+                instance.edit_attempts += 1
+                # Якщо 3 або більше спроб – деактивуємо
+                if instance.edit_attempts >= 3:
+                    instance.status = "inactive"
+                    instance.notify_manager()
+                    instance.save(update_fields=['status', 'edit_attempts'])
+                    raise ValidationError(
+                        "You have failed to edit your description 3 times. The ad has been deactivated."
+                    )
+                # Якщо менше 3 спроб – ставимо pending
+                instance.status = "pending"
+                instance.save(update_fields=['status', 'edit_attempts'])
+                raise ValidationError("Description contains prohibited words. Please edit.")
+
+        # Якщо все ок – зберігаємо
+        serializer.save()
         return Response(serializer.data)
 
 

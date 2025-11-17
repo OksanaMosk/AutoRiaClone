@@ -6,7 +6,6 @@ import { IUser } from "@/models/IUser";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from './AdminDashboardComponent.module.css';
 import AdminUserManagementComponent from "@/components/admin-user-management-component/AdminUserManagementComponent";
-import Loading from "@/app/(public)/cars/loading";
 
 const AdminDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -16,13 +15,11 @@ const AdminDashboardComponent = () => {
   useEffect(() => {
     (async () => {
       try {
-        // отримуємо токен з cookie
         const token = authService.getRefreshToken();
         if (!token) {
           setError("Please activate your account.");
           return;
         }
-
         const userData = await authService.getCurrentUser(token);
         setUser(userData);
       } catch (err) {

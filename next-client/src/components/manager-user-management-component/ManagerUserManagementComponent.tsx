@@ -6,6 +6,7 @@ import {IUser} from "@/models/IUser";
 import styles from './ManagerUserManagementComponent.module.css';
 import userService from "@/lib/services/userService";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
+import {useRouter} from "next/navigation";
 
 const ManagerUserManagementComponent = () => {
      const [users, setUsers] = useState<IUser[]>([]); // Список користувачів
@@ -17,6 +18,8 @@ const ManagerUserManagementComponent = () => {
     const [sortBy, setSortBy] = useState<string>('id');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const isAdmin = false;
+    const router = useRouter();
+
 
     useEffect(() => {
   (async () => {
@@ -170,6 +173,7 @@ const ManagerUserManagementComponent = () => {
                         <th>Account Type</th>
                         <th>Active</th>
                         <th>Actions</th>
+                        <th>Cars</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -275,6 +279,14 @@ const ManagerUserManagementComponent = () => {
                                         Delete
                                     </button>
                                 </td>
+                                <td>
+          <button
+            onClick={() => router.push(`/seller/${user.id}`)}
+            className={styles.viewCarsButton}
+          >
+            View Cars
+          </button>
+        </td>
                             </tr>
                         ))
                     ) : (

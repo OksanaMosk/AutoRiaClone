@@ -39,7 +39,6 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
   const [countryAvgPrice, setCountryAvgPrice] = useState<AveragePrice | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Ініціалізуємо користувача одразу з localStorage
   const storedUser: IUser | null = useMemo(() => {
     const accountType = localStorage.getItem("accountType");
     if (accountType === "premium") return { account_type: "premium" };
@@ -49,7 +48,6 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
 
   const activeUser = storedUser || user;
 
-  // Завантаження статистики та середніх цін
   useEffect(() => {
   if (!activeUser || activeUser.account_type !== "premium") return;
 
@@ -75,6 +73,11 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
 
 
   const handleStatusChange = async () => {
+  if (status === "pending") {
+    alert("You cannot change status while the car is pending review.");
+    return;
+  }
+
   try {
     const newStatus = status === "active" ? "inactive" : "active";
     await carService.update(car.id, { status: newStatus });
@@ -89,6 +92,7 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
     alert("Error updating status");
   }
 };
+
 
   const handleDelete = async () => {
     try {

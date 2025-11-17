@@ -1,15 +1,11 @@
 import React from "react";
 import CarEditComponent from "@/components/car-edit-component/CarEditComponent";
 
-interface EditCarPageProps {
-  params: Promise<{ id: string }>;
-}
-
-const EditCarPage = async ({ params }: EditCarPageProps) => {
-  const { id } = await params; // <-- треба await
+export default async function EditCarPage({
+  params,
+}: {
+  params: Promise<{ id: string }>; // <-- params це Promise
+}) {
+  const { id } = await params;       // <-- unwrap тут
   return <CarEditComponent carId={id} />;
-};
-
-export default EditCarPage;
-
-
+}

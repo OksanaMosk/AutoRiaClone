@@ -3,6 +3,7 @@ import { authService } from "@/lib/services/authService";
 import { IUser } from "@/models/IUser";
 import styles from './AdminUserManagementComponent.module.css';
 import userService from "@/lib/services/userService";
+import {useRouter} from "next/navigation";
 
 
 const AdminUserManagementComponent = () => {
@@ -14,6 +15,7 @@ const AdminUserManagementComponent = () => {
     const [is_active, setIsActive] = useState<boolean | undefined>();
     const [sortBy, setSortBy] = useState<string>('id');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+const router = useRouter();
 
     useEffect(() => {
   (async () => {
@@ -165,6 +167,7 @@ const AdminUserManagementComponent = () => {
                         <th>Account Type</th>
                         <th>Active</th>
                         <th>Actions</th>
+                         <th>Cars</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -200,10 +203,21 @@ const AdminUserManagementComponent = () => {
                                     {user.is_active ? (
                                         <button onClick={() => handleBlockUser(String(user.id))} className={styles.blockButton}>Block</button>
                                     ) : (
-                                        <button onClick={() => handleUnblockUser(String(user.id))} className={styles.unblockButton}>Unblock</button>
+                                        <button onClick={() => handleUnblockUser(String(user.id))}
+                                                className={styles.unblockButton}>Unblock</button>
                                     )}
-                                    <button onClick={() => handleDeleteUser(user.id)} className={styles.deleteButton}>Delete</button>
+                                    <button onClick={() => handleDeleteUser(user.id)}
+                                            className={styles.deleteButton}>Delete
+                                    </button>
                                 </td>
+                                <td>
+                                    <button
+                                        onClick={() => router.push(`/seller/${user.id}`)}
+                                        className={styles.viewCarsButton}
+                                    >
+                                        View Cars
+                                    </button>
+              </td>
                             </tr>
                         ))
                     ) : (

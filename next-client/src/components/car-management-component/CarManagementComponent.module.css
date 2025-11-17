@@ -1,0 +1,174 @@
+
+.user{
+    color: var(--color-border);
+}
+.actions {
+  display: flex;
+    justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.statusActive{
+    color: var(--color-container);
+}
+
+.actions button {
+    color: var(--color-border);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+    justify-content: center;
+    align-items: center;
+    width:80px;
+    height: 30px;
+}
+
+.actions button:hover {
+  background-color: var(--color-border);
+}
+
+.deleteButton {
+  background-color: #ef4444;
+}
+
+.deleteButton:hover {
+  background-color:  var(--color-border);
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+    margin: 60px auto;
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+  background:  radial-gradient(circle at 10% 50%, #5ff, #00b8b8 40%, #003333);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  max-width: 1200px;
+}
+
+.table thead tr {
+  background-color: var(--color-active);
+  color: white;
+  text-align: left;
+
+}
+
+.table th, .table td {
+  padding: 12px 16px;
+}
+.table th:last-child{
+    text-align: end;
+}
+
+.table th, .table td {
+  padding: 12px 16px;
+}
+
+.table tr {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.table tr:hover {
+  background-color: var(--color-text);
+    cursor: pointer;
+}
+
+.table tbody tr {
+  background-color:var(--color-white);
+  border-radius: 10px;
+  box-shadow: 0 0.25rem 0.75rem var(--color-text);
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.25rem 0.75rem var(--color-border);
+}
+
+.actions {
+  display: flex;
+    justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.statusActive{
+    color: var(--color-container);
+}
+
+.actions button {
+    color: var(--color-white);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+    justify-content: center;
+    align-items: center;
+    width:80px;
+    height: 30px;
+}
+
+.actions button:hover {
+  background-color: var(--color-border);
+}
+
+.deleteButton {
+  background-color: #ef4444;
+}
+
+.deleteButton:hover {
+  background-color:  var(--color-border);
+}
+
+.select {
+  border-radius: 12px;
+  padding: 5px 10px;
+  border: 1px solid var(--color-white);
+  font-size: 0.95rem;
+    background-color: var(--color-badgeId);
+}
+
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 500;
+     z-index: 1000;
+}
+
+.success {
+  background-color: var(--color-white);
+  color: var(--color-border);
+}
+
+.error {
+  background-color: var(--color-white);
+  color:  #ef4444;
+}
+
+.blockButton {
+  background-color: #9c8611;
+  color: white;
+  border: none;
+   display: flex;
+
+  border-radius: 4px;
+}
+
+.unblockButton {
+  background-color: var(--color-active);
+  color: var(--color-white);
+  border: none;
+  border-radius: 4px;
+     justify-content: center;
+    align-items: center;
+width:80px;
+    height: 30px;
+}
