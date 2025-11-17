@@ -16,6 +16,7 @@
 .form{
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     gap: 1.5rem;
 }
 .subtitle{
@@ -23,6 +24,7 @@
 }
 .inputSection {
     display: flex;
+    flex-wrap: wrap;
     gap: 1.5rem;
 }
 
@@ -37,7 +39,7 @@
 .label,
 .photoLabel{
    height: 30px;
-  width: 110px;
+  width: 100px;
     outline: none;
   border-radius: 2rem;
  display: flex;
@@ -68,7 +70,9 @@
      z-index: 1000;
     color: var(--color-white);
 }
+.photoContainer{
 
+}
 .checkbox {
   appearance: none;
   -webkit-appearance: none;
@@ -182,8 +186,10 @@
     display: flex;
     gap: 1.5rem;
     flex-direction: column;
+    flex-wrap: wrap;
 }
 .deleteButton{
+    border-radius: 50%;
     font-size: 0.7rem;
 margin: 1.5rem auto;
 }
@@ -197,6 +203,7 @@ margin: 1.5rem auto;
     justify-content: space-between;
     gap: 0.7rem;
     cursor: pointer;
+    flex-wrap: wrap;
 }
 
 .photoImage{
@@ -209,4 +216,9 @@ margin: 1.5rem auto;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
+}
+.deleteButton{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
