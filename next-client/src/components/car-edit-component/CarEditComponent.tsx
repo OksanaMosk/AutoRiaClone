@@ -31,7 +31,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  // Завантаження автомобіля та курсів валют
   useEffect(() => {
     if (!carId) return;
     setLoading(true);
@@ -95,7 +94,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     }
   };
 
-  // Валідація моделі перед збереженням
   const validateForm = () => {
     if (!form) return false;
     if (!form.model || form.model.trim() === "") {
@@ -105,13 +103,10 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     return true;
   };
 
-  // Збереження даних автомобіля
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form) return;
-
     if (!validateForm()) return;
-
     setSaving(true);
     setError(null);
 

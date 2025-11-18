@@ -39,12 +39,15 @@ class carListCreateView(ListCreateAPIView):
             serializer.save(seller=user, status="active")
 
 
-
 class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = CarSerializer
     queryset = carModel.objects.all()
     http_method_names = ['get', 'put', 'patch', 'delete']
-    permission_classes = [IsSellerOrAdminOrManager]
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsSellerOrAdminOrManager()]
 
     def get_serializer(self, *args, **kwargs):
         kwargs['partial'] = True

@@ -28,7 +28,6 @@ const carService = {
 
     create(data: ICar) {
         console.log(data);
-
         return apiService.post<ICar>(urls.cars.create, data);
     },
 

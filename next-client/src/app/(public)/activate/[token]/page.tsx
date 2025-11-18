@@ -7,8 +7,7 @@ import { useParams } from "next/navigation";
 const ActivateAccount = () => {
   const [isActivated, setIsActivated] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { token } = useParams(); // ✅ замість useRouter()
-
+  const { token } = useParams();
   useEffect(() => {
     if (token) {
       const activationUrl = `http://localhost:8888/api/auth/activate/${token}/`;

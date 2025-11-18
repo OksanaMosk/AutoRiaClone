@@ -1,13 +1,12 @@
 import datetime
 from decimal import Decimal
 
-from better_profanity import profanity
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.db import models
 from rest_framework.exceptions import ValidationError
 import requests
-from brands_models import BRANDS, MODELS_BY_BRAND
+from brands_models import BRANDS
 from core.services.file_service import upload_car_photo
 from locations import LOCATION_CHOICES
 
@@ -107,20 +106,6 @@ class carModel(models.Model):
     def get_photos(self):
         return self.photos.all()
 
-    # def clean(self):
-    #     if profanity.contains_profanity(self.description):
-    #         if self.edit_attempts >= 3:
-    #             self.status = 'inactive'
-    #             self.notify_manager()
-    #             raise ValidationError("You have failed to edit your description 3 times. The ad has been deactivated.")
-    #         else:
-    #             self.edit_attempts += 1  # інкремент перед ValidationError
-    #             self.status = 'pending'
-    #             raise ValidationError("Description contains prohibited words. Please edit.")
-    #     else:
-    #         if not hasattr(self, '_status_from_request'):
-    #             self.status = 'active'
-
     def notify_manager(self):
         send_mail(
             subject="Car listing needs attention",
@@ -141,16 +126,3 @@ class CarPhoto(models.Model):
     class Meta:
         db_table = "car_photos"
 
-    # def clean(self):
-    #     if profanity.contains_profanity(self.description):
-    #         self.status = 'pending'
-    #         if self.edit_attempts >= 3:
-    #             self.status = 'inactive'
-    #             self.notify_manager()
-    #             raise ValidationError("You have failed to edit your description 3 times. The ad has been deactivated.")
-    #         else:
-    #             self.edit_attempts += 1
-    #             raise ValidationError("Description contains prohibited words. Please edit.")
-    #     else:
-    #         if not hasattr(self, '_status_from_request'):
-    #             self.status = 'active'
