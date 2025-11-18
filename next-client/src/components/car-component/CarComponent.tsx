@@ -3,6 +3,7 @@ import React from "react";
 import { ICar } from "@/models/ICar";
 import styles from "./CarComponent.module.css";
 import {ScrollTopButtonComponent} from "@/components/scroll-top-button-component/ScrollTopButtonComponent";
+import Image from "next/image";
 
 interface Props {
   car: ICar;
@@ -23,9 +24,16 @@ const CarComponent: React.FC<Props> = ({ car }) => {
             className={styles.carPoster}
           />
         ) : (
-          <div className={styles.carPosterPlaceholder}>
-            <span className={styles.noImageText}>No PHOTO available</span>
-          </div>
+          <div className={styles.noPoster}>
+                        <Image
+                            src='/images/noPoster.png'
+                            alt="No poster"
+                            className={styles.placeholder}
+                            width={150}
+                            height={100}
+                            sizes="(max-width: 150px) 30vw, 100px"
+                        />
+                    </div>
         )}
           <div className={styles.r}>
             <span className={styles.label}>Price:  </span>{" "}

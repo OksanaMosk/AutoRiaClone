@@ -5,16 +5,21 @@ import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBac
 export default async function Page({
   params,
 }: {
-  params: Promise<{ id: string }>; // <- params може бути Promise
+  params: Promise<{ id: string }>
 }) {
-  const { id } = await params;      // <- unwrap тут
-  return (
-    <div>
-      <h2>Cars of User #{id}</h2>
-      <CarManagementComponent userId={id} />
-        <GoBackButtonComponent/>
-    </div>
-  );
+  const { id } = await params;
+    return (
+        <div
+            style={{
+                fontWeight: "bolder",
+                margin: "40px auto",
+                textAlign: "center"
+            }}
+        >
+            <CarManagementComponent userId={id}/>
+            <GoBackButtonComponent/>
+        </div>
+    );
 }
 
 

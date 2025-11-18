@@ -1,5 +1,11 @@
-.container{
-    margin: 20px ;
+.containerDashboard{
+    text-align: center;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100vw;
+
 }
 .title {
   text-transform: uppercase;

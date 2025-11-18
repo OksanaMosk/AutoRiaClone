@@ -1,5 +1,10 @@
 .container{
-    margin: 20px ;
+    text-align: center;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 90%;
 }
 .title {
   text-transform: uppercase;

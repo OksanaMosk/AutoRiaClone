@@ -2,6 +2,7 @@
 // import { useNavigate } from 'react-router-dom';
 // import styles from './HeaderComponent.module.css';
 // import {NavLink} from "react-router";
+// import {MenuComponent} from "../menu-component/MenuComponent";
 //
 //
 // export const Header = () =>{
@@ -15,6 +16,7 @@
 //
 //     return (
 //         <header className={styles.header}>
+//             <MenuComponent/>
 //             <nav className={styles.nav}>
 //                 <ul className={styles.list}>
 //                     <li >
@@ -37,4 +39,4 @@
 //
 //
 //
-
+//

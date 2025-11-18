@@ -3,7 +3,17 @@ import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBack
 
 
 const Page = () => {
-    <GoBackButtonComponent/>
-    return <AdminDashboardComponent/>
-}
+  return (
+    <div style={{
+      fontWeight: 'bolder',
+      margin: '40px auto',
+      textAlign: 'center',
+      width: '100%'
+    }}>
+      <GoBackButtonComponent />
+      <AdminDashboardComponent />
+    </div>
+  );
+};
+
 export default Page;

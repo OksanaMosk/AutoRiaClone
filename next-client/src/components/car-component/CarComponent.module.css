@@ -30,6 +30,11 @@
     justify-content: space-between;
 }
 
+.placeholder{
+    border-radius: 15px;
+}
+
+
 .carInfo {
   display: flex;
   flex-direction: column;

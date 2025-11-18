@@ -18,7 +18,14 @@ const HomePage = () => {
   }, [message, router]);
 
   return (
-    <div>
+   <div
+  style={{
+    fontWeight: "bolder",
+    margin: "40px auto",
+      textAlign: "center",
+       width: '100vw'
+  }}
+>
       {message && <p style={{ color: "#003333", fontWeight: "bolder" }}>{message}</p>
 }
       <h2>Welcome to the platform</h2>

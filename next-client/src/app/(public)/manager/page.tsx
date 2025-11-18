@@ -4,8 +4,17 @@ import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBack
 
 const Page = () => {
     return (
-        <div><GoBackButtonComponent/>
-            <ManagerDashboardComponent/></div>
+        <div style={{
+      fontWeight: 'bolder',
+      margin: '40px auto',
+      textAlign: 'center',
+      width: '100%'
+    }}>
+
+            <GoBackButtonComponent/>
+            <ManagerDashboardComponent/>
+
+        </div>
 )
 }
 export default Page;

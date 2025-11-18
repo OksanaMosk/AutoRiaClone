@@ -105,7 +105,7 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
   };
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       {error && <p className={styles.error}>{error}</p>}
       <table className={styles.table}>
         <thead>
@@ -130,15 +130,15 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
             <td className={status === "active" ? styles.statusActive : styles.statusInactive}>
               {status}
             </td>
-            <td className={styles.actions}>
-             <button onClick={handleStatusChange}>
-  {status === "active" ? "Deactivate" : "Activate"}
-</button>
-             <Link href={`/cars/edit/${car.id}`} passHref>
-                <button className={styles.editButton}>Edit</button>
-              </Link>
-              <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>
-            </td>
+              <td className={styles.actions}>
+                  <button className={styles.button} onClick={handleStatusChange}>
+                      {status === "active" ? "Deactivate" : "Activate"}
+                  </button>
+                  <Link href={`/cars/edit/${car.id}`} passHref>
+                      <button className={styles.editButton}>Edit</button>
+                  </Link>
+                  <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>
+              </td>
             <td className={styles.user}>
               {activeUser?.account_type === "premium" ? (
                 stats ? (

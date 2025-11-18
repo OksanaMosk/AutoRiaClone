@@ -9,7 +9,7 @@ import type { IUser } from "@/models/IUser";
 import {usePathname} from "next/navigation";
 import Image from "next/image";
 import styles from "./MenuClientComponent.module.css";
-import {router} from "next/client";
+
 
 type Props = {
     user: IUser | null;

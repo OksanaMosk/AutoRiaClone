@@ -12,8 +12,11 @@
     color: var(--color-container);
 }
 
-.actions button {
+.tableRow{
     color: var(--color-border);
+}
+.actions select {
+    color: var(--color-white);
   border: none;
   border-radius: 20px;
   cursor: pointer;
@@ -24,6 +27,7 @@
     align-items: center;
     width:80px;
     height: 30px;
+    background-color: var(--color-border);
 }
 
 .actions button:hover {
@@ -51,8 +55,8 @@
 }
 
 .table thead tr {
-  background-color: var(--color-active);
-  color: white;
+  background-color: var(--color-badgeId);
+  color: var(--color-border);
   text-align: left;
 
 }

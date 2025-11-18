@@ -34,7 +34,7 @@ export const MenuClientComponent = ({ user, authenticated }: Props) => {
         <div className={styles.header}>
             <nav className={styles.navbar}>
                 <Link href="/" className={styles.logoLink}>
-                    {/*<Image src="/favicon/android-chrome-512x512.png" alt="logo" width={51} height={51} />*/}
+                    <Image src="/favicon/android-chrome-512x512.png" alt="logo" width={51} height={51} />
                     <div className={styles.logo}>
                         <h1 className={styles.logoTitle}>Turbo Horse</h1>
                     </div>

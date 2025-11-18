@@ -23,7 +23,7 @@ const ThemesButton = () => {
             className={styles.theme}
         >
             <Image
-                src={theme === "light" ? "/images/user.png" : "/images/eye.png"}
+                src={theme === "light" ? "/images/light.png" : "/images/dark.png"}
                 alt={theme === "light" ? "Dark Theme" : "Light Theme"}
                 width={60}
                 height={60}

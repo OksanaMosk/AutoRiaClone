@@ -77,39 +77,6 @@ export const ManagerDashboardComponent = () => {
       ) : (
         <p className={styles.text}>No user data available.</p>
       )}
-
-      {/* Секція для завдань менеджера */}
-      <div className={styles.taskList}>
-        <h2 className={styles.taskListHeader}>Your Tasks</h2>
-        <div className={styles.taskItem}>
-          <p className={styles.taskItemHeader}>Review Suspicious Listings</p>
-          <p className={styles.taskItemDescription}>
-            Check the listings that have been flagged by the system for suspicious activity and take necessary actions.
-          </p>
-        </div>
-
-        <div className={styles.taskItem}>
-          <p className={styles.taskItemHeader}>Block Problematic Users</p>
-          <p className={styles.taskItemDescription}>
-            Review users flagged for violations and block them if necessary to maintain the integrity of the platform.
-          </p>
-        </div>
-
-        <div className={styles.taskItem}>
-          <p className={styles.taskItemHeader}>Moderate Reports</p>
-          <p className={styles.taskItemDescription}>
-            Review and resolve any reports made by users regarding inappropriate listings, spamming, or other issues.
-          </p>
-        </div>
-      </div>
-
-      {/* Інші можливості менеджера */}
-      <div className={styles.adminOptions}>
-        <h2 className={styles.adminOptionsHeader}>Admin Options</h2>
-        <button className={styles.adminButton}>View User Activity</button>
-        <button className={styles.adminButton}>Manage Banned Users</button>
-        <button className={styles.adminButton}>Generate Reports</button>
-      </div>
     </div>
   );
 };

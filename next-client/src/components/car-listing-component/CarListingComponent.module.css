@@ -1,46 +1,19 @@
+.wrapper{
 
+}
 .user{
     color: var(--color-border);
-}
-.actions {
-  display: flex;
-    justify-content: flex-end;
-  gap: 6px;
-  flex-wrap: wrap;
+    text-align: left;
+    font-size: 0.7rem;
 }
 .statusActive{
     color: var(--color-container);
 }
 
-.actions button {
-    color: var(--color-border);
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-    justify-content: center;
-    align-items: center;
-    width:80px;
-    height: 30px;
-}
-
-.actions button:hover {
-  background-color: var(--color-border);
-}
-
-.deleteButton {
-  background-color: #ef4444;
-}
-
-.deleteButton:hover {
-  background-color:  var(--color-border);
-}
 
 .table {
   border-collapse: separate;
-  border-spacing: 0 8px;
+
     margin: 60px auto;
   padding: 20px;
   font-family: 'Inter', sans-serif;
@@ -82,6 +55,7 @@
   border-radius: 10px;
   box-shadow: 0 0.25rem 0.75rem var(--color-text);
   transition: all 0.2s ease;
+    color: var(--color-border);
 }
 
 .table tbody tr:hover {
@@ -91,26 +65,29 @@
 
 .actions {
   display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
   gap: 6px;
   flex-wrap: wrap;
 }
 .statusActive{
     color: var(--color-container);
 }
-
+.editButton,
+.button {
+    background-color: var(--color-badgeId);
+}
 .actions button {
     color: var(--color-white);
   border: none;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
   transition: all 0.2s ease;
     justify-content: center;
     align-items: center;
     width:80px;
-    height: 30px;
+    height: 20px;
 }
 
 .actions button:hover {
@@ -153,22 +130,3 @@
   color:  #ef4444;
 }
 
-.blockButton {
-  background-color: #9c8611;
-  color: white;
-  border: none;
-   display: flex;
-
-  border-radius: 4px;
-}
-
-.unblockButton {
-  background-color: var(--color-active);
-  color: var(--color-white);
-  border: none;
-  border-radius: 4px;
-     justify-content: center;
-    align-items: center;
-width:80px;
-    height: 30px;
-}
