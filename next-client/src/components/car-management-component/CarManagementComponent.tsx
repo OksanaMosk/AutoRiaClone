@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ICar } from "@/models/ICar";
 import userService from "@/lib/services/userService";
 import styles from "./CarManagementComponent.module.css";
-import {carService} from "@/lib/services/carService"; // припустимо, що стилі є
+import {carService} from "@/lib/services/carService";
 
 interface Props {
   userId: string;

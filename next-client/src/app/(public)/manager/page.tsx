@@ -1,7 +1,11 @@
 
 import ManagerDashboardComponent from "@/components/manager-dashboard-component/ManagerDashboardComponent";
+import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBackButtonComponent";
 
 const Page = () => {
-    return <ManagerDashboardComponent/>
+    return (
+        <div><GoBackButtonComponent/>
+            <ManagerDashboardComponent/></div>
+)
 }
 export default Page;

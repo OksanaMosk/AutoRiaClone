@@ -1,8 +1,12 @@
 
-import { carService } from "@/lib/services/carService";
 import CarComponent from "@/components/car-component/CarComponent";
+import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBackButtonComponent";
 
 export default async function CarsPage() {
-  const carsData = await carService.getAll();
-  return <CarComponent car={carsData.data} />;
+  return (
+      <div>
+          <GoBackButtonComponent/>
+          <CarComponent car={car}/>
+      </div>
+  );
 }

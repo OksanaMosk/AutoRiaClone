@@ -44,7 +44,7 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     serializer_class = CarSerializer
     queryset = carModel.objects.all()
     http_method_names = ['get', 'put', 'patch', 'delete']
-    permission_classes = [IsSellerOrAdmin]
+    permission_classes = [IsSellerOrAdminOrManager]
 
     def get_serializer(self, *args, **kwargs):
         kwargs['partial'] = True
@@ -57,10 +57,10 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
         description = serializer.validated_data.get('description')
         if description:
-            # Перевірка лайки
+
             if profanity.contains_profanity(description):
                 instance.edit_attempts += 1
-                # Якщо 3 або більше спроб – деактивуємо
+
                 if instance.edit_attempts >= 3:
                     instance.status = "inactive"
                     instance.notify_manager()
@@ -68,12 +68,11 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
                     raise ValidationError(
                         "You have failed to edit your description 3 times. The ad has been deactivated."
                     )
-                # Якщо менше 3 спроб – ставимо pending
+
                 instance.status = "pending"
                 instance.save(update_fields=['status', 'edit_attempts'])
                 raise ValidationError("Description contains prohibited words. Please edit.")
 
-        # Якщо все ок – зберігаємо
         serializer.save()
         return Response(serializer.data)
 

@@ -1,5 +1,6 @@
 import React from "react";
 import CarEditComponent from "@/components/car-edit-component/CarEditComponent";
+import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBackButtonComponent";
 
 export default async function EditCarPage({
   params,
@@ -7,5 +8,8 @@ export default async function EditCarPage({
   params: Promise<{ id: string }>; // <-- params це Promise
 }) {
   const { id } = await params;       // <-- unwrap тут
-  return <CarEditComponent carId={id} />;
+  return (
+      <div><GoBackButtonComponent/>
+          <CarEditComponent carId={id}/></div>
+    )
 }

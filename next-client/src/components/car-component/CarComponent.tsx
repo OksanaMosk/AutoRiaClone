@@ -2,7 +2,6 @@
 
 import React from "react";
 import { ICar } from "@/models/ICar";
-import Image from "next/image";
 import styles from "./CarComponent.module.css";
 
 interface Props {
@@ -14,8 +13,9 @@ const CarComponent: React.FC<Props> = ({ car }) => {
     <div className={styles.card}>
       {car.photos[0] && (
         <div className={styles.imageWrapper}>
-          <Image
-            src={car.photos[0].photo_url}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={car.photos[0].photo}
             alt={`${car.brand} ${car.model}`}
             width={400}
             height={250}

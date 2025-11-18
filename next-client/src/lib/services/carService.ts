@@ -5,9 +5,22 @@ import {ICar} from "@/models/ICar";
 const carService = {
     action: (id: string) => `${paths.cars}/${id}/`,
 
-    getAll() {
-        return apiService.get(urls.cars.list);
-    },
+    getAll: async (filterCriteria: {
+    price_min?: number;
+    price_max?: number;
+    year_min?: number;
+    year_max?: number;
+    mileage_min?: number;
+    mileage_max?: number;
+    brand?: string;
+    model?: string;
+    condition?: string;
+    sort_by?: string;
+    sort_order?: 'asc' | 'desc';
+  }) => {
+    const { data } = await apiService.get(urls.cars.list, { params: filterCriteria });
+    return data;
+  },
 
     get(id: string) {
         return apiService.get<ICar>(urls.cars.action(id));

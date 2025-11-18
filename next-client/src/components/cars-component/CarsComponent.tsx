@@ -1,31 +1,33 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React from 'react';
 import CarComponent from "@/components/car-component/CarComponent";
-import CarFilterComponent from "@/components/car-filter-component/CarFilterComponent";
+import { PaginationComponent } from "@/components/pagination-component/PaginationComponent";
 import { ICar } from "@/models/ICar";
 
-interface CarsProps {
-   cars: ICar[];
-   onFilterChange: (filters: Record<string, string | number>) => void;
+interface CarListComponentProps {
+  cars: ICar[];
+  totalPages: number;
 }
 
-const CarsComponent: React.FC<CarsProps> = ({ cars, onFilterChange }) => {
-    const [filters, setFilters] = useState<Record<string, string | number>>({});
+const CarsComponent: React.FC<CarListComponentProps> = ({ cars, totalPages }) => {
 
-    useEffect(() => {
-        onFilterChange(filters);
-    }, [filters, onFilterChange]);
+  return (
+    <div>
+      <div className="car-list">
+        {cars.length > 0 ? (cars.map((car) => (
+          <CarComponent key={car.id} car={car} />
+        ))):( <p>No cars available.</p>)}
+      </div>
 
-    return (
-        <div>
-            <CarFilterComponent onFilterChange={setFilters} />
-            <div className="car-grid">
-                {cars.map(car => (
-                    <CarComponent key={car.id} car={car} />
-                ))}
-            </div>
-        </div>
-    );
+      <PaginationComponent
+        totalPages={totalPages}
+      />
+    </div>
+  );
 };
 
 export default CarsComponent;
+
+
+
+
