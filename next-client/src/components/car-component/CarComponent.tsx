@@ -80,7 +80,6 @@ const CarComponent: React.FC<Props> = ({ car }) => {
           </div>
         </div>
       </div>
-        <ScrollTopButtonComponent />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import userService from "@/lib/services/userService";
 import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./SellerDashboardComponent.module.css";
+import ChatComponent from "@/components/chat-component/ChatComponent";
 
 const SellerDashboardComponent: React.FC = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -93,6 +94,7 @@ const SellerDashboardComponent: React.FC = () => {
   if (error) return <p className={styles.errorText}>{error}</p>;
   return (
     <div className={styles.dashboard}>
+        <ChatComponent/>
       <h2>My Car Listings</h2>
       <div className={styles.cardsContainer}>
         {cars.length > 0 ? (

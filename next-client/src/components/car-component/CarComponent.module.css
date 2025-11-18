@@ -10,6 +10,12 @@
   margin: 16px auto;
   background-color: var(--color-badgeId);
       box-shadow: 0 0 12px white;
+     transition: transform 0.2s ease-in-out;
+}
+
+
+.cardWrapper:hover {
+    transform: scale(1.05);
 }
 
 .noImageText {

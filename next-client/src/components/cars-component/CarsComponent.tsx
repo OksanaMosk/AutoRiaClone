@@ -5,6 +5,7 @@ import { PaginationComponent } from "@/components/pagination-component/Paginatio
 import { ICar } from "@/models/ICar";
 import styles from "./CarsComponent.module.css";
 import Link from "next/link";
+import {ScrollTopButtonComponent} from "@/components/scroll-top-button-component/ScrollTopButtonComponent";
 
 interface CarListComponentProps {
   cars: ICar[];
@@ -28,6 +29,7 @@ const CarsComponent: React.FC<CarListComponentProps> = ({ cars, totalPages }) =>
       </ul>
 
       <PaginationComponent totalPages={totalPages} />
+          <ScrollTopButtonComponent />
     </div>
   );
 };
