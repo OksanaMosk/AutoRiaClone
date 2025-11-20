@@ -2,7 +2,7 @@
 import React from "react";
 import { ICar } from "@/models/ICar";
 import styles from "./CarInfoComponent.module.css";
-import Image from "next/image";
+
 
 interface CarInfoComponentProps {
   car: ICar;
@@ -36,8 +36,12 @@ const CarInfoComponent: React.FC<CarInfoComponentProps> = ({ car }) => {
         )}
         <div className={styles.content}>
           <h1 className={styles.title}>
-            {car.brand} {car.model}
+            {car.brand} {car.model} (<span className={styles.spanYear}> {car.year}{' '} </span>)
           </h1>
+
+
+
+            <p>{car.condition}</p>
              <hr className={styles.tagline}></hr>
           <div className={styles.details}>
               <div className={styles.top}>
@@ -47,26 +51,89 @@ const CarInfoComponent: React.FC<CarInfoComponentProps> = ({ car }) => {
                   </div>
               </div>
 
-            <p><strong>Year:</strong> {car.year}</p>
-            <p >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-              src="/images/road.png"
-              alt="User icon"
-              width={24}
-              height={24}
-              className={styles.img}
-            />{car.mileage.toLocaleString()} km</p>
+              <div className={styles.aboutCar}>
+                  <div className={styles.about}>
+                      <div className={styles.imageContainer}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                              src="/images/road.png"
+                              alt="road"
+                              width={24}
+                              height={24}
+                              className={styles.img}
+                          />
+                          <p className={styles.imgAbout}>Traveled</p>
+                          <p className={styles.imgText}>{car.mileage.toLocaleString()} km</p>
+                      </div>
+                      <div className={styles.imageContainer}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                              src="/images/speed.png"
+                              alt="speed"
+                              width={24}
+                              height={24}
+                              className={styles.img}
+                          />
+                          <p className={styles.imgAbout}>Max speed </p>
+                          <p className={styles.imgText}> {car.max_speed} km/h</p>
+                      </div>
+                      <div className={styles.imageContainer}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                              src="/images/seat.png"
+                              alt="seat"
+                              width={24}
+                              height={24}
+                              className={styles.img}
+                          />
+                          <p className={styles.imgAbout}>Seats</p>
+                          <p className={styles.imgText}> {car.seats_count}</p>
+                      </div>
+                  </div>
 
-            <p><strong>Condition:</strong> {car.condition}</p>
-            <p><strong>Max Speed:</strong> {car.max_speed} km/h</p>
-            <p><strong>Seats:</strong> {car.seats_count}</p>
-            <p><strong>Engine Volume:</strong> {car.engine_volume} L</p>
-            <p><strong>AC:</strong> {car.has_air_conditioner ? "Yes" : "No"}</p>
-            <p><strong>Fuel Type:</strong> {car.fuel_type}</p>
-            <p><strong>Location:</strong> {car.location}</p>
+                  <div className={styles.about}>
+                      <div className={styles.imageContainer}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                              src="/images/engine.png"
+                              alt="Engine Volume"
+                              width={24}
+                              height={24}
+                              className={styles.img}
+                          />
+                          <p className={styles.imgAbout}>Engine Volume</p>
+                          <p className={styles.imgText}> {car.engine_volume.toLocaleString()}</p>
+                      </div>
+                      <div className={styles.imageContainer}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                              src="/images/climate.png"
+                              alt="AC"
+                              width={24}
+                              height={24}
+                              className={styles.img}
+                          />
+                          <p className={styles.imgAbout}>AC</p>
+                          <p className={styles.imgText}> {car.has_air_conditioner ? "Yes" : "No"}</p>
+                      </div>
+                      <div className={styles.imageContainer}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                              src="/images/fuel.png"
+                              alt="fuel"
+                              width={24}
+                              height={24}
+                              className={styles.img}
+                          />
+                          <p className={styles.imgAbout}>Fuel Type</p>
+                          <p className={styles.imgText}> {car.fuel_type}</p>
+                      </div>
+                  </div>
+              </div>
+
+              <p><strong>Location:</strong> {car.location}</p>
           </div>
-              <hr className={styles.tagline}></hr>
+            <hr className={styles.tagline}></hr>
           {car.description && (
             <p className={styles.overview}><strong>Description:</strong> {car.description}</p>
           )}
