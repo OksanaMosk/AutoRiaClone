@@ -14,7 +14,7 @@ export default function ResetPasswordPage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token"); // беремо токен з query string
+  const token = searchParams.get("token");
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

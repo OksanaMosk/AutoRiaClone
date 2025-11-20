@@ -70,7 +70,6 @@ async getCurrentUser(token: string | null) {
   } catch (error) {
     const axiosError = error as AxiosError;
     if (axiosError.response?.status === 401) {
-      // спробуємо зробити refresh токена
       const refreshToken = document.cookie
         .split("; ")
         .find((row) => row.startsWith("refreshToken="))
@@ -79,14 +78,15 @@ async getCurrentUser(token: string | null) {
       if (!refreshToken) throw new Error("Session expired");
 
       try {
-        const tokens = await this.refreshToken(refreshToken); // refreshToken з сервісу
+        const tokens = await this.refreshToken(refreshToken);
         document.cookie = `authToken=${tokens.access}; path=/; max-age=${7*24*60*60}; sameSite=strict`;
         if (tokens.refresh) {
           document.cookie = `refreshToken=${tokens.refresh}; path=/; max-age=${30*24*60*60}; sameSite=strict`;
         }
 
-        return await getUser(tokens.access); // повторно /me один раз
+        return await getUser(tokens.access);
       } catch {
+         await this.logout();
         throw new Error("Session expired");
       }
     }
@@ -122,6 +122,22 @@ async refreshToken(refreshToken: string) {
     throw new Error("Failed to refresh token.");
   }
 },
+
+    async logout() {
+        try {
+            await fetch("/api/logout", {
+                method: "POST",
+                credentials: "include",
+            });
+        } catch (e) {
+            console.error("Logout API error:", e);
+        }
+
+        if (typeof window !== "undefined") {
+            localStorage.clear();
+            window.location.href = "/login";
+        }
+    },
 };
 
 export { authService };

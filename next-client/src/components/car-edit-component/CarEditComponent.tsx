@@ -55,7 +55,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     })();
   }, [carId]);
 
-  // Конвертація цін
   const convertedPrices = useMemo(() => {
     if (!form || !exchangeRates || isNaN(Number(form.price))) {
       return { UAH: 0, USD: 0, EUR: 0 };
@@ -76,7 +75,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     };
   }, [form, exchangeRates]);
 
-  // Зміни в формах
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -88,7 +86,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
 
     setForm((prev) => ({ ...prev!, [name]: newValue }));
 
-    // Якщо змінився бренд, обов'язкове поле model
     if (name === "brand") {
       setMessage("Please select a model for the brand");
     }
@@ -153,7 +150,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     }
   };
 
-  // Додавання фото
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const filesArray = Array.from(e.target.files).slice(
@@ -167,7 +163,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     setNewFiles((prev) => [...prev, ...previews]);
   };
 
-  // Видалення фото
   const handleDeletePhoto = async (id: string) => {
     try {
       await carService.deletePhoto(id);
@@ -178,7 +173,6 @@ const CarEditComponent = ({ carId }: CarEditComponentProps) => {
     }
   };
 
-  // Завантаження нових фото
   const handleAddPhotos = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!carId || newFiles.length === 0) return;

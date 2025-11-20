@@ -5,9 +5,9 @@ import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBac
 export default async function EditCarPage({
   params,
 }: {
-  params: Promise<{ id: string }>; // <-- params це Promise
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;       // <-- unwrap тут
+  const { id } = await params;
   return (
       <div>
           <GoBackButtonComponent/>

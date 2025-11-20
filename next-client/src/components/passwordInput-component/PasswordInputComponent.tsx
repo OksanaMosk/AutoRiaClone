@@ -10,7 +10,7 @@ export const PasswordInput = ({
   placeholder,
 }: {
   value: string;
-  onChangeAction: (v: string) => void; // Змінюємо ім'я тут теж
+  onChangeAction: (v: string) => void;
   placeholder: string;
 }) => {
   const [show, setShow] = useState(false);
@@ -23,7 +23,7 @@ export const PasswordInput = ({
         required
         className={styles.input}
         value={value}
-        onChange={(e) => onChangeAction(e.target.value)} // Використовуємо нову функцію
+        onChange={(e) => onChangeAction(e.target.value)}
       />
       <div className={styles.icon} onClick={() => setShow(!show)}>
         <Image

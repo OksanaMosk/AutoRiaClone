@@ -2,8 +2,7 @@ from django.urls import path
 
 from .api_views import car_constants
 from .views import carListCreateView, carRetrieveUpdateDestroyView, CarPhotoDeleteView, CarPhotoCreateView, \
-    CarStatsView, CarAveragePriceByRegionView, CarAveragePriceCountryView, ExchangeRateView,\
-    CarUserListView
+    CarStatsView, CarAveragePriceByRegionView, CarAveragePriceCountryView, ExchangeRateView
 
 urlpatterns = [
 path('', carListCreateView.as_view()),

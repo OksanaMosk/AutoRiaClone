@@ -242,7 +242,7 @@ const ManagerUserManagementComponent = () => {
                                                 void handleBlockUser(String(user.id));
                                             }}
                                             className={styles.blockButton}
-                                            disabled={user.role === "admin" && !isAdmin} // візуально заблоковано
+                                            disabled={user.role === "admin" && !isAdmin}
                                             style={{cursor: user.role === "admin" && !isAdmin ? "not-allowed" : "pointer"}}
                                         >
                                             Block

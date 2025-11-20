@@ -25,10 +25,6 @@ export const MenuClientComponent = () => {
   const isRegisterActive = pathname === "/register";
   const from = "/";
 
-  // -------------------------
-  //   HELPERS
-  // -------------------------
-
   const getCookie = (name: string) => {
     return document.cookie
       .split("; ")
@@ -42,10 +38,6 @@ export const MenuClientComponent = () => {
     setUser(null);
     setAuthenticated(false);
   };
-
-  // -------------------------
-  //   AUTH LOGIC
-  // -------------------------
 
   useEffect(() => {
   const loadUser = async () => {

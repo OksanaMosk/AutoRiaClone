@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./ForgotPasswordComponent.module.css";
-import {router} from "next/client";
 import {useRouter} from "next/navigation";
 
 export default function ForgotPasswordComponent() {

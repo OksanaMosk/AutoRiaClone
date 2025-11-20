@@ -2,7 +2,6 @@
 import React from "react";
 import { ICar } from "@/models/ICar";
 import styles from "./CarComponent.module.css";
-import {ScrollTopButtonComponent} from "@/components/scroll-top-button-component/ScrollTopButtonComponent";
 import Image from "next/image";
 
 interface Props {

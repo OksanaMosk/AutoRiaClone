@@ -128,7 +128,7 @@ class CurrentUserAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        profile = getattr(user, "profile", None)  # поверне None, якщо профілю нема
+        profile = getattr(user, "profile", None)
 
         data = {
             "id": user.id,

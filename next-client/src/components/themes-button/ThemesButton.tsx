@@ -28,6 +28,7 @@ const ThemesButton = () => {
                 width={60}
                 height={60}
                 style={{ width: 60, height: 60}}
+                 className={styles.themeImage}
             />
         </button>
     );

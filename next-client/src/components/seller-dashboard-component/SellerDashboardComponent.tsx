@@ -62,9 +62,6 @@ const SellerDashboardComponent: React.FC = () => {
     loadUser();
   }, []);
 
-  // -------------------------
-  // Load user's cars
-  // -------------------------
   useEffect(() => {
     if (!user?.id) return;
 
@@ -85,9 +82,6 @@ const response = await userService.getUserCars(String(user.id));
     loadCars();
   }, [user]);
 
-  // -------------------------
-  // Handlers
-  // -------------------------
   const handleDelete = (carId: string) => {
     setCars((prev) => prev.filter((c) => c.id !== carId));
   };

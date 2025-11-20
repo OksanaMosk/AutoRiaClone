@@ -39,8 +39,6 @@ const CarInfoComponent: React.FC<CarInfoComponentProps> = ({ car }) => {
             {car.brand} {car.model} (<span className={styles.spanYear}> {car.year}{' '} </span>)
           </h1>
 
-
-
             <p>{car.condition}</p>
              <hr className={styles.tagline}></hr>
           <div className={styles.details}>

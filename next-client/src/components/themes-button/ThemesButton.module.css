@@ -1,4 +1,16 @@
 .theme {
     cursor: pointer;
-    width: 70px;
+    width: 60px;
+    border-radius: 50%;
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+
+}
+.themeImage{
+    border-radius: 50%;
+    object-fit: contain;
+    background-position: center;
+     background-color: var(--color-text);
 }

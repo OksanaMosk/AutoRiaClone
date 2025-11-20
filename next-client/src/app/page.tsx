@@ -3,7 +3,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AccountsComponent from "@/components/accounts-component/AccountsComponent";
 import HeroComponent from "@/components/hero-component/HeroComponent";
-import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 import {ScrollTopButtonComponent} from "@/components/scroll-top-button-component/ScrollTopButtonComponent";
 
 const HomePage = () => {

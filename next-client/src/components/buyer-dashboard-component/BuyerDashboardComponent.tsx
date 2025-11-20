@@ -20,10 +20,6 @@ const BuyerDashboardComponent = () => {
     );
   };
 
-  // -------------------------
-  //   LOAD USER LOGIC
-  // -------------------------
-
   useEffect(() => {
     const loadUser = async () => {
       const token = getCookie("authToken");
@@ -35,7 +31,6 @@ const BuyerDashboardComponent = () => {
       }
 
       try {
-        // Спробувати отримати користувача
         const userData = await authService.getCurrentUser(token);
         setUser(userData);
 
@@ -51,10 +46,7 @@ const BuyerDashboardComponent = () => {
         }
 
         try {
-          // Оновлення токенів (куки оновлюються всередині сервісу!)
           const tokens = await authService.refreshToken(refreshToken);
-
-          // Пробуємо отримати користувача з новим доступом
           const userData = await authService.getCurrentUser(tokens.access);
           setUser(userData);
 
