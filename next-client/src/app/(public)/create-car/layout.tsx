@@ -2,18 +2,18 @@ import type {Metadata} from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-    title: "Login",
+    title: "Create Car",
 };
 
 type Props = {
     children: React.ReactNode;
 }
 
-const LoginLayout = ({children}: Props) => {
+const CreateLayout = ({children}: Props) => {
     return (
         <>
             {children}
         </>
     );
 }
-export default LoginLayout;
+export default CreateLayout;

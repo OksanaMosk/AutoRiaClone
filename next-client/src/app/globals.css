@@ -107,7 +107,9 @@ html.dark {
 
     body,
     .burgerMenu {
-        /*background-image: url("/background/dark.jpg");*/
+       background:
+          url("/images/dark-background.jpg") no-repeat center center / cover,
+          linear-gradient(to bottom, black 70%, #003333);
     }
 
     .registerMessage {

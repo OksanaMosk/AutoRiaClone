@@ -1,13 +1,19 @@
-import RegisterComponent from "@/components/register-component/RegisterComponent";
-import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
+import type {Metadata} from "next";
+import React from "react";
 
-const RegisterPage = () => {
-    return (
-        <div>
-            <GoBackButtonComponent/>
-            <RegisterComponent />
-        </div>
-    );
+export const metadata: Metadata = {
+    title: "Cars Register",
 };
 
-export default RegisterPage;
+type Props = {
+    children: React.ReactNode;
+}
+
+const RegisterLayout = ({children}: Props) => {
+    return (
+        <>
+            {children}
+        </>
+    );
+}
+export default RegisterLayout;

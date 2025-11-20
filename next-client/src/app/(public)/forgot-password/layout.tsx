@@ -2,18 +2,18 @@ import type {Metadata} from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-    title: "Login",
+    title: "Cars forgot",
 };
 
 type Props = {
     children: React.ReactNode;
 }
 
-const LoginLayout = ({children}: Props) => {
+const ForgotPasswordLayout = ({children}: Props) => {
     return (
         <>
             {children}
         </>
     );
 }
-export default LoginLayout;
+export default ForgotPasswordLayout;
