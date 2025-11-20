@@ -1,5 +1,5 @@
 import AdminDashboardComponent from "@/components/admin-dashboard-component/AdminDashboardComponent";
-import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBackButtonComponent";
+import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 
 
 const Page = () => {
@@ -10,7 +10,7 @@ const Page = () => {
       textAlign: 'center',
       width: '100%'
     }}>
-      <GoBackButtonComponent />
+      <GoBackButtonComponent/>
       <AdminDashboardComponent />
     </div>
   );

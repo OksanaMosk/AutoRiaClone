@@ -1,0 +1,224 @@
+@use "sass:math";
+@import url('https://fonts.googleapis.com/css2?family=Asul:wght@700&display=swap');
+
+
+$min_sections: 5;
+$max_sections: 5;
+$split_width: 30px;
+$background_color: black;
+$text_slide_distance: 30px;
+
+
+ul.slidey {
+    backdrop-filter: brightness(0.3);
+    background-image: linear-gradient(to right bottom, var(--color-muted-green), var(--color-muted-pink));
+    padding: 10px;
+
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+    --height: 395px;
+    width: 80%;
+    height: var(--height);
+    display: grid;
+margin: 6rem auto;
+    list-style: none;
+
+
+    > li {
+        position: relative;
+        grid-area: 1 / 1;
+        transition: clip-path 0.5s ease;
+    }
+
+    .background {
+        position: absolute;
+        inset: 0;
+    }
+
+    .foreground {
+        position: relative;
+    }
+
+    .tab {
+        overflow: hidden;
+    }
+
+    @for $num_sections from $min_sections to ($max_sections + 1) {
+        $ns1: $num_sections + 1;
+        //$pps: 100% / $num_sections;
+      $pps: math.div(100%, $num_sections);
+
+        &:has(> :last-child:nth-child(#{$num_sections})) {
+
+            @for $i from 2 to $ns1 {
+                & > :nth-child(#{$i}) {
+
+                    clip-path: polygon(
+                                    calc(#{($i - 1) * $pps} - #{$split_width}) 100%,
+                                    calc(#{($i - 1) * $pps} + #{$split_width}) 0,
+                                    100% 0,
+                                    100% 100%
+                    );
+                }
+            }
+
+            h1 {
+                transform: translateX(-50%);
+                transition: transform 1s 0.7s;
+            }
+
+
+            @for $i from 1 to $ns1 {
+                @for $j from 1 to $ns1 {
+                    &:has(li:nth-child(#{$i}):where(
+            :hover,
+            :focus,
+            :focus-within,
+            [aria-selected="true"]
+          )) > :nth-child(#{$j}) {
+                        $num_left: $j - 1;
+                        $num_right: $num_sections - $j;
+
+
+                        @if $j <= $i {
+                            @if $j != 1 {
+                                $base_num: $num_left * 2;
+                                clip-path: polygon(
+                                                #{($base_num + 0) * $split_width} 100%,
+                                                #{($base_num + 2) * $split_width} 0,
+                                                100% 0,
+                                                100% 100%
+                                );
+                            }
+
+                            @if $j < $i {
+                                h1 {
+                                    transform: translateX(calc(-50% - #{-1 * $text_slide_distance}));
+                                }
+                            }
+                        }
+
+                        @else if $j > $i {
+                            $base_num: $num_right * 2;
+                            clip-path: polygon(
+                                            calc(100% - #{($base_num + 4) * $split_width}) 100%,
+                                            calc(100% - #{($base_num + 2) * $split_width}) 0,
+                                            100% 0,
+                                            100% 100%
+                            );
+
+                            h1 {
+                                transform: translateX($text_slide_distance);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+ul.slidey {
+    @for $num_sections from $min_sections to ($max_sections + 1) {
+
+        $ns1: $num_sections + 1;
+
+        //$pps: 100% / $num_sections;
+      $pps: math.div(100%, $num_sections);
+
+        &:has(> :last-child:nth-child(#{$num_sections})) {
+
+            @for $i from 1 to $ns1 {
+                & > :nth-child(#{$i}) {
+                    .foreground {
+                        opacity: 0;
+                        transition: opacity 0.2s;
+                        background-color: $background_color;
+                        color: white;
+                        mix-blend-mode: multiply;
+                    }
+
+
+                    .fg_content {
+                        position: relative;
+                        width: calc(100% - #{($num_sections + 1) * $split_width * 2});
+                        margin-left: #{$i * $split_width * 2};
+
+                        > * {
+                            position: absolute;
+                            left: 50%;
+                            top: 0;
+                        }
+                    }
+
+
+                    &:where(:hover, :focus, :focus-within) .foreground {
+                        opacity: 1;
+                        transition: opacity 0.5s 1s;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.background {
+    video {
+        border-radius: 0.5rem;
+        width: 100%;
+        height: 375px;
+        object-position: center 70%;
+        object-fit: cover;
+    }
+}
+
+.foreground {
+    border-radius:0.5rem;
+    height: 375px;
+    display: none;
+    overflow: hidden;
+}
+
+.with-text .foreground {
+    display: block;
+}
+
+.title {
+    margin: 0;
+    line-height: var(--height);
+    text-transform: uppercase;
+    text-align: center;
+    font-family: "Asul", serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 8vw;
+}
+
+.fg_content {
+    width: 100%;
+    height: 100%;
+}
+
+.slidey {
+    > :nth-child(1) {
+        border-radius: 0.5rem 0 0 0.5rem;
+        background: var(--color-muted-green);
+    }
+    > :nth-child(2) {
+        background: var(--color-muted-pink);
+    }
+    > :nth-child(3) {
+        object-position: center;
+        border-radius:0 0.5rem 0.5rem 0;
+        background: var(--color-wine);
+    }
+    > :nth-child(4) {
+        border-radius:0 0.5rem 0.5rem 0;
+        background: #4d3355;
+    }
+    > :nth-child(5) {
+        border-radius:0 0.5rem 0.5rem 0;
+        background:var(--color-dark-slate-blue);
+    }
+}

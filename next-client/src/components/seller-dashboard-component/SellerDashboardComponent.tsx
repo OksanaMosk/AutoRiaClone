@@ -8,7 +8,7 @@ import userService from "@/lib/services/userService";
 import CarListingComponent from "@/components/car-listing-component/CarListingComponent";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./SellerDashboardComponent.module.css";
-import ChatComponent from "@/components/chat-component/ChatComponent";
+import AccountsComponent from "@/components/accounts-component/AccountsComponent";
 
 const SellerDashboardComponent: React.FC = () => {
   const [user, setUser] = useState<IUser | null>(null);
@@ -17,84 +17,99 @@ const SellerDashboardComponent: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("authToken="))
-    ?.split("=")[1];
-
-  (async () => {
-    if (!token) {
-      setError("Please activate your account.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const userData: IUser = await authService.getCurrentUser(token);
-      setUser(userData);
-    } catch (e) {
-        console.log(e);
-        setError("There was an error fetching user data.");
-      const refreshToken = document.cookie
+    const loadUser = async () => {
+      const token = document.cookie
         .split("; ")
-        .find((row) => row.startsWith("refreshToken="))
+        .find((row) => row.startsWith("authToken="))
         ?.split("=")[1];
 
-      if (refreshToken) {
+      if (!token) {
+        setError("Please activate your account.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const userData = await authService.getCurrentUser(token);
+        setUser(userData);
+      } catch (e) {
+        console.error("Error fetching user:", e);
+
+        const refreshToken = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("refreshToken="))
+          ?.split("=")[1];
+
+        if (!refreshToken) {
+          setError("Please log in again.");
+          setLoading(false);
+          return;
+        }
+
         try {
-          const access = await authService.refreshToken(refreshToken);
-          document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
-          const userData: IUser = await authService.getCurrentUser(access);
+          const tokens = await authService.refreshToken(refreshToken);
+          const userData = await authService.getCurrentUser(tokens.access);
           setUser(userData);
         } catch (refreshError) {
           console.error("Failed to refresh token:", refreshError);
           setError("Your session has expired. Please log in again.");
         }
-      } else {
-        setError("Please log in again.");
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  })();
-}, []);
-
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) return;
-      (async () => {
-          setLoading(true);
-          try {
-              const response = await userService.getUserCars(userId);
-              console.log("User cars response:", response);
-              const cars = response.data.cars;
-              setCars(cars);
-          } catch (err) {
-              console.error("Failed to load cars:", err);
-              setError("Failed to load cars.");
-          } finally {
-              setLoading(false);
-          }
-      })();
-  }, [user]);
-    const handleDelete = (carId: string) => {
-        setCars((prev) => prev.filter((c) => c.id !== carId));
     };
-    const handleStatusChange = (carId: string, status: string) => {
-        setCars((prev) =>
+
+    loadUser();
+  }, []);
+
+  // -------------------------
+  // Load user's cars
+  // -------------------------
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const loadCars = async () => {
+      setLoading(true);
+      try {
+      if (!user?.id) return; // якщо undefined, нічого не робимо
+const response = await userService.getUserCars(String(user.id));
+        setCars(response.data.cars);
+      } catch (err) {
+        console.error("Failed to load cars:", err);
+        setError("Failed to load cars.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCars();
+  }, [user]);
+
+  // -------------------------
+  // Handlers
+  // -------------------------
+  const handleDelete = (carId: string) => {
+    setCars((prev) => prev.filter((c) => c.id !== carId));
+  };
+
+  const handleStatusChange = (carId: string, status: string) => {
+    setCars((prev) =>
       prev.map((car) => (car.id === carId ? { ...car, status } : car))
     );
   };
+
   if (loading)
     return (
       <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
         <LoaderComponent />
       </div>
     );
+
   if (error) return <p className={styles.errorText}>{error}</p>;
+
   return (
     <div className={styles.dashboard}>
-        <ChatComponent/>
+        <AccountsComponent/>
       <h2>My Car Listings</h2>
       <div className={styles.cardsContainer}>
         {cars.length > 0 ? (

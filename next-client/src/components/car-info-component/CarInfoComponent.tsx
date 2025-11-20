@@ -2,6 +2,7 @@
 import React from "react";
 import { ICar } from "@/models/ICar";
 import styles from "./CarInfoComponent.module.css";
+import Image from "next/image";
 
 interface CarInfoComponentProps {
   car: ICar;
@@ -47,7 +48,15 @@ const CarInfoComponent: React.FC<CarInfoComponentProps> = ({ car }) => {
               </div>
 
             <p><strong>Year:</strong> {car.year}</p>
-            <p><strong>Mileage:</strong> {car.mileage.toLocaleString()} km</p>
+            <p >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+              src="/images/road.png"
+              alt="User icon"
+              width={24}
+              height={24}
+              className={styles.img}
+            />{car.mileage.toLocaleString()} km</p>
 
             <p><strong>Condition:</strong> {car.condition}</p>
             <p><strong>Max Speed:</strong> {car.max_speed} km/h</p>

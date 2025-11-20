@@ -11,59 +11,77 @@ const BuyerDashboardComponent = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-
- useEffect(() => {
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("authToken="))
-    ?.split("=")[1];
-
-  (async () => {
-    if (!token) {
-      setError("Please activate your account.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const userData: IUser = await authService.getCurrentUser(token);
-      setUser(userData);
-    } catch (e) {
-        console.log(e);
-        setError("There was an error fetching user data.");
-      const refreshToken = document.cookie
+  const getCookie = (name: string): string | null => {
+    return (
+      document.cookie
         .split("; ")
-        .find((row) => row.startsWith("refreshToken="))
-        ?.split("=")[1];
+        .find((row) => row.startsWith(name + "="))
+        ?.split("=")[1] ?? null
+    );
+  };
 
-      if (refreshToken) {
+  // -------------------------
+  //   LOAD USER LOGIC
+  // -------------------------
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = getCookie("authToken");
+
+      if (!token) {
+        setError("Please activate your account.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Спробувати отримати користувача
+        const userData = await authService.getCurrentUser(token);
+        setUser(userData);
+
+      } catch (e) {
+        console.warn("Token expired, trying refresh...");
+
+        const refreshToken = getCookie("refreshToken");
+
+        if (!refreshToken) {
+          setError("Your session has expired. Please log in again.");
+          setLoading(false);
+          return;
+        }
+
         try {
-          const access = await authService.refreshToken(refreshToken);
-          document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
-          const userData: IUser = await authService.getCurrentUser(access);
+          // Оновлення токенів (куки оновлюються всередині сервісу!)
+          const tokens = await authService.refreshToken(refreshToken);
+
+          // Пробуємо отримати користувача з новим доступом
+          const userData = await authService.getCurrentUser(tokens.access);
           setUser(userData);
+
         } catch (refreshError) {
           console.error("Failed to refresh token:", refreshError);
           setError("Your session has expired. Please log in again.");
         }
-      } else {
-        setError("Please log in again.");
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  })();
-}, []);
+    };
 
+    loadUser();
+  }, []);
+  if (loading)
+    return (
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+        <LoaderComponent />
+      </div>
+    );
 
-  if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
-            <LoaderComponent />
-        </div>;
   if (error) return <p className={styles.errorText}>{error}</p>;
 
   return (
     <div className={styles.container}>
       <h1 className={styles.header}>BUYER PORTAL</h1>
+
       {user ? (
         <>
           <p className={styles.text}>
@@ -72,14 +90,6 @@ const BuyerDashboardComponent = () => {
           <p className={styles.text}>Email: {user.email}</p>
           <p className={styles.text}>Role: {user.role}</p>
           {user.profile?.age && <p className={styles.text}>Age: {user.profile.age}</p>}
-          <p className={styles.text}>Browse listings, contact a seller or dealership.</p>
-
-
-          <section className={styles.buyerInfo}>
-            <h2>Your Dashboard</h2>
-            <p>As a buyer, you can browse and contact sellers.</p>
-
-          </section>
         </>
       ) : (
         <p className={styles.text}>No user data available.</p>

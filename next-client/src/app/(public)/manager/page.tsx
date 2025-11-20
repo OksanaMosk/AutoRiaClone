@@ -1,6 +1,6 @@
 
 import ManagerDashboardComponent from "@/components/manager-dashboard-component/ManagerDashboardComponent";
-import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBackButtonComponent";
+import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 
 const Page = () => {
     return (

@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import { carService } from "@/lib/services/carService";
 import { ICar } from "@/models/ICar";
 import CarInfoComponent from "@/components/car-info-component/CarInfoComponent";
-import { GoBackButtonComponent } from "@/components/goBack-button-component/GoBackButtonComponent";
 import axios from "axios";
+import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 interface CarsPageProps {
   params: { id: string };
 }

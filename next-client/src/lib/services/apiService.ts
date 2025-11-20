@@ -32,7 +32,7 @@ apiService.interceptors.response.use(
         ?.split("=")[1];
       if (refreshToken) {
         try {
-          const response = await axios.post(`${baseURL}/api/refresh-token/`, {
+          const response = await axios.post(`${baseURL}/auth/refresh/`, {
             refreshToken
           });
           const { access } = response.data;

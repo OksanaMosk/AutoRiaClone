@@ -1,6 +1,10 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import AccountsComponent from "@/components/accounts-component/AccountsComponent";
+import HeroComponent from "@/components/hero-component/HeroComponent";
+import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
+import {ScrollTopButtonComponent} from "@/components/scroll-top-button-component/ScrollTopButtonComponent";
 
 const HomePage = () => {
   const searchParams = useSearchParams();
@@ -30,7 +34,9 @@ const HomePage = () => {
 }
       <h2>Welcome to the platform</h2>
       <div className="">
-        GSAP HOME
+         <HeroComponent/>
+          <AccountsComponent/>
+          <ScrollTopButtonComponent/>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import RegisterComponent from "@/components/register-component/RegisterComponent";
-import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBackButtonComponent";
+import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 
 const RegisterPage = () => {
     return (

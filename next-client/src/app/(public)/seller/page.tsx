@@ -1,6 +1,6 @@
 import SellerDashboardComponent from "@/components/seller-dashboard-component/SellerDashboardComponent";
 import Link from 'next/link';
-import {GoBackButtonComponent} from "@/components/goBack-button-component/GoBackButtonComponent";
+import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 
 const SellerPage = () => {
 

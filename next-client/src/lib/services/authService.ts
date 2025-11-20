@@ -49,51 +49,79 @@ const authService = {
     return apiService.get(urls.auth.socket);
   },
 
-  async getCurrentUser(token: string | null) {
-    if (!token) return null;
-    try {
-      const { data } = await apiService.get(urls.auth.me, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (data?.id && typeof window !== "undefined") {
-          console.log('API Response:', data);
-        localStorage.setItem("userId", data.id.toString());
-        localStorage.setItem("accountType", data.accountType.toString());
+async getCurrentUser(token: string | null) {
+  if (!token) throw new Error("No token");
 
-      }
-      return data;
-    } catch (error: unknown) {
-      const axiosError = error as AxiosError;
-      if (axiosError.response?.status === 401) {
-        return null;
-      }
-      throw error;
+  const getUser = async (t: string) => {
+    const { data: { id, accountType, ...rest } } = await apiService.get(urls.auth.me, {
+      headers: { Authorization: `Bearer ${t}` }
+    });
+
+    if (id && typeof window !== "undefined") {
+      localStorage.setItem("userId", id.toString());
+      localStorage.setItem("accountType", accountType.toString());
     }
-},
 
+    return { id, accountType, ...rest };
+  };
+
+  try {
+    return await getUser(token);
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 401) {
+      // спробуємо зробити refresh токена
+      const refreshToken = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("refreshToken="))
+        ?.split("=")[1];
+
+      if (!refreshToken) throw new Error("Session expired");
+
+      try {
+        const tokens = await this.refreshToken(refreshToken); // refreshToken з сервісу
+        document.cookie = `authToken=${tokens.access}; path=/; max-age=${7*24*60*60}; sameSite=strict`;
+        if (tokens.refresh) {
+          document.cookie = `refreshToken=${tokens.refresh}; path=/; max-age=${30*24*60*60}; sameSite=strict`;
+        }
+
+        return await getUser(tokens.access); // повторно /me один раз
+      } catch {
+        throw new Error("Session expired");
+      }
+    }
+    throw error;
+  }
+},
 
   getRefreshToken(): string | null {
     if (typeof document === "undefined") return null;
     return document.cookie.split("; ").find(row => row.startsWith("refreshToken="))?.split("=")[1] || null;
   },
 
-
-  async refreshToken(refreshToken: string) {
-    try {
-      const { data } = await apiService.post<{ access: string }>(
-        urls.auth.refresh,
-        { refresh: refreshToken }
-      );
-
-      if (typeof document !== "undefined") {
-        document.cookie = `authToken=${data.access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
-      }
-      return data.access;
-    } catch (error) {
-      console.error("Failed to refresh token:", error);
-      throw new Error("Failed to refresh token.");
+async refreshToken(refreshToken: string) {
+  try {
+    const {
+      data: { access, refresh }
+    } = await apiService.post<{ access: string; refresh?: string }>(
+      urls.auth.refresh,
+      { refresh: refreshToken }
+    );
+    document.cookie =
+      `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
+    if (refresh) {
+      document.cookie =
+        `refreshToken=${refresh}; path=/; max-age=${30 * 24 * 60 * 60}; sameSite=strict`;
     }
+    return {
+      access,
+      refresh: refresh ?? refreshToken,
+    };
+  } catch (error) {
+    console.error("Failed to refresh token:", error);
+    throw new Error("Failed to refresh token.");
   }
+},
 };
 
 export { authService };

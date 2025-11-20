@@ -10,55 +10,60 @@ import ManagerUserManagementComponent
 
 export const ManagerDashboardComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("authToken="))
-    ?.split("=")[1];
-
-  (async () => {
-    if (!token) {
-      setError("Please activate your account.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const userData: IUser = await authService.getCurrentUser(token);
-      setUser(userData);
-    } catch (e) {
-        console.log(e);
-        setError("There was an error fetching user data.");
-      const refreshToken = document.cookie
+    const loadUser = async () => {
+      const token = document.cookie
         .split("; ")
-        .find((row) => row.startsWith("refreshToken="))
+        .find((row) => row.startsWith("authToken="))
         ?.split("=")[1];
 
-      if (refreshToken) {
+      if (!token) {
+        setError("Please activate your account.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const userData = await authService.getCurrentUser(token);
+        setUser(userData);
+      } catch (e) {
+        console.error(e);
+
+        const refreshToken = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("refreshToken="))
+          ?.split("=")[1];
+
+        if (!refreshToken) {
+          setError("Please log in again.");
+          setLoading(false);
+          return;
+        }
+
         try {
-          const access = await authService.refreshToken(refreshToken);
-          document.cookie = `authToken=${access}; path=/; max-age=${7 * 24 * 60 * 60}; sameSite=strict`;
-          const userData: IUser = await authService.getCurrentUser(access);
+          const tokens = await authService.refreshToken(refreshToken);
+          const userData = await authService.getCurrentUser(tokens.access);
           setUser(userData);
         } catch (refreshError) {
           console.error("Failed to refresh token:", refreshError);
           setError("Your session has expired. Please log in again.");
         }
-      } else {
-        setError("Please log in again.");
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  })();
-}, []);
+    };
 
-  if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
-            <LoaderComponent />
-        </div>;
+    loadUser();
+  }, []);
+
+  if (loading)
+    return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+      <LoaderComponent />
+    </div>;
+
   if (error) return <p className={styles.error}>{error}</p>;
 
   return (
@@ -71,8 +76,8 @@ export const ManagerDashboardComponent = () => {
           </p>
           <p className={styles.text}>Email: {user.email}</p>
           <p className={styles.text}>Role: {user.role}</p>
-          {user.profile?.age && <p className={styles.text}>Age: {user.profile.age}</p>}
-            <ManagerUserManagementComponent/>
+          {user.profile?.age && <p className={styles.text}>Age: {user.profile.age.toString()}</p>}
+          <ManagerUserManagementComponent />
         </div>
       ) : (
         <p className={styles.text}>No user data available.</p>
