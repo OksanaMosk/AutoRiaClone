@@ -15,14 +15,24 @@ from .serializers import CarPhotoSerializer, CarSerializer, CarAveragePriceSeria
 from rest_framework.generics import CreateAPIView, DestroyAPIView
 from .models import CarPhoto
 from ..user.permissions import IsSellerOrAdminOrManager, IsSellerOrAdmin
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 
-
+@method_decorator(name='get', decorator=swagger_auto_schema(security=[]))
 class carListCreateView(ListCreateAPIView):
+    """
+    get:
+        Get all cars
+    post:
+        Create a new car
+    """
+
     serializer_class = CarSerializer
     queryset = carModel.objects.all()
     filterset_class = CarFilter
     permission_classes =(AllowAny,)
     pagination_class = PagePagination
+
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -40,6 +50,17 @@ class carListCreateView(ListCreateAPIView):
 
 
 class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """
+    get:
+        Retrieve a car by ID
+    put:
+        Update a car by ID
+    patch:
+        Partially update a car by ID
+    delete:
+        Delete a car by ID
+    """
+
     serializer_class = CarSerializer
     queryset = carModel.objects.all()
     http_method_names = ['get', 'put', 'patch', 'delete']
@@ -81,6 +102,10 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
 
 class CarPhotoCreateView(CreateAPIView):
+    """
+    post:
+        Upload a photo for a car
+    """
     serializer_class = CarPhotoSerializer
     permission_classes = [IsSellerOrAdmin]
 
@@ -90,11 +115,20 @@ class CarPhotoCreateView(CreateAPIView):
 
 
 class CarPhotoDeleteView(DestroyAPIView):
+    """
+    delete:
+        Delete a car photo by ID
+    """
     serializer_class = CarPhotoSerializer
     queryset = CarPhoto.objects.all()
     permission_classes = [IsSellerOrAdminOrManager]
 
 class CarStatsView(APIView):
+    """
+    get:
+        Retrieve statistics for a specific car by its ID.
+        Only accessible to authenticated users with a premium account.
+    """
     permission_classes = [IsSellerOrAdmin]
     def get(self, request, car_id):
         user = request.user
@@ -117,6 +151,12 @@ class CarStatsView(APIView):
 
 
 class CarAveragePriceByRegionView(APIView):
+    """
+    get:
+        Retrieve the average price of cars by region.
+        Only accessible to authenticated users with a premium account.
+    """
+
     permission_classes = [IsSellerOrAdmin]
     def get(self, request):
         user = request.user
@@ -145,6 +185,13 @@ class CarAveragePriceByRegionView(APIView):
 
 
 class CarAveragePriceCountryView(APIView):
+    """
+    get:
+        Retrieve the average price of all cars in the country.
+        Only accessible to authenticated users with a premium account.
+        Returns average prices in USD, EUR, and UAH.
+    """
+
     permission_classes = [IsSellerOrAdmin]
     def get(self, request):
         user = request.user
@@ -167,6 +214,11 @@ class CarAveragePriceCountryView(APIView):
         return Response(serializer.data)
 
 class ExchangeRateView(APIView):
+    """
+    get:
+        Retrieve current exchange rates from the private bank.
+        Accessible to all users (no authentication required).
+    """
     permission_classes =(AllowAny,)
     def get(self, request, *args, **kwargs):
         try:
@@ -177,6 +229,12 @@ class ExchangeRateView(APIView):
 
 
 class CarUserListView(APIView):
+    """
+    get:
+        Retrieve a list of cars belonging to the authenticated user.
+        Only accessible to logged-in users.
+    """
+
     permission_classes = [IsSellerOrAdminOrManager]
     def get(self, request, user_id, *args, **kwargs):
         user = request.user

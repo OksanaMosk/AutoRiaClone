@@ -1,0 +1,70 @@
+{
+  "info": {
+    "name": "My API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        { "name": "Register", "request": { "method": "POST", "url": "{{base_url}}/auth/register/" } },
+        { "name": "Login", "request": { "method": "POST", "url": "{{base_url}}/auth/login/" } },
+        { "name": "Refresh Token", "request": { "method": "POST", "url": "{{base_url}}/auth/refresh/" } },
+        { "name": "Me", "request": { "method": "GET", "url": "{{base_url}}/auth/me/" } },
+        { "name": "Activate (GET)", "request": { "method": "GET", "url": "{{base_url}}/auth/activate/{{token}}/" } },
+        { "name": "Activate (PATCH)", "request": { "method": "PATCH", "url": "{{base_url}}/auth/activate/{{token}}/" } },
+        { "name": "Recovery", "request": { "method": "POST", "url": "{{base_url}}/auth/recovery/" } },
+        { "name": "Recovery Confirm", "request": { "method": "POST", "url": "{{base_url}}/auth/recovery/{{token}}/" } },
+        { "name": "Socket Info", "request": { "method": "GET", "url": "{{base_url}}/auth/socket/" } }
+      ]
+    },
+    {
+      "name": "Cars",
+      "item": [
+        { "name": "List Cars", "request": { "method": "GET", "url": "{{base_url}}/cars/" } },
+        { "name": "Create Car", "request": { "method": "POST", "url": "{{base_url}}/cars/" } },
+        { "name": "Car Constants", "request": { "method": "GET", "url": "{{base_url}}/cars/constants/" } },
+        { "name": "Exchange Rates", "request": { "method": "GET", "url": "{{base_url}}/cars/exchange-rates/" } },
+        { "name": "Delete Car Photo", "request": { "method": "DELETE", "url": "{{base_url}}/cars/photos/{{id}}/" } },
+        { "name": "Stats Country", "request": { "method": "GET", "url": "{{base_url}}/cars/stats/average-country/" } },
+        { "name": "Stats Average", "request": { "method": "GET", "url": "{{base_url}}/cars/stats/average/" } },
+        { "name": "Upload Photo", "request": { "method": "POST", "url": "{{base_url}}/cars/{{car_id}}/photos/" } },
+        { "name": "Car Stats", "request": { "method": "GET", "url": "{{base_url}}/cars/{{car_id}}/stats/" } },
+        { "name": "Get Car", "request": { "method": "GET", "url": "{{base_url}}/cars/{{id}}/" } },
+        { "name": "Update Car (PUT)", "request": { "method": "PUT", "url": "{{base_url}}/cars/{{id}}/" } },
+        { "name": "Update Car (PATCH)", "request": { "method": "PATCH", "url": "{{base_url}}/cars/{{id}}/" } },
+        { "name": "Delete Car", "request": { "method": "DELETE", "url": "{{base_url}}/cars/{{id}}/" } }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        { "name": "List Users", "request": { "method": "GET", "url": "{{base_url}}/users/" } },
+        { "name": "Create User", "request": { "method": "POST", "url": "{{base_url}}/users/" } },
+        { "name": "Change Account Type", "request": { "method": "PATCH", "url": "{{base_url}}/users/change-account-type/{{user_id}}/" } },
+        { "name": "Change Role", "request": { "method": "PATCH", "url": "{{base_url}}/users/change-role/{{user_id}}/" } },
+        { "name": "Filter / Sort", "request": { "method": "GET", "url": "{{base_url}}/users/filter-sort/" } },
+        { "name": "Test", "request": { "method": "GET", "url": "{{base_url}}/users/test/" } },
+        { "name": "Get Block Status", "request": { "method": "GET", "url": "{{base_url}}/users/{{id}}/block/" } },
+        { "name": "Block User", "request": { "method": "PUT", "url": "{{base_url}}/users/{{id}}/block/" } },
+        { "name": "Block User (PATCH)", "request": { "method": "PATCH", "url": "{{base_url}}/users/{{id}}/block/" } },
+        { "name": "Delete User", "request": { "method": "DELETE", "url": "{{base_url}}/users/{{id}}/delete/" } },
+        { "name": "Unblock User", "request": { "method": "GET", "url": "{{base_url}}/users/{{id}}/unblock/" } },
+        { "name": "Unblock User (PUT)", "request": { "method": "PUT", "url": "{{base_url}}/users/{{id}}/unblock/" } },
+        { "name": "Unblock User (PATCH)", "request": { "method": "PATCH", "url": "{{base_url}}/users/{{id}}/unblock/" } },
+        { "name": "Read User Update Info", "request": { "method": "GET", "url": "{{base_url}}/users/{{id}}/update/" } },
+        { "name": "Update User (PUT)", "request": { "method": "PUT", "url": "{{base_url}}/users/{{id}}/update/" } },
+        { "name": "Update User (PATCH)", "request": { "method": "PATCH", "url": "{{base_url}}/users/{{id}}/update/" } },
+        { "name": "User Cars", "request": { "method": "GET", "url": "{{base_url}}/users/{{user_id}}/cars/" } },
+        { "name": "Change Dealership", "request": { "method": "PATCH", "url": "{{base_url}}/users/{{user_id}}/change-dealership/" } }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "id", "value": "" },
+    { "key": "car_id", "value": "" },
+    { "key": "user_id", "value": "" }
+  ]
+}

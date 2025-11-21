@@ -15,12 +15,20 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 import logging
+
 
 UserModel = get_user_model()
 logger = logging.getLogger(__name__)
 
 class ActivateUserView(GenericAPIView):
+    """
+    get:
+        Activate a user account using the activation token provided in the URL.
+    """
+
     permission_classes = (AllowAny,)
     serializer_class = UserSerializer
     def activate_user(self, token):
@@ -66,6 +74,15 @@ class ActivateUserView(GenericAPIView):
         return response
 
 class RecoveryRequestView(GenericAPIView):
+    """
+    post:
+        Request a password recovery for a user account.
+        Provide the user's email in the request body.
+    """
+
+    def get_serializer(self):
+        return None
+
     permission_classes = (AllowAny,)
     def post(self, *args, **kwargs):
         data=self.request.data
@@ -77,6 +94,12 @@ class RecoveryRequestView(GenericAPIView):
 
 
 class RecoveryPasswordView(GenericAPIView):
+    """
+    post:
+        Reset the user's password using the provided token and new password.
+        Provide 'token' and 'new_password' in the request body.
+    """
+
     permission_classes = (AllowAny,)
     serializer_class = PasswordSerializer
 
@@ -90,12 +113,27 @@ class RecoveryPasswordView(GenericAPIView):
         return Response(UserSerializer(user).data, status.HTTP_200_OK)
 
 class SocketTokenView(GenericAPIView):
+    """
+    get:
+        Generate a socket token for the authenticated user.
+    """
+
+    def get_serializer(self):
+        return None
+
     permission_classes = (IsAuthenticated,)
     def get(self, *args, **kwargs):
         token=JWTService.create_token(user=self.request.user,token_class=SocketToken)
         return Response({'token': str(token)}, status.HTTP_200_OK)
 
+
+@method_decorator(name='post', decorator=swagger_auto_schema(security=[]))
 class RegisterAPIView(GenericAPIView):
+    """
+    post:
+        Register a new user account.
+        Provide required user details (e.g., username, email, password) in the request body.
+    """
     permission_classes = (AllowAny,)
     serializer_class = UserSerializer
     def post(self, request, *args, **kwargs):
@@ -105,6 +143,11 @@ class RegisterAPIView(GenericAPIView):
         return Response(UserSerializer(user).data, status.HTTP_201_CREATED)
 
 class LoginAPIView(APIView):
+    """
+    post:
+        Authenticate a user and return an access token.
+        Provide 'username' and 'password' in the request body.
+    """
     permission_classes = (AllowAny,)
     def post(self, request, *args, **kwargs):
         username = request.data.get('username') or request.data.get('email')
@@ -124,6 +167,10 @@ class LoginAPIView(APIView):
 
 
 class CurrentUserAPIView(APIView):
+    """
+    get:
+        Retrieve information about the currently authenticated user.
+    """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
