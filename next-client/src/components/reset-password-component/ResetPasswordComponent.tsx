@@ -1,5 +1,5 @@
-"use client";
 
+"use client";
 import React, { useState } from "react";
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import { useRouter, useSearchParams } from "next/navigation";

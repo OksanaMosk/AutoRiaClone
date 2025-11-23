@@ -1,3 +1,5 @@
+"use client"
+
 import type { IUser } from "@/models/IUser";
 import type { FC } from "react";
 import Link from "next/link";
@@ -10,10 +12,10 @@ type BurgerMenuProps = {
     from: string;
     authenticated: boolean;
     user: IUser | null;
-    logoutBtn?: () => void;
-    closeMenu: () => void;
-    onDarkTheme: () => void;
-    onLightTheme: () => void;
+    logoutBtnAction?: () => void;
+    closeMenuAction: () => void;
+    onDarkThemeAction: () => void;
+    onLightThemeAction: () => void;
     theme: "dark" | "light";
 };
 
@@ -22,13 +24,13 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
                                                              from,
                                                              authenticated,
                                                              user,
-                                                             closeMenu,
+                                                             closeMenuAction,
                                                          }) => {
     if (!isOpen) return null;
 
     return (
         <nav className={`burgerMenu ${styles.burgerMenu}`}>
-            <button onClick={closeMenu} className={styles.closeBtn} aria-label="Close menu">
+            <button onClick={closeMenuAction} className={styles.closeBtn} aria-label="Close menu">
                 ×
             </button>
 
@@ -36,14 +38,14 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
                 <>
                     <Link
                         href={{ pathname: "/login", query: { from } }}
-                        onClick={closeMenu}
+                        onClick={closeMenuAction}
                         className={styles.burgerLink}
                     >
                         Sign In
                     </Link>
                     <Link
                         href={{ pathname: "/register", query: { from } }}
-                        onClick={closeMenu}
+                        onClick={closeMenuAction}
                         className={styles.burgerLink}
                     >
                         Sign Up

@@ -1,3 +1,6 @@
+"use client";
+
+
 import SellerDashboardComponent from "@/components/seller-dashboard-component/SellerDashboardComponent";
 import Link from 'next/link';
 import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";

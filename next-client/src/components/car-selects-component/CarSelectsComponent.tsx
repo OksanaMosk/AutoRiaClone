@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect } from "react";
 import { carService } from "@/lib/services/carService";
 import styles from "./CarSelectsComponent.module.css";

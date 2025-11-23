@@ -1,5 +1,6 @@
+"use client"
 import { MenuClientComponent } from "@/components/menuClient-component/MenuClientComponent";
 
-export const MenuComponent = () => {
+export default function MenuComponent  () {
     return <MenuClientComponent />;
 };

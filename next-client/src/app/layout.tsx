@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import React from "react";
+import React, {Suspense} from "react";
 import {ThemeProvider} from "next-themes";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
-import {MenuComponent} from "@/components/menu-component/MenuComponent";
+import MenuComponent from "@/components/menu-component/MenuComponent";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 const openSans = Open_Sans({
     subsets: ["latin"],
@@ -33,7 +34,9 @@ export default function RootLayout({
             defaultTheme="dark"
             enableSystem={false}
         >
-        <MenuComponent/>
+         <Suspense fallback={<LoaderComponent />}>
+            <MenuComponent />
+          </Suspense>
             {children}
         </ThemeProvider>
         </body>

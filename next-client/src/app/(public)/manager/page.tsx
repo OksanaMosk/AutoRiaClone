@@ -1,4 +1,4 @@
-
+"use client";
 import ManagerDashboardComponent from "@/components/manager-dashboard-component/ManagerDashboardComponent";
 import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 

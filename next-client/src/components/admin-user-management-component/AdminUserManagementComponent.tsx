@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState } from "react";
 import { authService } from "@/lib/services/authService";
 import { IUser } from "@/models/IUser";

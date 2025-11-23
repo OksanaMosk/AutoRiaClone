@@ -19,7 +19,8 @@
     "react-router-dom": "^7.9.5",
     "sass": "^1.94.1",
     "websocket": "^1.0.35",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "typescript": "5.9.3"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -27,7 +28,6 @@
     "@types/react-dom": "^19",
     "@types/ws": "^8.18.1",
     "eslint": "^9",
-    "eslint-config-next": "16.0.1",
-    "typescript": "^5"
+    "eslint-config-next": "16.0.1"
   }
 }

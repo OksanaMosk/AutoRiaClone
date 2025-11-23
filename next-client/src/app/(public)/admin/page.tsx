@@ -1,3 +1,5 @@
+"use client";
+
 import AdminDashboardComponent from "@/components/admin-dashboard-component/AdminDashboardComponent";
 import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 

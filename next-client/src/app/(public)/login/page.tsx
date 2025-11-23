@@ -1,3 +1,4 @@
+"use client";
 import LoginComponent from "@/components/login-component/LoginComponent";
 import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
 

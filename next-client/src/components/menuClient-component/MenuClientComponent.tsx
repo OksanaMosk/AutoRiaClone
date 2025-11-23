@@ -1,4 +1,3 @@
-"use client";
 
 "use client";
 
@@ -140,10 +139,10 @@ export const MenuClientComponent = () => {
         from={from}
         authenticated={authenticated}
         user={user}
-        logoutBtn={handleLogout}
-        closeMenu={() => setIsOpen(false)}
-        onDarkTheme={handleDark}
-        onLightTheme={handleLight}
+        logoutBtnAction={handleLogout}
+        closeMenuAction={() => setIsOpen(false)}
+        onDarkThemeAction={handleDark}
+        onLightThemeAction={handleLight}
         theme={theme}
       />
     </div>

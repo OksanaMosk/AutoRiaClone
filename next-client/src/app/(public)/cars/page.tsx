@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {CarsClientComponent} from "@/components/cars-client-component/CarsClientComponent";
 import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBackButtonComponent";
