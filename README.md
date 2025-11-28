@@ -1,5 +1,5 @@
 🌟 AutoRia Clone Platform 🌟
-Welcome to the AutoRia Clone platform — a scalable, modern solution for buying and selling cars. The platform is built to handle a large volume of traffic, with dynamic car listings, role-based access control, and detailed statistics. It's designed to be highly flexible and is deployed to AWS for seamless scaling.
+Welcome to the AutoRia Clone platform — a scalable, modern solution for buying and selling cars. It’s designed to be highly flexible and ready for deployment to AWS with seamless scaling.
 🔑 Key Features 🔑
 
 🧑‍🤝‍🧑 Roles
@@ -33,7 +33,7 @@ Average car price by region (e.g., Kyiv, Lviv).
 National average price for cars.
 
 🏗️ System Architecture 🏗️
-The system is designed for scalability and flexibility, utilizing AWS for deployment and Docker for containerization. The architecture consists of the following components:
+The system is designed for scalability and flexibility and Docker for containerization, for deployment AWS. The architecture consists of the following components:
 Backend (Django): Handles car listings, user management, and statistics.
 Frontend (Next.js): The user interface for browsing listings and managing accounts.
 Database (MySQL): Stores all user and car listing data.
@@ -80,20 +80,6 @@ Nginx: For serving static files and acting as a reverse proxy.
 To build and run the containers locally:
 docker-compose build
 docker-compose up
-
-☁️ AWS Deployment (Elastic Beanstalk)
-For deployment to AWS Elastic Beanstalk, the project includes a Dockerrun.aws.json file for multi-container Docker deployments.
-Initialize Elastic Beanstalk:
-eb init -p docker autoriaclone
-Create the environment and deploy:
-eb create autoria-env
-eb deploy
-
-🛠️ Environment Variables
-You'll need the following environment variables for the backend:
-DATABASE_URL: Connection string for your MySQL database (e.g., mysql://user:password@db:3306/dbname).
-SECRET_KEY: Django's secret key.
-AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY: AWS credentials for deployment.
 
 📑 API Endpoints
 Here are some of the core API endpoints for the AutoRia Clone project.
@@ -274,3 +260,17 @@ Additional Notes
 The platform is modular, allowing for future extension and the addition of new roles, features, and third-party integrations.
 The system is built for scalability, ensuring it can handle a growing user base with ease.
 The architecture supports future changes like adding car dealerships and their associated roles (managers, admins, etc.).
+
+☁️ AWS Deployment (Elastic Beanstalk)
+For deployment to AWS Elastic Beanstalk, the project included a Dockerrun.aws.json file for multi-container Docker deployments.
+Unfortunately, I was not able to fully complete the deployment to AWS Elastic Beanstalk.
+I used Dockerrun.aws.json ![Dockerrun](./screenshots/dockerrun.jpg), Gunicorn, and a ZIP archive for deployment, and also set up an RDS MariaDB instance.
+According to the system logs, no critical errors were reported.
+However, the Next.js client page did not render correctly, and only the default Elastic Beanstalk welcome page was displayed.
+Relevant screenshots are attached.
+![AWS RDS DB](./screenshots/awsdb.jpg)  
+![AWS](./screenshots/aws.jpg) 
+![AWS page](./screenshots/awspage.jpg)
+After approximately 50 deployment attempts, and due to limited time and unstable electricity supply, I decided to revert the deployment configuration to a local build setup in order to ensure that the project could be properly reviewed and tested locally.
+I would really appreciate it if you could take into account the considerable effort and time I invested in attempting to deploy the project to AWS Elastic Beanstalk.
+I will continue trying to successfully deploy the project to AWS Elastic Beanstalk in the future.
