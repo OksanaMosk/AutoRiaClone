@@ -1,8 +1,9 @@
-
+"use client"
 import React from "react";
 import { useState } from "react";
 import { ICar } from "@/models/ICar";
 import styles from "./CarInfoComponent.module.css";
+import ChatComponent from "../chat-component/ChatComponent";
 
 
 interface CarInfoComponentProps {
@@ -12,7 +13,6 @@ interface CarInfoComponentProps {
 
 const CarInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-
     const prevPhoto = () => {
         setCurrentIndex((prev) => Math.max(prev - 1, 0));
     };
@@ -187,7 +187,19 @@ const CarInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                 </div>
 
             </div>
-           <h3 style={{ margin: "40px auto", textAlign: "center", width: "fit-content" }}>Chat with Seller</h3></div>
+            <div style={{margin: "40px auto", width: "400px"}}>
+                <h3 style={{margin: "40px auto", textAlign: "center", width: "fit-content"}}>
+                    Chat with Seller
+                </h3>
+                {!car ? (
+                    <p>Loading car info...</p>
+                ) : car.seller_id ? (
+                    <ChatComponent ownerId={String(car.seller_id)}/>
+                ) : (
+                    <p>Seller not available</p>
+                )}
+            </div>
+        </div>
         );
     };
 

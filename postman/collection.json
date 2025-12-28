@@ -1,0 +1,1176 @@
+{
+	"info": {
+		"_postman_id": "02ce7a90-5cda-4142-be2e-d0dbb6815b71",
+		"name": "AutoRiaClone",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46844194"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test2@example.com\",\n  \"password\": \"123456\",\n  \"age\": 25,\n  \"profile\": {\n    \"name\": \"John\",\n    \"surname\": \"Doe\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"token\", pm.response.json().access);",
+									"pm.collectionVariables.set(\"refresh_token\", pm.response.json().refresh);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"valter55300@gmail.com\",\n  \"password\": \"111111\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate (GET)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/activate/{{activate_token}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"activate",
+								"{{activate_token}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Activate (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/activate/{{activate_token}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"activate",
+								"{{activate_token}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Recovery",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"valter55300@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/recovery/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"recovery",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Recovery Confirm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"password\": \"111111\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/recovery/{{recovery_token}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"recovery",
+								"{{recovery_token}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Socket Info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/socket/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"socket",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cars",
+			"item": [
+				{
+					"name": "List Cars",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Car",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"brand\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"year\": 2020,\n  \"mileage\": 30000,\n  \"price\": 15000,\n  \"currency\": \"USD\",\n  \"condition\": \"used\",\n  \"fuel_type\": \"petrol\",\n  \"location\": \"Kyiv\",\n  \"max_speed\": 180,\n  \"seats_count\": 5,\n  \"engine_volume\": 1.8,\n  \"has_air_conditioner\": true,\n  \"description\": \"Ok\",\n  \"status\": \"active\"\n}\n\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/cars/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Car Constants",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/constants/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"constants",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Exchange Rates",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/exchange-rates/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"exchange-rates",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Car Photo",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/photos/{{id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"photos",
+								"{{id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stats Country",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/stats/average-country/?model={{model}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"stats",
+								"average-country",
+								""
+							],
+							"query": [
+								{
+									"key": "model",
+									"value": "{{model}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stats Average",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/stats/average/?model={{model}}&region={{region}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"stats",
+								"average",
+								""
+							],
+							"query": [
+								{
+									"key": "model",
+									"value": "{{model}}"
+								},
+								{
+									"key": "region",
+									"value": "{{region}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Photo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "photo",
+									"value": "",
+									"type": "file"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/cars/{{car_id}}/photos/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"{{car_id}}",
+								"photos",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Car Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/{{car_id}}/stats/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"{{car_id}}",
+								"stats",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Car",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/{{car_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"{{car_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Car (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"make\": \"Toyota\",\n  \"model\": \"Corolla\",\n  \"year\": 1999,\n  \"price\": 16000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cars/{{car_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"{{car_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Car (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price\": 15900\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cars/{{car_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"{{car_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Car",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/cars/{{car_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cars",
+								"{{car_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"john_doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"123456\",\n  \"age\": 25,\n  \"profile\": {\n    \"name\": \"John\",\n    \"surname\": \"Doe\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Account Type",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"account_type\": \"premium\" }"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/change-account-type/{{user_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"change-account-type",
+								"{{user_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Role",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"role\": \"admin\" }"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/change-role/{{user_id}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"change-role",
+								"{{user_id}}",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter / Sort",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/filter-sort/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"filter-sort",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Block Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/block/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"block",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Block User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/block/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"block",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Block User (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/block/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"block",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/delete/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"delete",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unblock User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/unblock/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"unblock",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unblock User (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/unblock/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"unblock",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unblock User (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/unblock/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"unblock",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read User Update Info",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/update/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"update",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"john_doe_updated\",\n  \"age\": 26\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/update/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"update",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"age\": 27 }"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/update/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"update",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Cars",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/cars/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"cars",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Dealership",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"dealership_id\": 2 }"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/{{user_id}}/change-dealership/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"{{user_id}}",
+								"change-dealership",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+      "key": "base_url",
+      "value": "http://localhost:8888/api",
+      "enabled": true
+    },
+    {
+      "key": "token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzY3MDIwNTc3LCJpYXQiOjE3NjY5MzQxNzcsImp0aSI6IjU0ZjA0ZjFiMjRlYzQxNGY4Nzc1ODMzMDZjZDYyM2NmIiwidXNlcl9pZCI6IjcifQ.o7t6myp5E5Q6YQHNIBD74wahmBKux1u9_2JnBBTJcFs",
+      "enabled": true
+    },
+    {
+      "key": "refresh_token",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc2NzUzODk3NywiaWF0IjoxNzY2OTM0MTc3LCJqdGkiOiJhNDI0ZDAzOTAyZTg0ZGI0OWJmYzhiMGU1MmQ0YTAzZSIsInVzZXJfaWQiOiI3In0.if0OFo2LvOhekGdc5x1B77WzAIahAJMhOwBy5F24xOo",
+      "enabled": true
+    },
+    {
+      "key": "id",
+      "value": "47",
+      "enabled": true
+    },
+    {
+      "key": "car_id",
+      "value": "1",
+      "enabled": true
+    },
+    {
+      "key": "user_id",
+      "value": "9",
+      "enabled": true
+    },
+    {
+      "key": "model",
+      "value": "Corrola",
+      "enabled": true
+    },
+    {
+      "key": "region",
+      "value": "Kyiv",
+      "enabled": true
+    }
+	]
+}

@@ -55,16 +55,29 @@ Nginx: Reverse proxy managing incoming requests.
 Docker: Containerization of all components for easy deployment and scaling.
 WebSocket: Provides real-time chat between Sellers and Buyers, including private messaging.
 
+🎨 Frontend / UI & Design
+### Styling
+All components use **CSS Modules** for scoped and maintainable styles.
+
+### Animations
+**GSAP** provides smooth and interactive animations for Home Page
+
+### Layout / Responsiveness
+A **mixed responsive layout** (Flex + media queries + relative units) ensures proper display on all devices.
+
+
 🛠️ Setup and Installation
 1. Clone the Repository
 git clone https://github.com/OksanaMosk/AutoRiaClone.git
 cd AutoRiaClone
 
 2. Install Backend Dependencies (Django)
-Create a virtual environment
+Create a virtual environment or
+for a quick verification, please use my .env file.
+
 cd backend
 python -m venv venv
-Activate the virtual environment
+You can activate the virtual environment.
 venv\Scripts\activate
 
 Install dependencies
@@ -85,16 +98,16 @@ python manage.py migrate
 I know this shouldn’t be done, but I don’t mind, for a quick real-time check of the project.
 email:ksenjap124@gmail.com
 password: Ksenjap124@gmail.com
+(Table Editor)
 
 5. Run the Project Locally
 Use Docker Compose to run all services:
-docker-compose up --build
+docker-compose build
+docker-compose up
 Backend (Django): http://localhost:8000
 Alternative port (for Docker / dev): http://localhost:8888
 Frontend (Next.js): http://localhost:3000
-
-Note: For WebSocket chat, run frontend separately:
-npm run dev
+WebSocket chat
 WebSocket host: ws://localhost/api
 
 6. Superuser for Testing
@@ -104,9 +117,9 @@ Password: 111111
 Or create your own superuser:
 python manage.py createsuperuser
 
-7. Additional Notes
+Additional Notes
 Redis is required for Celery tasks.
-All components (Backend, Fontrend, Redis, Celery, Nginx) are containerized with Docker.
+All components (Backend, Frontrend, Redis, Celery, Nginx) are containerized with Docker.
 For production, configure environment variables and Docker/Nginx as needed.
 
 

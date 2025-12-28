@@ -26,7 +26,7 @@ urlpatterns = [
     path('api/cars/', include('apps.car.urls')),
     path('api/auth/', include('apps.auth.urls')),
     path('api/users/', include('apps.user.urls')),
-    path('api/doс/', schema_view.with_ui('swagger'), name='schema-swagger'),
+    path('api/doc/', schema_view.with_ui('swagger'), name='schema-swagger'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

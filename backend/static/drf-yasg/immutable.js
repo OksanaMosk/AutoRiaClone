@@ -4758,7 +4758,7 @@
         return this;
       }
       // If index is negative, it should resolve relative to the size of the
-      // collection. However size may be expensive to compute if not cached, so
+      // collection.json. However size may be expensive to compute if not cached, so
       // only call count() if the number is in fact negative.
       index = resolveBegin(index, index < 0 ? this.count() : this.size);
       var spliced = this.slice(0, index);
@@ -4771,7 +4771,7 @@
     },
 
 
-    // ### More collection methods
+    // ### More collection.json methods
 
     findLastIndex: function(predicate, context) {
       var entry = this.findLastEntry(predicate, context);
