@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os.path
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from django.conf.global_settings import STATIC_ROOT
 
 from .extra_conf import *
@@ -93,12 +97,15 @@ ASGI_APPLICATION = 'configs.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME':os.environ.get("MYSQL_DATABASE"),
-        'USER': os.environ.get("MYSQL_USER"),
-        'PASSWORD': os.environ.get("MYSQL_PASSWORD"),
-        'HOST':os.environ.get("MYSQL_HOST"),
-        'PORT':os.environ.get("MYSQL_PORT"),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get("PG_DATABASE"),
+        'USER': os.environ.get("PG_USER"),
+        'PASSWORD': os.environ.get("PG_PASSWORD"),
+        'HOST': os.environ.get("PG_HOST"),
+        'PORT': os.environ.get("PG_PORT", "5432"),
+        'OPTIONS': {
+            'sslmode': 'require',
+        }
     }
 }
 
@@ -147,10 +154,9 @@ MEDIA_URL='/api/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH=False
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
 BASE_URL = os.environ.get('BASE_URL', 'http://localhost:3000')
+MANAGER_EMAIL = "codyaliev@gmail.com"

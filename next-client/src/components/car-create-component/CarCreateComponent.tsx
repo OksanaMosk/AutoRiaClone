@@ -9,6 +9,7 @@ import CarSelectsComponent from "@/components/car-selects-component/CarSelectsCo
 import userService from "@/lib/services/userService";
 import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 import axios from "axios";
+import {useRouter} from "next/navigation";
 
 type Currency = "UAH" | "USD" | "EUR";
 
@@ -49,10 +50,11 @@ const CarCreateComponent = () => {
   });
 
   const [localPhotos, setLocalPhotos] = useState<ILocalPhoto[]>([]);
-  const [exchangeRates, setExchangeRates] = useState<{ USD: number; EUR: number } | null>(null);
-  const [message, setMessage] = useState("");
-  const [loadingCar, setLoadingCar] = useState(false);
-  const [loadingPhotos, setLoadingPhotos] = useState(false);
+    const [exchangeRates, setExchangeRates] = useState<{ USD: number; EUR: number } | null>(null);
+    const [message, setMessage] = useState("");
+    const [loadingCar, setLoadingCar] = useState(false);
+    const [loadingPhotos, setLoadingPhotos] = useState(false);
+    const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -171,30 +173,33 @@ const CarCreateComponent = () => {
         : null,
       photos: [],
     };
-
-    // Логування всього payload перед відправкою
-    console.log("Payload to send:", JSON.stringify(carToSend, null, 2));
-
     const createdCar = await carService.create(carToSend);
-
-    // Логування відповіді сервера
-    console.log("Server response:", createdCar.data);
-
     setNewCar((prev) => ({ ...prev, id: createdCar.data.id }));
 
     if (createdCar.data.status === "pending") {
       setMessage("Your car listing contains inappropriate language. Please edit the description.");
       setLoadingCar(false);
-      return;
+        setTimeout(() => {
+            router.push("/seller");
+        }, 3000);
+        return;
     }
 
-    if (createdCar.data.status === "inactive") {
-      setMessage("You have failed to edit your description 3 times. The ad has been deactivated.");
-      setLoadingCar(false);
-      return;
-    }
+      if (createdCar.data.status === "inactive") {
+          setMessage("You have failed to edit your description 3 times. The ad has been deactivated.");
+          setLoadingCar(false);
+          return;
+      }
 
-    setMessage("Car created successfully! You can add photos now.");
+      if (createdCar.data.status === "active") {
+          setMessage("Car created successfully! Redirecting to your listings in 3 seconds...");
+          setLoadingCar(false);
+          setTimeout(() => {
+              router.push("/seller");
+          }, 3000);
+          return;
+      }
+
   } catch (err) {
     if (axios.isAxiosError(err)) {
       console.error("Axios error response:", err.response?.data);

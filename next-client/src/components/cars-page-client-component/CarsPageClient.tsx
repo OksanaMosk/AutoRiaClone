@@ -1,9 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { carService } from "@/lib/services/carService";
 import { ICar } from "@/models/ICar";
 import CarInfoComponent from "@/components/car-info-component/CarInfoComponent";
 import { GoBackButtonComponent } from "@/components/go-back-button-component/GoBackButtonComponent";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 interface CarsPageClientProps {
   carId: string;
@@ -29,9 +30,13 @@ export default function CarsPageClient({ carId }: CarsPageClientProps) {
     })();
   }, [carId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-  if (!car) return <div>Car not found</div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
+
+    if (error) return <div>{error}</div>;
+    if (!car) return <div>Car not found</div>;
+
 
   return (
     <div>

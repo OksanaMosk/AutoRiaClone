@@ -25,11 +25,15 @@ const ThemesButton = () => {
             <Image
                 src={theme === "light" ? "/images/light.png" : "/images/dark.png"}
                 alt={theme === "light" ? "Dark Theme" : "Light Theme"}
-                width={60}
-                height={60}
-                style={{ width: 60, height: 60}}
-                 className={styles.themeImage}
+                width={50}
+                height={50}
+                className={
+                    theme === "light"
+                        ? styles.themeImageLight
+                        : styles.themeImageDark
+                }
             />
+
         </button>
     );
 };

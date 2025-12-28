@@ -20,13 +20,14 @@
   border: none;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.6rem;
   font-weight: 500;
   transition: all 0.2s ease;
     justify-content: center;
     align-items: center;
-    width:80px;
-    height: 30px;
+    text-align: center;
+    width:50px;
+    height: 20px;
     background-color: var(--color-border);
 }
 
@@ -34,15 +35,8 @@
   background-color: var(--color-border);
 }
 
-.deleteButton {
-  background-color: #ef4444;
-}
-
-.deleteButton:hover {
-  background-color:  var(--color-border);
-}
-
 .table {
+    font-size: 0.7rem;
   border-collapse: separate;
   border-spacing: 0 8px;
     margin: 60px auto;
@@ -51,7 +45,7 @@
   background:  radial-gradient(circle at 10% 50%, #5ff, #00b8b8 40%, #003333);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  max-width: 1200px;
+ width: 90%;
 }
 
 .table thead tr {
@@ -60,16 +54,15 @@
   text-align: left;
 
 }
+.table th {
+  padding: 8px 4px;
+}
 
-.table th, .table td {
-  padding: 12px 16px;
+.table td {
+  padding: 8px 4px;
 }
 .table th:last-child{
     text-align: end;
-}
-
-.table th, .table td {
-  padding: 12px 16px;
 }
 
 .table tr {
@@ -93,12 +86,6 @@
   box-shadow: 0 0.25rem 0.75rem var(--color-border);
 }
 
-.actions {
-  display: flex;
-    justify-content: flex-end;
-  gap: 6px;
-  flex-wrap: wrap;
-}
 .statusActive{
     color: var(--color-container);
 }
@@ -108,13 +95,13 @@
   border: none;
   border-radius: 20px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.6rem;
   font-weight: 500;
   transition: all 0.2s ease;
     justify-content: center;
     align-items: center;
-    width:80px;
-    height: 30px;
+    width:50px;
+    height: 20px;
 }
 
 .actions button:hover {
@@ -133,7 +120,7 @@
   border-radius: 12px;
   padding: 5px 10px;
   border: 1px solid var(--color-white);
-  font-size: 0.95rem;
+  font-size: 0.6rem;
     background-color: var(--color-badgeId);
 }
 
@@ -166,13 +153,43 @@
   border-radius: 4px;
 }
 
-.unblockButton {
-  background-color: var(--color-active);
-  color: var(--color-white);
-  border: none;
-  border-radius: 4px;
-     justify-content: center;
-    align-items: center;
-width:80px;
+@media (min-width: 768px) {
+    .table {
+        font-size: 0.85rem;
+        width: 760px;
+    }
+    .table th {
+  padding: 12px 16px;
+}
+
+.table td {
+  padding: 12px 16px;
+}
+    .actions button {
+        font-size: 0.85rem;
+    }
+    .select {
+        border-radius: 12px;
+        padding: 5px 10px;
+        border: 1px solid var(--color-white);
+        font-size: 0.95rem;
+    }
+    .actions select {
+        color: var(--color-white);
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        width:80px;
+        height: 30px;
+    }
+    .actions button {
+    width:80px;
     height: 30px;
+}
+}
+@media (min-width: 1280px) {
+    .table {
+  max-width: 1200px;
+}
 }

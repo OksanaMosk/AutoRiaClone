@@ -17,7 +17,6 @@ const AccountsComponent = () => {
                         </div>
                         <ul className={styles.list}>
                             <li>✔ 1 Car Listing</li>
-                            <li>✔ Visible for 30 days</li>
                             <li>✔ Standard Support</li>
                         </ul>
                     </div>
@@ -31,9 +30,9 @@ const AccountsComponent = () => {
                                 <p className={styles.price}>$49.99</p>
                             </div>
                             <ul className={styles.list}>
-                                <li>✔ Up to 5 Car Listings</li>
-                                <li>✔ Highlighted in Search Results</li>
-                                <li>✔ Visible for 90 days</li>
+                                <li>✔ Unlimited car listings</li>
+                                <li>✔ Access to detailed car statistics</li>
+                                <li>✔ Exclusive access to market trends and data</li>
                                 <li>✔ Priority Support</li>
                             </ul>
                         </div>

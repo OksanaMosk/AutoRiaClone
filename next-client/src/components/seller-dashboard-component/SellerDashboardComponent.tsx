@@ -9,12 +9,13 @@ import CarListingComponent from "@/components/car-listing-component/CarListingCo
 import { LoaderComponent } from "@/components/loader-component/LoaderComponent";
 import styles from "./SellerDashboardComponent.module.css";
 import AccountsComponent from "@/components/accounts-component/AccountsComponent";
+import ChatComponent from "@/components/chat-component/ChatComponent";
 
 const SellerDashboardComponent: React.FC = () => {
   const [user, setUser] = useState<IUser | null>(null);
   const [cars, setCars] = useState<ICar[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -68,7 +69,7 @@ const SellerDashboardComponent: React.FC = () => {
     const loadCars = async () => {
       setLoading(true);
       try {
-      if (!user?.id) return; // якщо undefined, нічого не робимо
+      if (!user?.id) return;
 const response = await userService.getUserCars(String(user.id));
         setCars(response.data.cars);
       } catch (err) {
@@ -119,6 +120,16 @@ const response = await userService.getUserCars(String(user.id));
           <p>No cars found.</p>
         )}
       </div>
+        {user && (
+       <div style={{ margin: "40px auto", width: "400px" }}>
+           <h3 style={{ margin: "40px auto", textAlign: "center", width: "fit-content" }}>Chat with Buyers</h3>
+            {user?.id && (
+                <ChatComponent ownerId={String(user.id)}/>
+            )}
+
+        </div>
+        )}
+
     </div>
   );
 };

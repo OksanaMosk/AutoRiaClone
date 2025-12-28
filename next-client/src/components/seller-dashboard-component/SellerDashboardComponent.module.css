@@ -4,7 +4,15 @@
      display: flex;
      flex-direction: column;
      justify-content: center;
+     align-items: center;
      width: 100%;
+ }
+ .cardsContainer{
+     display: flex;
+     justify-content: center;
+     flex-direction: column;
+     margin: 0 auto;
+     text-align: center;
  }
 
      .userManagement {

@@ -1,6 +1,7 @@
 from better_profanity import profanity
 from django.core.exceptions import PermissionDenied
 from django.db.models import Avg
+from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
@@ -11,12 +12,14 @@ from rest_framework.exceptions import PermissionDenied
 from core.pagination import PagePagination
 from .filter import CarFilter
 from .models import carModel, get_private_bank_exchange_rate
-from .serializers import CarPhotoSerializer, CarSerializer, CarAveragePriceSerializer, CarStatsSerializer
+from .serializers import CarPhotoSerializer, CarSerializer, CarStatsSerializer
 from rest_framework.generics import CreateAPIView, DestroyAPIView
 from .models import CarPhoto
 from ..user.permissions import IsSellerOrAdminOrManager, IsSellerOrAdmin
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
+from .utils import update_car_stats
+from core.services.email_service import EmailService
 
 @method_decorator(name='get', decorator=swagger_auto_schema(security=[]))
 class carListCreateView(ListCreateAPIView):
@@ -44,9 +47,9 @@ class carListCreateView(ListCreateAPIView):
 
         description = serializer.validated_data.get('description', '')
         if description and profanity.contains_profanity(description):
-            serializer.save(seller=user, status="pending")
+            serializer.save(seller=user, status="pending", edit_attempts=1)
         else:
-            serializer.save(seller=user, status="active")
+            serializer.save(seller=user, status="active", edit_attempts=0)
 
 
 class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
@@ -74,32 +77,46 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         kwargs['partial'] = True
         return super().get_serializer(*args, **kwargs)
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.method == 'GET' and request.accepted_renderer.format == 'json':
+            update_car_stats(instance, request)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
+        if instance.edit_attempts >= 3 and request.user.role not in ["manager", "admin"]:
+            raise ValidationError("This ad is locked and cannot be edited.")
+
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-
         description = serializer.validated_data.get('description')
-        if description:
 
-            if profanity.contains_profanity(description):
-                instance.edit_attempts += 1
+        if request.user.role in ["manager", "admin"] and serializer.validated_data.get("status") == "active":
+            instance.edit_attempts = 0
+            instance.save(update_fields=["edit_attempts"])
 
-                if instance.edit_attempts >= 3:
-                    instance.status = "inactive"
-                    instance.notify_manager()
-                    instance.save(update_fields=['status', 'edit_attempts'])
-                    raise ValidationError(
-                        "You have failed to edit your description 3 times. The ad has been deactivated."
-                    )
+        if description and profanity.contains_profanity(description):
+            instance.edit_attempts += 1
+            instance.status = "inactive" if instance.edit_attempts >= 3 else "pending"
+            instance.save(update_fields=["edit_attempts", "status"])
 
-                instance.status = "pending"
-                instance.save(update_fields=['status', 'edit_attempts'])
-                raise ValidationError("Description contains prohibited words. Please edit.")
+            if instance.edit_attempts == 3:
+                EmailService._EmailService__send_email(
+                    to=settings.MANAGER_EMAIL,
+                    template_name='manager_email.html',
+                    context={
+                        'ad_id': instance.id,
+                        'frontend_url': f"{settings.BASE_URL}/ads/{instance.id}"
+                    },
+                    subject='Ad requires review'
+                )
+
+            raise ValidationError("Description contains prohibited words.")
 
         serializer.save()
         return Response(serializer.data)
-
 
 class CarPhotoCreateView(CreateAPIView):
     """
@@ -123,6 +140,7 @@ class CarPhotoDeleteView(DestroyAPIView):
     queryset = CarPhoto.objects.all()
     permission_classes = [IsSellerOrAdminOrManager]
 
+
 class CarStatsView(APIView):
     """
     get:
@@ -140,14 +158,14 @@ class CarStatsView(APIView):
         except carModel.DoesNotExist:
             return Response({"detail": "Car not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        data = {
+        stats = {
             "total_views": car.views,
             "daily_views": car.daily_views,
             "weekly_views": car.weekly_views,
             "monthly_views": car.monthly_views
         }
-        serializer = CarStatsSerializer(data)
-        return Response(serializer.data)
+        serializer = CarStatsSerializer(instance=stats)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CarAveragePriceByRegionView(APIView):
@@ -158,6 +176,7 @@ class CarAveragePriceByRegionView(APIView):
     """
 
     permission_classes = [IsSellerOrAdmin]
+
     def get(self, request):
         user = request.user
         if not user.is_authenticated or user.account_type != 'premium':
@@ -168,21 +187,25 @@ class CarAveragePriceByRegionView(APIView):
             return Response({"detail": "Region is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         cars = carModel.objects.filter(location__iexact=region)
+        model_name = request.query_params.get("model")
+        if model_name:
+            cars = cars.filter(model__iexact=model_name.strip())
+
         avg_usd = cars.aggregate(avg_price_usd=Avg("price_usd"))["avg_price_usd"] or 0
         avg_eur = cars.aggregate(avg_price_eur=Avg("price_eur"))["avg_price_eur"] or 0
         avg_uah = cars.aggregate(avg_price_uah=Avg("price"))["avg_price_uah"] or 0
 
         data = {
             "region": region,
+            "model": model_name if model_name else "all",
             "average_price": {
                 "USD": round(avg_usd, 2),
                 "EUR": round(avg_eur, 2),
                 "UAH": round(avg_uah, 2)
             }
         }
-        serializer = CarAveragePriceSerializer(data)
-        return Response(serializer.data)
 
+        return Response(data)
 
 class CarAveragePriceCountryView(APIView):
     """
@@ -193,26 +216,32 @@ class CarAveragePriceCountryView(APIView):
     """
 
     permission_classes = [IsSellerOrAdmin]
+
     def get(self, request):
         user = request.user
         if not user.is_authenticated or user.account_type != 'premium':
             return Response({"detail": "Premium account required"}, status=status.HTTP_403_FORBIDDEN)
 
-        cars = carModel.objects.all()
+        model_name = request.query_params.get("model")
+        if not model_name:
+            return Response({"detail": "Model is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        cars = carModel.objects.filter(model__iexact=model_name.strip())
+
         avg_usd = cars.aggregate(avg_price_usd=Avg("price_usd"))["avg_price_usd"] or 0
         avg_eur = cars.aggregate(avg_price_eur=Avg("price_eur"))["avg_price_eur"] or 0
         avg_uah = cars.aggregate(avg_price_uah=Avg("price"))["avg_price_uah"] or 0
 
         data = {
+            "model": model_name,
             "average_price": {
                 "USD": round(avg_usd, 2),
                 "EUR": round(avg_eur, 2),
                 "UAH": round(avg_uah, 2)
             }
         }
-        serializer = CarAveragePriceSerializer(data)
-        return Response(serializer.data)
 
+        return Response(data)
 class ExchangeRateView(APIView):
     """
     get:

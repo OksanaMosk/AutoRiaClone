@@ -3,11 +3,13 @@ import datetime
 
 from django.contrib.auth import get_user_model
 from django.db.models.expressions import F
+from django.db.models import CharField, Value
+from django.db.models.functions import Concat, Coalesce, Cast
 from django.db.models.query_utils import Q
 from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 from channels.db import database_sync_to_async
 from  djangochannelsrestframework.decorators import action
-
+from django.db.models.functions import Coalesce, Concat
 from apps.chat.models import ChatRoomModel, MessageModel
 
 
@@ -108,14 +110,26 @@ class ChatConsumer(GenericAsyncAPIConsumer):
 
     @database_sync_to_async
     def get_profile_name(self):
-        user=self.scope['user']
-        return user.profile.name
+        user = self.scope['user']
+        if hasattr(user, "profile"):
+            return user.profile.name
+        return "Admin"
+
 
     @database_sync_to_async
     def get_last_five_messages(self):
         res=MessageModel.objects.filter(
             Q(room=self.room)|(Q(room__is_private=True)&Q(room__users__in=[self.scope['user']]))
         ).annotate(
-            name=F('user__profile__name'), pk=F('user__pk')
+            name=Coalesce(
+                Concat(
+                    Cast(F('user__pk'), CharField()),
+                    Value('_'),
+                    F('user__profile__name')
+                ),
+                Cast(F('user__pk'), CharField()),
+                output_field=CharField()
+            ),
+            pk=F('user__pk')
         ).values('text','name', 'pk').order_by('-id')[:5]
         return reversed([(f"{message['pk']}_{message['name']}", message['text']) for message in res])

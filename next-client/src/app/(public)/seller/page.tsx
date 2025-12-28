@@ -35,8 +35,6 @@ const SellerPage = () => {
           </Link>
           <SellerDashboardComponent/>
 
-
-
     </div>
   );
 };

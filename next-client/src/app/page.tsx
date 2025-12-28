@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import AccountsComponent from "@/components/accounts-component/AccountsComponent";
@@ -50,7 +50,9 @@ function HomePageContent() {
 
 export default function HomePage() {
   return (
-    <Suspense fallback={<LoaderComponent />}>
+    <Suspense fallback={<div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>}>
       <HomePageContent />
     </Suspense>
   );

@@ -19,14 +19,22 @@ type UserInfoProps = {
 export const UserInfoComponent = ({ user, classNames = {} }: UserInfoProps) => {
     if (!user) return null;
 
-    const handleLogout = async () => {
-        try {
-            await fetch("/api/logout", { method: "POST" });
-            window.location.href = "/";
-        } catch (error) {
-            console.error("Logout error:", error);
-        }
-    };
+   const handleLogout = () => {
+    if (typeof window !== "undefined") {
+
+        localStorage.clear();
+        sessionStorage.clear();
+
+        document.cookie.split(";").forEach((cookie) => {
+            document.cookie = cookie
+                .replace(/^ +/, "")
+                .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+
+        window.location.href = "/login";
+    }
+};
 
     const avatarLetter = user.email ? user.email[0].toUpperCase() : "?";
 

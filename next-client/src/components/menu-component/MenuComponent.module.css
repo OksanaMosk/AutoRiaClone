@@ -49,14 +49,6 @@
     text-decoration: none;
 }
 
-.menuItem:hover {
-    color: #f2e499;
-}
-
-.activeLink {
-    color: #FFD700;
-    text-decoration: underline;
-}
 
 .rightBlock {
     margin-left: auto;

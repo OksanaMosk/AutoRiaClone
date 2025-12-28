@@ -25,6 +25,7 @@ export interface ICar {
     updated_at: string;
     exchange_rate_id: string;
     last_exchange_update: string | null;
+    edit_attempts?: number;
     photos: ICarPhoto[];
     region_avg_price?: {
     USD: number;

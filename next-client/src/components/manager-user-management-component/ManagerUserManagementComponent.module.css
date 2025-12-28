@@ -1,59 +1,50 @@
 .userManagement {
     margin: 60px auto;
-    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     font-family: 'Inter', sans-serif;
     background: radial-gradient(circle at 10% 50%, #5ff, #00b8b8 40%, #003333);
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    max-width: 1200px;
-    width: 100%;
-}
+    width: 90%;
+    }
+
 
 .subtitle {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
     font-weight: 600;
     margin-bottom: 20px;
     color: var(--color-black);
 }
 
-.filterForm {
+.filters{
+    max-width: 80%;
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 1rem;
     margin-bottom: 20px;
     align-items: center;
 }
-
-.filterForm label {
-    font-weight: 500;
-    margin-right: 6px;
+.bigSelect{
+     border-radius: 12px;
+    padding: 3px 8px;
+    border: 1px solid var(--color-white);
+    font-size: 0.7rem;
+    background-color: var(--color-badgeId);
 }
 
 .user {
     color: var(--color-border);
 }
 
-.filterForm select,
-.filterForm button {
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--color-white);
-    font-size: 0.95rem;
-}
-
-.filterForm button {
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.filterForm button:hover {
-    background-color: var(--color-badgeId);
-}
-
 .table {
-    width: 100%;
+    margin: 40px auto;
+    font-size: 0.4rem;
+    width: 90%;
     border-collapse: separate;
     border-spacing: 0 8px;
 }
@@ -65,8 +56,9 @@
 }
 
 .table th, .table td {
-    padding: 12px 16px;
+    padding: 0.25rem;
 }
+
 
 .table th:last-child {
     text-align: end;
@@ -110,12 +102,13 @@
     border: none;
     border-radius: 20px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.4rem;
     font-weight: 500;
     transition: all 0.2s ease;
     justify-content: center;
+    text-align: center;
     align-items: center;
-    width: 80px;
+    width: 30px;
     height: 30px;
 }
 
@@ -137,10 +130,10 @@
 }
 
 .select {
-    border-radius: 12px;
-    padding: 5px 10px;
+    border-radius: 6px;
+    padding: 1px;
     border: 1px solid var(--color-white);
-    font-size: 0.95rem;
+    font-size: 0.4rem;
     background-color: var(--color-badgeId);
 }
 
@@ -148,72 +141,58 @@
     background-color: var(--color-active);
 }
 
-@media (max-width: 1200px) {
-    .userManagement {
-        margin: 20px;
-        padding: 15px;
-    }
+@media (min-width: 768px) {
     .subtitle {
-        font-size: 1.6rem;
+        font-size: 1rem;
     }
-    .filterForm {
-        flex-direction: column;
-        gap: 8px;
-    }
-    .table th, .table td {
-        padding: 10px 12px;
-    }
-    .viewCarsButton, .actions button {
-        width: 70px;
-        height: 28px;
-        font-size: 0.8rem;
-    }
+
+.bigSelect{
+     border-radius: 12px;
+    padding: 3px 8px;
+    border: 1px solid var(--color-white);
+    font-size: 1rem;
+    background-color: var(--color-badgeId);
 }
 
-@media (max-width: 768px) {
-    .userManagement {
-        margin: 15px;
-        padding: 10px;
-    }
-    .subtitle {
-        font-size: 1.4rem;
-    }
-    .filterForm select,
-    .filterForm button {
-        font-size: 0.85rem;
-        padding: 5px 10px;
-    }
     .viewCarsButton, .actions button {
-        width: 60px;
-        height: 26px;
+        width: 70px;
+        height: 30px;
         font-size: 0.75rem;
     }
+    .table{
+         font-size: 0.75rem;
+    }
+
     .table th, .table td {
-        padding: 8px 10px;
+        padding: 6px 6px;
+    }
+    .select {
+    font-size: 0.75rem;
+        border-radius: 12px;
+    padding: 4px;
     }
     .actions {
         justify-content: space-between;
         flex-wrap: wrap;
     }
+
 }
 
-@media (max-width: 480px) {
-    .userManagement {
-        margin: 10px;
-        padding: 8px;
-    }
+@media (min-width: 1200px) {
+
     .subtitle {
-        font-size: 1.2rem;
+        font-size: 1.6rem;
     }
-    .filterForm {
-        gap: 6px;
+ .table{
+         font-size: 0.9rem;
     }
+
     .table th, .table td {
-        padding: 6px 8px;
+        padding: 10px 12px;
     }
     .viewCarsButton, .actions button {
-        width: 50px;
-        height: 24px;
-        font-size: 0.7rem;
+        width: 80px;
+        height: 30px;
+        font-size: 0.8rem;
     }
 }

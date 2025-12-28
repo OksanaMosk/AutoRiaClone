@@ -17,7 +17,7 @@ const carService = {
     condition?: string;
     sort_by?: string;
     sort_order?: 'asc' | 'desc';
-  }) => {
+    }) => {
     const { data } = await apiService.get(urls.cars.list, { params: filterCriteria });
     return data;
   },
@@ -57,15 +57,36 @@ const carService = {
         return apiService.get(url);
     },
 
-    getAveragePriceByRegion: (region: string) => {
-        const url = `${urls.cars.averagePriceRegion}?region=${encodeURIComponent(region)}`;
+    getAveragePriceByRegion: (region: string, model?: string) => {
+        const params = new URLSearchParams();
+        params.append("region", region);
+
+        if (model) {
+            params.append("model", model);
+        }
+
+        const query = params.toString();
+        const url = `${urls.cars.averagePriceRegion}?${query}`;
+
+        console.log("Request URL (region):", url);
         return apiService.get(url);
     },
 
-    getAveragePriceByCountry: () => {
-        const url = urls.cars.averagePriceCountry;
-        return apiService.get(url);
-    },
+    getAveragePriceByCountry: (model?: string) => {
+        const params = new URLSearchParams();
+
+    if (model) {
+        params.append("model", model);
+    }
+
+    const query = params.toString();
+    const url = query
+        ? `${urls.cars.averagePriceCountry}?${query}`
+        : urls.cars.averagePriceCountry;
+
+    console.log("Request URL (country):", url);
+    return apiService.get(url);
+},
 
     getConstants() {
         return apiService.get(urls.cars.constants);

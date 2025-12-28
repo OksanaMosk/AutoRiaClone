@@ -5,14 +5,26 @@ Welcome to the AutoRia Clone platform — a scalable, modern solution for buying
 🧑‍🤝‍🧑 Roles
 The platform supports four distinct user roles, each with different permissions:
 Buyer: A user browsing the platform who can contact sellers or dealerships for test drives or viewings.
+If a Buyer is logged in, they have access to the chat on the page of the car they are interested in.
+
 Seller: A user who wants to sell a car.
+A Seller can contact different potential Buyers in the Chat. A private Chat is also available by clicking on a user.
+Unfortunately, the chat could only be implemented by running a separate command:
+npm run dev
+(ws://localhost/api)
+
 Manager: A user who moderates the platform (e.g., bans users or removes invalid listings).
 Admin: A superuser with full access to all features. Only platform owners and partners will have this role.
 
-Superuser Credentials for Instructor Testing
+🔐 Superuser Credentials for Instructor Testing
 To verify the functionality of the platform, you can use the following superuser credentials to access the Django admin panel:
 Email: admin@gmail.com
-Password: 11111
+Password: 111111
+
+🔐 Admin Credentials (for Instructor Testing)
+To verify the functionality of the platform, you need to enter the following value in the settings.py file (the last line).
+(I left my own value there.)
+MANAGER_EMAIL = ""
 
 🛠️ Account Types
 Basic Account: Default account for sellers. This allows posting a single car listing.
@@ -25,21 +37,23 @@ Basic accounts: Limit to one car listing.
 Premium accounts: Unlimited car listings.
 Currency Conversion: Car prices are automatically converted using the PrivatBank exchange rate and updated daily.
 If inappropriate words are found, sellers will be prompted to edit the listing (up to 3 attempts).
-After 3 failed attempts, the listing becomes inactive and managers are notified.
+After 3 failed attempts, the listing becomes inactive and the Manager receives an email notification about it.
 Listing Statistics (Premium Only)
 Premium users can view the following detailed statistics for their listings:
 Views per day, week, and month.
 Average car price by region (e.g., Kyiv, Lviv).
 National average price for cars.
 
-🏗️ System Architecture 🏗️
-The system is designed for scalability and flexibility and Docker for containerization, for deployment AWS. The architecture consists of the following components:
+🏗🏗️ System Architecture with WebSocket
+The system is designed for scalability and flexibility, using Docker for containerization and ready for deployment on AWS. The architecture includes the following components:
 Backend (Django): Handles car listings, user management, and statistics.
-Frontend (Next.js): The user interface for browsing listings and managing accounts.
-Database (MySQL): Stores all user and car listing data.
+Frontend (Next.js): User interface for browsing listings and managing accounts.
+Database (Supabase / PostgreSQL): Stores all user and car listing data.
 Redis: Used for caching and task management via Celery.
-Celery: Asynchronous task execution.
+Celery: Handles asynchronous background tasks.
 Nginx: Reverse proxy managing incoming requests.
+Docker: Containerization of all components for easy deployment and scaling.
+WebSocket: Provides real-time chat between Sellers and Buyers, including private messaging.
 
 🛠️ Setup and Installation
 1. Clone the Repository
@@ -47,33 +61,60 @@ git clone https://github.com/OksanaMosk/AutoRiaClone.git
 cd AutoRiaClone
 
 2. Install Backend Dependencies (Django)
-Navigate to the backend directory and install Python dependencies:
+Create a virtual environment
 cd backend
-pip install -r requirements.txt
+python -m venv venv
+Activate the virtual environment
+venv\Scripts\activate
+
+Install dependencies
+poetry install
 
 3. Install Frontend Dependencies (Next.js)
-Navigate to the next-client directory and install Node.js dependencies:
 cd next-client
 npm install
 
 4. Set Up the Database
-Ensure MySQL is running (either locally or via Docker). Set up the DATABASE_URL environment variable:
-export DATABASE_URL=mysql://user:password@localhost:3306/autoriaclone
-Run database migrations:
+The project supports Supabase / PostgreSQL.
+Ensure your database is running.
+
+Run migrations:
 cd backend
 python manage.py migrate
 
-5. Running Locally with Docker Compose
-To run the application locally using Docker Compose:
+I know this shouldn’t be done, but I don’t mind, for a quick real-time check of the project.
+email:ksenjap124@gmail.com
+password: Ksenjap124@gmail.com
+
+5. Run the Project Locally
+Use Docker Compose to run all services:
 docker-compose up --build
-Backend (Django) will be available at http://localhost:8000//8888
-Frontend (Next.js) will be available at http://localhost:3000
+Backend (Django): http://localhost:8000
+Alternative port (for Docker / dev): http://localhost:8888
+Frontend (Next.js): http://localhost:3000
+
+Note: For WebSocket chat, run frontend separately:
+npm run dev
+WebSocket host: ws://localhost/api
+
+6. Superuser for Testing
+Django admin credentials for testing:
+Email: admin@gmail.com
+Password: 111111
+Or create your own superuser:
+python manage.py createsuperuser
+
+7. Additional Notes
+Redis is required for Celery tasks.
+All components (Backend, Fontrend, Redis, Celery, Nginx) are containerized with Docker.
+For production, configure environment variables and Docker/Nginx as needed.
+
 
 🐳 Docker Containers
 This project includes the following Docker containers:
 Backend (Django): For the API service.
 Frontend (Next.js): For the user interface.
-Database (MySQL): For storing data.
+Database Supabase / PostgreSQL: For storing data.
 Redis: For task management.
 Celery: For asynchronous background tasks.
 Nginx: For serving static files and acting as a reverse proxy.
@@ -241,14 +282,12 @@ Retrieves a list of cars listed by a specific user.
 Change Dealership
 PATCH /users/{user_id}/change-dealership/
 
-
 📦 Postman Collection
 The Postman collection for API testing can be found in the /postman directory. This collection contains sample API requests for easy testing and development.
 How to Import the Postman Collection:
 Open Postman.
 Go to File > Import.
 Select Import From Link and paste the URL to the Postman collection JSON file.
-
 
 🌱 Additional Notes
 Scalable Architecture: The platform is built with scalability in mind, allowing for future growth and additional features.
@@ -262,15 +301,12 @@ The system is built for scalability, ensuring it can handle a growing user base 
 The architecture supports future changes like adding car dealerships and their associated roles (managers, admins, etc.).
 
 ☁️ AWS Deployment (Elastic Beanstalk)
-For deployment to AWS Elastic Beanstalk, the project included a Dockerrun.aws.json file for multi-container Docker deployments.
-Unfortunately, I was not able to fully complete the deployment to AWS Elastic Beanstalk.
-I used Dockerrun.aws.json ![Dockerrun](./screenshots/dockerrun.jpg), Gunicorn, and a ZIP archive for deployment, and also set up an RDS MariaDB instance.
-According to the system logs, no critical errors were reported.
-However, the Next.js client page did not render correctly, and only the default Elastic Beanstalk welcome page was displayed.
+I used Dockerrun.aws.json ![Dockerrun](./screenshots/dockerrun.jpg), along with Gunicorn and an RDS MariaDB ![AWS RDS DB](./screenshots/awsdb.jpg) instance.
+During deployment to AWS Elastic Beanstalk:
+No critical errors were reported in the system logs [AWS](./screenshots/aws.jpg).
+However, the Next.js client did not render correctly, showing only the default backend page "Welcome to the home page!"
+![AWS page](./screenshots/awspage.jpg).
+Due to limited time and unstable electricity, the deployment was reverted to a local setup to ensure the project could be fully tested and reviewed.
+The project can be reviewed locally using Docker without issues.
+Future plans include successfully deploying the project to AWS.
 Relevant screenshots are attached.
-![AWS RDS DB](./screenshots/awsdb.jpg)  
-![AWS](./screenshots/aws.jpg) 
-![AWS page](./screenshots/awspage.jpg)
-After approximately 50 deployment attempts, and due to limited time and unstable electricity supply, I decided to revert the deployment configuration to a local build setup in order to ensure that the project could be properly reviewed and tested locally.
-I would really appreciate it if you could take into account the considerable effort and time I invested in attempting to deploy the project to AWS Elastic Beanstalk.
-I will continue trying to successfully deploy the project to AWS Elastic Beanstalk in the future.

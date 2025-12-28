@@ -18,8 +18,8 @@ const CarComponent: React.FC<Props> = ({ car }) => {
           <img
             src={car.photos[0].photo}
             alt={`${car.brand} ${car.model}`}
-            width={150}
-            height={100}
+            width={250}
+            height={120}
             className={styles.carPoster}
           />
         ) : (
@@ -28,13 +28,12 @@ const CarComponent: React.FC<Props> = ({ car }) => {
                             src='/images/noPoster.png'
                             alt="No poster"
                             className={styles.placeholder}
-                            width={150}
-                            height={100}
-                            sizes="(max-width: 150px) 30vw, 100px"
+                            width={250}
+            height={120}
                         />
                     </div>
         )}
-          <div className={styles.r}>
+          <div className={styles.right}>
             <span className={styles.label}>Price:  </span>{" "}
             <span className={styles.value}>
               {car.price} <strong>{car.currency}</strong>
@@ -48,35 +47,68 @@ const CarComponent: React.FC<Props> = ({ car }) => {
             {car.brand} {car.model}{" "} {car.year}
           </h2>
 
-          <div className={styles.row}>
-            <span className={styles.label}>Condition:  </span>{" "}
-            <span className={styles.value}>{car.condition}</span>
-          </div>
+            <div className={styles.about}>
+                <div className={styles.imageContainer}>
+                    <img
+                        src="/images/speed.png"
+                        alt="speed"
+                        width={24}
+                        height={24}
+                        className={styles.img}
+                    />
+                    <p className={styles.imgAbout}>Max speed </p>
+                    <p className={styles.value}>{car.max_speed} km/h</p>
+                </div>
 
-          <div className={styles.row}>
-            <span className={styles.label}>Max Speed:  </span>{" "}
-            <span className={styles.value}>{car.max_speed} km/h</span>
-          </div>
+                <div className={styles.imageContainer}>
+                    <img
+                        src="/images/seat.png"
+                        alt="seat"
+                        width={24}
+                        height={24}
+                        className={styles.img}
+                    />
+                    <p className={styles.imgAbout}>Seats</p>
+                    <p className={styles.value}>{car.seats_count}</p>
+                </div>
 
-          <div className={styles.row}>
-            <span className={styles.label}>Seats:  </span>{" "}
-            <span className={styles.value}>{car.seats_count}</span>
-          </div>
+                <div className={styles.imageContainer}>
+                    <img
+                        src="/images/engine.png"
+                        alt="Engine Volume"
+                        width={24}
+                        height={24}
+                        className={styles.img}
+                    />
+                    <p className={styles.imgAbout}>Engine</p>
+                    <p className={styles.value}>{car.engine_volume} L</p>
+                </div>
 
-          <div className={styles.row}>
-            <span className={styles.label}>Engine:  </span>{" "}
-            <span className={styles.value}>{car.engine_volume} L</span>
-          </div>
-
-          <div className={styles.row}>
-            <span className={styles.label}>Fuel:  </span>{" "}
-            <span className={styles.value}>{car.fuel_type}</span>
-          </div>
-
-          <div className={styles.row}>
-            <span className={styles.label}>Location:  </span>{" "}
-            <span className={styles.value}>{car.location}</span>
-          </div>
+                <div className={styles.imageContainer}>
+                    <img
+                        src="/images/fuel.png"
+                        alt="fuel"
+                        width={24}
+                        height={24}
+                        className={styles.img}
+                    />
+                    <p className={styles.imgAbout}>Fuel Type</p>
+                    <p className={styles.value}>{car.fuel_type}</p>
+                </div>
+            </div>
+            <hr className={styles.tagline}></hr>
+            <div className={styles.footerRow}>
+                <div className={styles.row}>
+                    <span className={styles.value}>{car.location}</span>
+                </div>
+                <div className={styles.row}>
+                    <span className={styles.label}>Id:  </span>{" "}
+                    <span className={styles.value}> {car.id}</span>
+                </div>
+            </div>
+            <div className={styles.row}>
+                <span className={styles.value}>{car.condition}</span>
+            </div>
         </div>
       </div>
     </div>

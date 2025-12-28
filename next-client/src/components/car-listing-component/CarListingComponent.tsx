@@ -38,6 +38,7 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
   const [regionAvgPrice, setRegionAvgPrice] = useState<AveragePrice | null>(null);
   const [countryAvgPrice, setCountryAvgPrice] = useState<AveragePrice | null>(null);
   const [error, setError] = useState<string | null>(null);
+const isLocked = (car.edit_attempts ?? 0) >= 3;
 
   const storedUser: IUser | null = useMemo(() => {
     const accountType = localStorage.getItem("accountType");
@@ -58,15 +59,17 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
       const statsRes = await carService.getStats(car.id);
       setStats(statsRes.data);
 
-      const regionRes = await carService.getAveragePriceByRegion(car.location);
-      setRegionAvgPrice(regionRes.data.average_price);
+        const model = car.model;
 
-      const countryRes = await carService.getAveragePriceByCountry();
-      setCountryAvgPrice(countryRes.data.average_price);
+        const regionRes = await carService.getAveragePriceByRegion(car.location, model);
+        setRegionAvgPrice(regionRes.data.average_price);
+
+        const countryRes = await carService.getAveragePriceByCountry(model);
+        setCountryAvgPrice(countryRes.data.average_price);
 
     } catch (err) {
-      console.error("UNKNOWN ERROR:", err);
-      setError("Error loading stats and prices");
+        console.error("UNKNOWN ERROR:", err);
+        setError("Error loading stats and prices");
     }
   })();
 }, [car.id, car.location, activeUser]);
@@ -121,28 +124,42 @@ const CarListingComponent: React.FC<Props> = ({ car, user, onDelete, onStatusCha
             <th>Country Avg Price</th>
           </tr>
         </thead>
-        <tbody>
+          <tbody>
           <tr key={car.id} className={styles.tableRow}>
-            <td className={styles.user}>{car.brand}</td>
-            <td className={styles.user}>{car.model}</td>
-            <td className={styles.user}>{car.year}</td>
-            <td className={styles.user}>{car.price}</td>
-            <td className={status === "active" ? styles.statusActive : styles.statusInactive}>
-              {status}
-            </td>
+              <td className={styles.user}>{car.brand}</td>
+              <td className={styles.user}>{car.model}</td>
+              <td className={styles.user}>{car.year}</td>
+              <td className={styles.user}>{car.price}</td>
+              <td className={status === "active" ? styles.statusActive : styles.statusInactive}>
+                  {status}
+              </td>
               <td className={styles.actions}>
-                  <button className={styles.button} onClick={handleStatusChange}>
+                  <button className={styles.button} onClick={handleStatusChange} disabled={isLocked}>
                       {status === "active" ? "Deactivate" : "Activate"}
                   </button>
-                  <Link href={`/cars/edit/${car.id}`} passHref>
-                      <button className={styles.editButton}>Edit</button>
+                  <Link href={isLocked ? "#" : `/cars/edit/${car.id}`} passHref>
+                      <button
+                          className={styles.editButton}
+                          onClick={(e) => {
+                              if (isLocked) e.preventDefault();
+                          }}
+                          disabled={isLocked}
+                      >
+                          Edit
+                      </button>
                   </Link>
+
                   <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>
+                  {isLocked && (
+                      <p style={{ color: "red", marginTop: 4, fontSize: 10}}>
+                          Locked!
+                      </p>
+                  )}
               </td>
-            <td className={styles.user}>
-              {activeUser?.account_type === "premium" ? (
-                stats ? (
-                  <>
+              <td className={styles.user}>
+                  {activeUser?.account_type === "premium" ? (
+                      stats ? (
+                          <>
                     <p>Views: {stats.total_views}</p>
                     <p>Daily: {stats.daily_views}</p>
                     <p>Weekly: {stats.weekly_views}</p>

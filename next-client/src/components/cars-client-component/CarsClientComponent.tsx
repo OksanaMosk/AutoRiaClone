@@ -35,8 +35,7 @@ export const CarsClientComponent = () => {
       const queryParams = buildQueryParams(page, filters);
       const response = await carService.getAll(queryParams);
       const resData = response.data;
-      console.log('resData:', resData);
-      setCarsData(resData.cars ?? resData);
+      setCarsData(resData.filter((car: { status: string }) => car.status === "active") ?? []);
       setTotalPagesState(resData.total_pages ?? 1);
     } catch (error) {
       console.error("Error fetching cars:", error);

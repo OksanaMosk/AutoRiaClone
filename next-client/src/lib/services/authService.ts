@@ -44,10 +44,9 @@ const authService = {
     const { data } = await apiService.post<IUser>(urls.auth.register, user);
     return data;
   },
-
-  getSocketToken(): Promise<{ token: string }> {
-    return apiService.get(urls.auth.socket);
-  },
+  getSocketToken() {
+        return apiService.get(urls.auth.socket);
+    },
 
 async getCurrentUser(token: string | null) {
   if (!token) throw new Error("No token");
@@ -123,21 +122,21 @@ async refreshToken(refreshToken: string) {
   }
 },
 
-    async logout() {
-        try {
-            await fetch("/api/logout", {
-                method: "POST",
-                credentials: "include",
-            });
-        } catch (e) {
-            console.error("Logout API error:", e);
-        }
+logout() {
+    if (typeof window !== "undefined") {
 
-        if (typeof window !== "undefined") {
-            localStorage.clear();
-            window.location.href = "/login";
-        }
-    },
+        localStorage.clear();
+        sessionStorage.clear();
+
+        document.cookie.split(";").forEach((cookie) => {
+            document.cookie = cookie
+                .replace(/^ +/, "")
+                .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+
+        window.location.href = "/login";
+    }
+},
 };
 
 export { authService };

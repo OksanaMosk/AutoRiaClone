@@ -5,6 +5,7 @@ import { IUser } from "@/models/IUser";
 import styles from './AdminUserManagementComponent.module.css';
 import userService from "@/lib/services/userService";
 import {useRouter} from "next/navigation";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 
 const AdminUserManagementComponent = () => {
@@ -108,7 +109,10 @@ const router = useRouter();
     };
 
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
+
     if (error) return <p>{error}</p>;
 
     return (
@@ -116,14 +120,14 @@ const router = useRouter();
             <h2 className={styles.subtitle}>Manage Users</h2>
 
             <div className={styles.filters}>
-                <select onChange={e => setRole(e.target.value)} value={role} className={styles.select}>
+                <select onChange={e => setRole(e.target.value)} value={role} className={styles.bigSelect}>
                     <option value="">All Roles</option>
                     <option value="buyer">Buyer</option>
                     <option value="seller">Seller</option>
                     <option value="manager">Manager</option>
                     <option value="admin">Admin</option>
                 </select>
-                <select onChange={e => setAccountType(e.target.value)} value={account_type} className={styles.select}>
+                <select onChange={e => setAccountType(e.target.value)} value={account_type} className={styles.bigSelect}>
                     <option value="">All Account Types</option>
                     <option value="basic">Basic</option>
                     <option value="premium">Premium</option>
@@ -141,18 +145,18 @@ const router = useRouter();
                                 ? "true"
                                 : "false"
                     }
-                    className={styles.select}
+                    className={styles.bigSelect}
                 >
                     <option value="">All Users</option>
                     <option value="true">Active</option>
                     <option value="false">Blocked</option>
                 </select>
-                <select onChange={e => setSortBy(e.target.value)} value={sortBy} className={styles.select}>
+                <select onChange={e => setSortBy(e.target.value)} value={sortBy} className={styles.bigSelect}>
                     <option value="id">ID</option>
                     <option value="email">Email</option>
                     <option value="role">Role</option>
                 </select>
-                <select onChange={e => setSortOrder(e.target.value as 'asc' | 'desc')} value={sortOrder} className={styles.select}>
+                <select onChange={e => setSortOrder(e.target.value as 'asc' | 'desc')} value={sortOrder} className={styles.bigSelect}>
                     <option value="asc">Asc</option>
                     <option value="desc">Desc</option>
                 </select>

@@ -1,26 +1,28 @@
-const baseURL = "ws://localhost/api";
+import { authService } from "@/lib/services/authService";
 
-export type ISocketService = {
-  chat: (room: string) => WebSocket;
-  cars: () => WebSocket;
-};
+import {w3cwebsocket as W3cwebsocket} from "websocket";
 
-const getCookie = (name: string): string | null => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift() ?? null;
-  return null;
-};
+// const baseURL = "ws://localhost/api";
+const baseURL =
+  typeof window === "undefined"
+    ? "ws://localhost/api"
+    : "ws://localhost/api";
+// const baseURL = "ws://host.docker.internal:3000/api";
 
-const socketService = async (): Promise<ISocketService> => {
-  const token = getCookie('refreshToken');
-  if (!token) {
-    throw new Error('Authentication token is missing');
-  }
-  return {
-    chat: (room: string) => new WebSocket(`${baseURL}/chat/${room}/?token=${token}`),
-    cars: () => new WebSocket(`${baseURL}/cars/?token=${token}`),
-  };
-};
-export { socketService };
+const socketService = async () => {
+    const { data: { token } } = await authService.getSocketToken()
 
+    return {
+        chat: (room: string) => {
+
+            const url = `${baseURL}/chat/${room}/?token=${token}`
+            console.log("WebSocket URL:", url)
+            return new W3cwebsocket(url)
+        },
+
+    }
+}
+
+export {
+    socketService
+}

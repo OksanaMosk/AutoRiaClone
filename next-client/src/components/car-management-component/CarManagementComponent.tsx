@@ -5,6 +5,7 @@ import { ICar } from "@/models/ICar";
 import userService from "@/lib/services/userService";
 import styles from "./CarManagementComponent.module.css";
 import {carService} from "@/lib/services/carService";
+import {LoaderComponent} from "@/components/loader-component/LoaderComponent";
 
 interface Props {
   userId: string;
@@ -61,7 +62,10 @@ const handleDelete = async (carId: string) => {
   }
 };
 
-  if (loading) return <p>Loading cars...</p>;
+  if (loading) return <div style={{ display: "flex", justifyContent: "center", marginTop: 50 }}>
+            <LoaderComponent />
+        </div>;
+
   if (error) return <p className={styles.error}>{error}</p>;
 
   return (
@@ -70,7 +74,8 @@ const handleDelete = async (carId: string) => {
       {cars.length > 0 ? (
         <table className={styles.table}>
           <thead>
-            <tr>
+          <tr>
+              <th>Id</th>
               <th>Brand</th>
               <th>Model</th>
               <th>Year</th>
@@ -81,29 +86,30 @@ const handleDelete = async (carId: string) => {
           </thead>
           <tbody>
             {cars.map(car => (
-              <tr key={car.id} className={styles.tableRow}>
-                <td>{car.brand}</td>
-                <td>{car.model}</td>
-                <td>{car.year}</td>
-                <td>{car.price}</td>
-                <td className={car.status === "active" ? styles.statusActive : styles.statusInactive}>
-                  {car.status}
-                </td>
-                  <td className={styles.actions}>
-                    <select
-                      value={car.status}
-                      onChange={(e) => handleStatusChange(car.id, e.target.value)}
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="pending">Pending</option>
-                    </select>
+                <tr key={car.id} className={styles.tableRow}>
+                    <td>{car.id}</td>
+                    <td>{car.brand}</td>
+                    <td>{car.model}</td>
+                    <td>{car.year}</td>
+                    <td>{car.price}</td>
+                    <td className={car.status === "active" ? styles.statusActive : styles.statusInactive}>
+                        {car.status}
+                    </td>
+                    <td className={styles.actions}>
+                        <select
+                            value={car.status}
+                            onChange={(e) => handleStatusChange(car.id, e.target.value)}
+                        >
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                        </select>
 
-                    <button onClick={() => handleDelete(car.id)} className={styles.deleteButton}>
-                      Delete
-                    </button>
-                  </td>
-              </tr>
+                        <button onClick={() => handleDelete(car.id)} className={styles.deleteButton}>
+                            Delete
+                        </button>
+                    </td>
+                </tr>
             ))}
           </tbody>
         </table>

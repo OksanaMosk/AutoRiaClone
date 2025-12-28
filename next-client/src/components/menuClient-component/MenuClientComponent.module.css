@@ -32,6 +32,7 @@
     width: 30%;
     text-align: center;
 
+
 }
 
 .logoLink:hover {
@@ -42,6 +43,13 @@
     margin-left: 0.5rem;
 }
 
+.logoImage{
+    background-color:#026666;
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    border-radius: 50%;
+}
 .logoTitle {
     margin: 0 auto;
     font-size: 0.8rem;
@@ -54,29 +62,9 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    gap: 3rem;
 }
 
-.menuItem {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    color: white;
-    text-decoration: none;
-}
-
-.menuItem:hover {
-    color: #f2e499;
-    text-decoration: underline;
-}
-
-.activeLink {
-    color: var(--color-badgeId);
-    text-decoration: underline;
-}
-.activeLink:hover {
-    color: var(--color-active);
-}
 .rightBlock {
     width: 30%;
     justify-content: flex-end;
@@ -86,6 +74,10 @@
 .authLinks {
     display: flex;
     gap: 0.8rem;
+}
+    .authLinks a {
+    color: violet;
+    text-decoration: none;
 }
 
 .burger {

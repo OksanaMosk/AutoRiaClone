@@ -5,6 +5,7 @@ margin: 5rem auto;
     justify-content: center;
     height: 100%;
     gap: 2rem;
+    flex-direction: column;
 
 }
 
@@ -67,4 +68,9 @@ margin: 5rem auto;
 
 .card:hover {
      transform: scale(1.01);
+}
+@media (min-width: 768px) {
+    .container{
+        flex-direction: row;
+    }
 }

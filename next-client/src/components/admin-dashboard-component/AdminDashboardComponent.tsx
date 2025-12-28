@@ -52,6 +52,7 @@ const AdminDashboardComponent = () => {
         <p className={styles.noUser}>No user data available.</p>
       )}
     </div>
+
   );
 };
 

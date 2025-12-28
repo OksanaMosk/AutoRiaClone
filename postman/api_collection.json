@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "My API",
+    "name": "AutoRiaClone",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -61,7 +61,7 @@
     }
   ],
   "variable": [
-    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "base_url", "value": "http://localhost/api" },
     { "key": "token", "value": "" },
     { "key": "id", "value": "" },
     { "key": "car_id", "value": "" },

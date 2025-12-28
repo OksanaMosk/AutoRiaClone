@@ -127,28 +127,6 @@ class ChangeUserRoleAPIView(APIView):
         return Response(UserSerializer(user).data, status=200)
 
 
-class SendEmailTestAPIView(APIView):
-    """
-    get:
-        Send a test email using the 'test_email.html' template.
-        Accessible to anyone (AllowAny).
-    """
-
-    permission_classes = [AllowAny]
-
-    def get(self, request, *args, **kwargs):
-        template = get_template('test_email.html')
-        html_content = template.render({'name': 'DJANGO'})
-        msg = EmailMultiAlternatives(
-            subject='Test Email',
-            from_email=os.environ.get('EMAIL_HOST_USER'),
-            to=[request.user.email if request.user.is_authenticated else 'example@example.com'],
-        )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
-        return Response({'message': 'Email sent!'}, status=status.HTTP_200_OK)
-
-
 class ChangeUserAccountTypeAPIView(APIView):
     """
     patch:

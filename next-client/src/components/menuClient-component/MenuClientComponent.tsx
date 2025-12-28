@@ -16,10 +16,13 @@ export const MenuClientComponent = () => {
   const [user, setUser] = useState<IUser | null>(null);
   const [authenticated, setAuthenticated] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
+    const [theme, setTheme] = useState<"light" | "dark">("dark");
+    const pathname = usePathname();
 
-  const pathname = usePathname();
-  const isCarsActive = pathname.startsWith("/cars");
+    const menuItems = [
+        {href: "/", label: "Home"},
+    { href: "/cars", label: "Cars" },
+  ];
   const isLoginActive = pathname === "/login";
   const isRegisterActive = pathname === "/register";
   const from = "/";
@@ -82,8 +85,9 @@ export const MenuClientComponent = () => {
           <Image
             src="/favicon/android-chrome-512x512.png"
             alt="logo"
-            width={51}
-            height={51}
+            width={35}
+            height={35}
+            className={styles.logoImage}
           />
           <div className={styles.logo}>
             <h1 className={styles.logoTitle}>Turbo Horse</h1>
@@ -91,15 +95,40 @@ export const MenuClientComponent = () => {
         </Link>
 
         <ul className={styles.menuList}>
-          <li>
+      {menuItems.map((item) => {
+        const isActive = pathname === item.href;
+
+        return (
+          <li key={item.href}>
             <Link
-              href="/cars"
-              className={isCarsActive ? styles.activeLink : styles.menuItem}
+              href={item.href}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "1rem",
+                color: "#00b8b8",
+                textDecoration: isActive ? "underline" : "none",
+                cursor: "pointer",
+                transition: "0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = isActive
+                  ? "white"
+                  : "#5ff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = isActive
+                  ? "#5ff"
+                   : "white";
+              }}
             >
-              Cars
+              {item.label}
             </Link>
           </li>
-        </ul>
+        );
+      })}
+    </ul>
 
         <div className={styles.rightBlock}>
           {authenticated && user ? (

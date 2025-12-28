@@ -13,6 +13,7 @@ class EmailService:
     @app.task
     def __send_email(to:str,template_name:str,context:dict,subject:str)-> None:
         template = get_template(template_name)
+
         html_content = template.render(context)
         msg = EmailMultiAlternatives(
             subject=subject,
