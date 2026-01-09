@@ -159,4 +159,4 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 BASE_URL = os.environ.get('BASE_URL', 'http://localhost:3000')
-MANAGER_EMAIL = "codyaliev@gmail.com"
+MANAGER_EMAIL = 'codyaliev@gmail.com'

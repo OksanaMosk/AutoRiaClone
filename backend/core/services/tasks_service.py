@@ -1,7 +1,8 @@
-from celery import shared_task
 import datetime
 
-from apps.car.models import get_private_bank_exchange_rate, Car
+from celery import shared_task
+
+from apps.car.services.exchange_service import get_private_bank_exchange_rate
 
 
 @shared_task
@@ -16,9 +17,11 @@ def update_exchange_rate():
         for car in cars:
             if car.last_exchange_update != today:
                 car.update_prices(rates)
-                car.save(update_fields=["price_usd", "price_eur", "last_exchange_update"])
+                car.save(update_fields=['price_usd', 'price_eur', 'last_exchange_update'])
                 updated += 1
 
-        print(f"Курс валют оновлено! Оновлено {updated} авто.")
+
     except Exception as e:
-        print(f"Помилка оновлення курсу валют: {e}")
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f'Error updating exchange rates: {e}')

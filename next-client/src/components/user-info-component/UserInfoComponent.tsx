@@ -1,6 +1,5 @@
 'use client';
 
-
 import { IUser } from "@/models/IUser";
 import styles from "./UserInfoComponent.module.css";
 
@@ -16,25 +15,25 @@ type UserInfoProps = {
     };
 };
 
-export const UserInfoComponent = ({ user, classNames = {} }: UserInfoProps) => {
+export const UserInfoComponent = ({user, classNames = {}}: UserInfoProps) => {
     if (!user) return null;
 
-   const handleLogout = () => {
-    if (typeof window !== "undefined") {
+    const handleLogout = () => {
+        if (typeof window !== "undefined") {
 
-        localStorage.clear();
-        sessionStorage.clear();
+            localStorage.clear();
+            sessionStorage.clear();
 
-        document.cookie.split(";").forEach((cookie) => {
-            document.cookie = cookie
-                .replace(/^ +/, "")
-                .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
+            document.cookie.split(";").forEach((cookie) => {
+                document.cookie = cookie
+                    .replace(/^ +/, "")
+                    .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
 
 
-        window.location.href = "/login";
-    }
-};
+            window.location.href = "/login";
+        }
+    };
 
     const avatarLetter = user.email ? user.email[0].toUpperCase() : "?";
 

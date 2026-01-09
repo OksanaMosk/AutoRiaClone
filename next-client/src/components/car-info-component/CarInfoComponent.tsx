@@ -1,22 +1,20 @@
 "use client"
+
 import React from "react";
 import { useState } from "react";
+import ChatComponent from "../chat-component/ChatComponent";
 import { ICar } from "@/models/ICar";
 import styles from "./CarInfoComponent.module.css";
-import ChatComponent from "../chat-component/ChatComponent";
-
 
 interface CarInfoComponentProps {
-  car: ICar;
+    car: ICar;
 }
-
 
 const CarInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const prevPhoto = () => {
         setCurrentIndex((prev) => Math.max(prev - 1, 0));
     };
-
     const nextPhoto = () => {
         setCurrentIndex((prev) =>
             Math.min(prev + 1, car.photos.length - 1)
@@ -200,8 +198,8 @@ const CarInfoComponent: React.FC<CarInfoComponentProps> = ({car}) => {
                 )}
             </div>
         </div>
-        );
-    };
+    );
+};
 
 export default CarInfoComponent;
 

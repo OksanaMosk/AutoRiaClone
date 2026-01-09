@@ -10,20 +10,25 @@ from apps.user.models import UserModel
 
 ActionTokenClassType = Type[Union[BlacklistMixin, Token]]
 
+
 class ActionToken(BlacklistMixin, Token):
     pass
+
 
 class RecoveryToken(ActionToken):
    token_type = ActionTokenEnum.RECOVERY.token_type
    lifetime = ActionTokenEnum.RECOVERY.lifetime
 
+
 class ActivateToken(ActionToken):
     token_type = ActionTokenEnum.ACTIVATE.token_type
     lifetime = ActionTokenEnum.ACTIVATE.lifetime
 
+
 class SocketToken(ActionToken):
     token_type = ActionTokenEnum.SOCKET.token_type
     lifetime = ActionTokenEnum.SOCKET.lifetime
+
 
 class JWTService:
     @staticmethod
@@ -33,10 +38,10 @@ class JWTService:
     @staticmethod
     def verify_token(token, token_class: ActionTokenClassType):
         try:
-            token_res=token_class(token)
+            token_res = token_class(token)
             token_res.check_blacklist()
         except Exception:
             raise JWTException
         token_res.blacklist()
-        user_id=token_res.payload.get('user_id')
+        user_id = token_res.payload.get('user_id')
         return get_object_or_404(UserModel, pk=user_id)

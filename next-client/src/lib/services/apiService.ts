@@ -1,6 +1,7 @@
-import axios, { AxiosError,AxiosHeaders, AxiosRequestConfig } from "axios";
+import axios, {AxiosError, AxiosHeaders, AxiosRequestConfig} from "axios";
+
 const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-const apiService = axios.create({ baseURL });
+const apiService = axios.create({baseURL});
 
 if (typeof window !== "undefined") {
     apiService.interceptors.request.use((req) => {
@@ -16,7 +17,6 @@ if (typeof window !== "undefined") {
         }
         return req;
     });
-
 
     apiService.interceptors.response.use(
         (response) => response,
@@ -39,20 +39,18 @@ if (typeof window !== "undefined") {
                             originalRequest.headers["Authorization"] = `Bearer ${access}`;
                             return axios(originalRequest);
                         }
-                    } catch (refreshError) {
-                        console.error("Error refreshing token:", refreshError);
+                    } catch {
                         window.location.replace("/login");
                     }
                 } else {
                     window.location.replace("/login");
                 }
             }
-
             return Promise.reject(error);
         }
     );
 }
-export { apiService };
+export {apiService};
 
 
 

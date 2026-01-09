@@ -2,8 +2,15 @@ from django.urls import path, re_path
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from apps.auth.views import ActivateUserView, CurrentUserAPIView, RecoveryPasswordView, RecoveryRequestView, SocketTokenView,RegisterAPIView, LoginAPIView
-
+from apps.auth.views import (
+    ActivateUserView,
+    CurrentUserAPIView,
+    LoginAPIView,
+    RecoveryPasswordView,
+    RecoveryRequestView,
+    RegisterAPIView,
+    SocketTokenView,
+)
 
 urlpatterns = [
     path('', TokenObtainPairView.as_view(), name='auth_login'),
@@ -12,7 +19,7 @@ urlpatterns = [
     path('login/', LoginAPIView.as_view(), name='login'),
     path('socket/', SocketTokenView.as_view(), name='socket-token'),
     re_path(r'^activate/(?P<token>.+)/$', ActivateUserView.as_view(), name='activate'),
-    path('recovery/', RecoveryRequestView.as_view(), name='recovery-request'),
-    re_path(r'^recovery/(?P<token>.+)/$', RecoveryPasswordView.as_view(), name='recovery-password'),
+    path('recovery/', RecoveryRequestView.as_view(), name='recovery_request'),
+    re_path(r'^recovery/(?P<token>.+)/$', RecoveryPasswordView.as_view(), name='recovery_password'),
     path('me/', CurrentUserAPIView.as_view(), name='current_user'),
 ]

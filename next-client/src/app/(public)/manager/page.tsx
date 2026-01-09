@@ -5,16 +5,16 @@ import {GoBackButtonComponent} from "@/components/go-back-button-component/GoBac
 const Page = () => {
     return (
         <div style={{
-      fontWeight: 'bolder',
-      margin: '40px auto',
-      textAlign: 'center',
-      width: '100%'
-    }}>
+            fontWeight: 'bolder',
+            margin: '40px auto',
+            textAlign: 'center',
+            width: '100%'
+        }}>
 
             <GoBackButtonComponent/>
             <ManagerDashboardComponent/>
 
         </div>
-)
+    )
 }
 export default Page;

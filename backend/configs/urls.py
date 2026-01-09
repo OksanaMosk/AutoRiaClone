@@ -1,17 +1,19 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import include, path
 from django.http import HttpResponse
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
+from django.urls import include, path
+
 from rest_framework.permissions import AllowAny
+
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="AutoRia Clone",
+        title='AutoRia Clone',
         default_version='v1',
-        description="AutoRia Clone",
-        contact=openapi.Contact(email="ksenjap124@gmail.com"),
+        description='AutoRia Clone',
+        contact=openapi.Contact(email='ksenjap124@gmail.com'),
     ),
     public=True,
     permission_classes=[AllowAny],
@@ -20,7 +22,7 @@ schema_view = get_schema_view(
 
 
 def home(request):
-    return HttpResponse("Welcome to the home page!")
+    return HttpResponse('Welcome to the home page!')
 urlpatterns = [
     path('', home),
     path('api/cars/', include('apps.car.urls')),

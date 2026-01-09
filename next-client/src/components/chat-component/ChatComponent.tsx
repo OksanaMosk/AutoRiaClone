@@ -1,8 +1,9 @@
 "use client";
+
 import React, {useEffect, useRef, useState, useCallback} from "react";
-import styles from "./ChatComponent.module.css";
-import {socketService} from "@/lib/services/socketService";
 import {w3cwebsocket as W3CWebSocket, IMessageEvent} from "websocket";
+import {socketService} from "@/lib/services/socketService";
+import styles from "./ChatComponent.module.css";
 
 type MessageType = {
     userId?: string;
@@ -36,7 +37,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ownerId}) => {
             if (!userId) return;
             const {chat} = await socketService();
             const client: W3CWebSocket = chat(`${roomName}`);
-            client.onopen = () => console.log("Socket connected");
             client.onmessage = (message: IMessageEvent) => {
                 try {
                     let dataStr: string;
@@ -63,10 +63,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ownerId}) => {
                     console.error("Error parsing message:", err);
                 }
             };
-
-            client.onerror = (err) => console.error("WebSocket error:", err);
-            client.onclose = () => console.log("Socket closed");
-
             socketClient.current = client;
         },
         [userId]
@@ -74,9 +70,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ownerId}) => {
 
     useEffect(() => {
         if (!room || !chatOpen || !userId) return;
-
         socketInit(room).catch(err => console.error(err));
-
         return () => {
             if (
                 socketClient.current &&

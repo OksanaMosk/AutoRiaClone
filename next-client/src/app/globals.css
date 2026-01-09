@@ -1,5 +1,3 @@
-
-
 :root {
   --color-disabled: #6b7280;
   --color-active: #00b8b8;
@@ -46,7 +44,6 @@ body {
     background-color: var(--color-white);
   }
 
-
   .search-button,
   .search-input,
   .noResults,
@@ -70,12 +67,10 @@ body {
     color: var(--color-white);
   }
 
-
   .carItem {
     box-shadow: none;
     border-bottom: 1px solid var(--color-active);
   }
-
 
   .loader {
     fill: var(--color-container);
@@ -85,12 +80,10 @@ body {
     fill: var(--color-active);
   }
 
-
   .auth {
     background-color: black;
     opacity: 0.8;
   }
-
 
   .burgerUserLogoutBtn {
     color: black;
@@ -117,7 +110,6 @@ html.dark {
     .registerMessage {
         color: var(--color-text);
     }
-
 
     .mainTitle {
         background: linear-gradient(var(--color-active), var(--color-badgeId));

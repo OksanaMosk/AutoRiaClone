@@ -1,6 +1,6 @@
 "use client"
-import "./HeroComponent.scss"
 
+import "./HeroComponent.scss"
 
 const HeroComponent = () => {
 

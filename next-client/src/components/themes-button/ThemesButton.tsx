@@ -5,7 +5,6 @@ import {useEffect, useState} from "react";
 import Image from "next/image";
 import styles from "./ThemesButton.module.css";
 
-
 const ThemesButton = () => {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);

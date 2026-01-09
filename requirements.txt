@@ -1,3 +1,5 @@
+django-filter
+drf-yasg
 djangorestframework-simplejwt
 djangochannelsrestframework
 channels

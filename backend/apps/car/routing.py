@@ -1,7 +1,7 @@
 from django.urls import path
 
-from apps.car.consumer import carConsumer
+from apps.car.consumer import CarConsumer
 
 websocket_urlpatterns = [
-    path('', carConsumer.as_asgi()),
+    path('', CarConsumer.as_asgi()),
 ]

@@ -1,58 +1,57 @@
-from better_profanity import profanity
-from django.core.exceptions import PermissionDenied
-from django.db.models import Avg
-from django.conf import settings
-from rest_framework import status
-from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
-from rest_framework.views import APIView
-from rest_framework.exceptions import PermissionDenied
-from core.pagination import PagePagination
-from .filter import CarFilter
-from .models import carModel, get_private_bank_exchange_rate
-from .serializers import CarPhotoSerializer, CarSerializer, CarStatsSerializer
-from rest_framework.generics import CreateAPIView, DestroyAPIView
-from .models import CarPhoto
-from ..user.permissions import IsSellerOrAdminOrManager, IsSellerOrAdmin
 from django.utils.decorators import method_decorator
+
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.exceptions import ValidationError
+from rest_framework.filters import OrderingFilter
+from rest_framework.generics import CreateAPIView, DestroyAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from core.pagination import PagePagination
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
-from .utils import update_car_stats
-from core.services.email_service import EmailService
+
+from apps.car.services.car_service import get_user_cars
+from apps.car.services.exchange_service import get_private_bank_exchange_rate
+from apps.car.services.pricing_service import get_average_price_by_model, get_average_price_by_region
+from apps.car.services.stats_service import (
+    create_car_with_logic,
+    get_car_stats_for_user,
+    handle_car_update_profanity,
+    update_car_stats,
+)
+
+from ..user.permissions import IsSellerOrAdmin, IsSellerOrAdminOrManager
+from .models import CarModel, CarPhoto
+from .serializers import CarPhotoSerializer, CarSerializer, CarStatsSerializer
+from .services.car_constans import get_car_constants
+
 
 @method_decorator(name='get', decorator=swagger_auto_schema(security=[]))
-class carListCreateView(ListCreateAPIView):
+class CarListCreateView(ListCreateAPIView):
     """
     get:
-        Get all cars
+        Get all cars (with filtering and ordering)
     post:
         Create a new car
     """
-
     serializer_class = CarSerializer
-    queryset = carModel.objects.all()
-    filterset_class = CarFilter
-    permission_classes =(AllowAny,)
+    queryset = CarModel.objects.all()
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['brand', 'model', 'condition', 'year', 'price', 'location']
+    ordering_fields = ['price', 'year', 'mileage', 'max_speed', 'location', 'seats_count', 'condition', 'engine_volume', 'created_at']
+    ordering = ['-created_at']
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     pagination_class = PagePagination
-
 
     def perform_create(self, serializer):
         user = self.request.user
-        if not user.is_authenticated:
-            raise ValidationError("Authentication required")
-
-        if getattr(user, "account_type", None) == "basic" and carModel.objects.filter(seller=user).exists():
-            raise ValidationError("Sorry, update account to Premium")
-
-        description = serializer.validated_data.get('description', '')
-        if description and profanity.contains_profanity(description):
-            serializer.save(seller=user, status="pending", edit_attempts=1)
-        else:
-            serializer.save(seller=user, status="active", edit_attempts=0)
+        create_car_with_logic(user, serializer)
 
 
-class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class CarRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """
     get:
         Retrieve a car by ID
@@ -65,11 +64,11 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """
 
     serializer_class = CarSerializer
-    queryset = carModel.objects.all()
+    queryset = CarModel.objects.all()
     http_method_names = ['get', 'put', 'patch', 'delete']
 
     def get_permissions(self):
-        if self.request.method == "GET":
+        if self.request.method == 'GET':
             return [AllowAny()]
         return [IsSellerOrAdminOrManager()]
 
@@ -79,44 +78,19 @@ class carRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        if request.method == 'GET' and request.accepted_renderer.format == 'json':
+        if request.accepted_renderer.format == 'json':
             update_car_stats(instance, request)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        if instance.edit_attempts >= 3 and request.user.role not in ["manager", "admin"]:
-            raise ValidationError("This ad is locked and cannot be edited.")
-
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        description = serializer.validated_data.get('description')
-
-        if request.user.role in ["manager", "admin"] and serializer.validated_data.get("status") == "active":
-            instance.edit_attempts = 0
-            instance.save(update_fields=["edit_attempts"])
-
-        if description and profanity.contains_profanity(description):
-            instance.edit_attempts += 1
-            instance.status = "inactive" if instance.edit_attempts >= 3 else "pending"
-            instance.save(update_fields=["edit_attempts", "status"])
-
-            if instance.edit_attempts == 3:
-                EmailService._EmailService__send_email(
-                    to=settings.MANAGER_EMAIL,
-                    template_name='manager_email.html',
-                    context={
-                        'ad_id': instance.id,
-                        'frontend_url': f"{settings.BASE_URL}/ads/{instance.id}"
-                    },
-                    subject='Ad requires review'
-                )
-
-            raise ValidationError("Description contains prohibited words.")
-
+        handle_car_update_profanity(instance, serializer, request.user)
         serializer.save()
         return Response(serializer.data)
+
 
 class CarPhotoCreateView(CreateAPIView):
     """
@@ -124,7 +98,7 @@ class CarPhotoCreateView(CreateAPIView):
         Upload a photo for a car
     """
     serializer_class = CarPhotoSerializer
-    permission_classes = [IsSellerOrAdmin]
+    permission_classes = [IsSellerOrAdminOrManager]
 
     def perform_create(self, serializer):
         car_id = self.kwargs['car_id']
@@ -149,21 +123,7 @@ class CarStatsView(APIView):
     """
     permission_classes = [IsSellerOrAdmin]
     def get(self, request, car_id):
-        user = request.user
-        if not user.is_authenticated or user.account_type != 'premium':
-            return Response({"detail": "Premium account required"}, status=status.HTTP_403_FORBIDDEN)
-
-        try:
-            car = carModel.objects.get(id=car_id)
-        except carModel.DoesNotExist:
-            return Response({"detail": "Car not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        stats = {
-            "total_views": car.views,
-            "daily_views": car.daily_views,
-            "weekly_views": car.weekly_views,
-            "monthly_views": car.monthly_views
-        }
+        stats = get_car_stats_for_user(car_id, request.user)
         serializer = CarStatsSerializer(instance=stats)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -180,32 +140,21 @@ class CarAveragePriceByRegionView(APIView):
     def get(self, request):
         user = request.user
         if not user.is_authenticated or user.account_type != 'premium':
-            return Response({"detail": "Premium account required"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'detail': 'Premium account required'}, status=status.HTTP_403_FORBIDDEN)
 
-        region = request.query_params.get("region")
+        region = request.query_params.get('region')
         if not region:
-            return Response({"detail": "Region is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Region is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        cars = carModel.objects.filter(location__iexact=region)
-        model_name = request.query_params.get("model")
-        if model_name:
-            cars = cars.filter(model__iexact=model_name.strip())
 
-        avg_usd = cars.aggregate(avg_price_usd=Avg("price_usd"))["avg_price_usd"] or 0
-        avg_eur = cars.aggregate(avg_price_eur=Avg("price_eur"))["avg_price_eur"] or 0
-        avg_uah = cars.aggregate(avg_price_uah=Avg("price"))["avg_price_uah"] or 0
+        model_name = request.query_params.get('model')
 
-        data = {
-            "region": region,
-            "model": model_name if model_name else "all",
-            "average_price": {
-                "USD": round(avg_usd, 2),
-                "EUR": round(avg_eur, 2),
-                "UAH": round(avg_uah, 2)
-            }
-        }
-
+        try:
+            data = get_average_price_by_region(region, model_name)
+        except ValueError as e:
+            return Response({'detail': str(e)}, status=400)
         return Response(data)
+
 
 class CarAveragePriceCountryView(APIView):
     """
@@ -220,28 +169,20 @@ class CarAveragePriceCountryView(APIView):
     def get(self, request):
         user = request.user
         if not user.is_authenticated or user.account_type != 'premium':
-            return Response({"detail": "Premium account required"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'detail': 'Premium account required'}, status=status.HTTP_403_FORBIDDEN)
 
-        model_name = request.query_params.get("model")
+        model_name = request.query_params.get('model')
         if not model_name:
-            return Response({"detail": "Model is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Model is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        cars = carModel.objects.filter(model__iexact=model_name.strip())
-
-        avg_usd = cars.aggregate(avg_price_usd=Avg("price_usd"))["avg_price_usd"] or 0
-        avg_eur = cars.aggregate(avg_price_eur=Avg("price_eur"))["avg_price_eur"] or 0
-        avg_uah = cars.aggregate(avg_price_uah=Avg("price"))["avg_price_uah"] or 0
-
-        data = {
-            "model": model_name,
-            "average_price": {
-                "USD": round(avg_usd, 2),
-                "EUR": round(avg_eur, 2),
-                "UAH": round(avg_uah, 2)
-            }
-        }
+        try:
+            data = get_average_price_by_model(model_name)
+        except ValueError as e:
+            return Response({'detail': str(e)}, status=400)
 
         return Response(data)
+
+
 class ExchangeRateView(APIView):
     """
     get:
@@ -254,7 +195,7 @@ class ExchangeRateView(APIView):
             rates = get_private_bank_exchange_rate()
             return Response(rates, status=status.HTTP_200_OK)
         except ValidationError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CarUserListView(APIView):
@@ -265,15 +206,22 @@ class CarUserListView(APIView):
     """
 
     permission_classes = [IsSellerOrAdminOrManager]
-    def get(self, request, user_id, *args, **kwargs):
-        user = request.user
 
-        for permission in self.permission_classes:
-            if not permission().has_permission(request, self):
-                raise PermissionDenied("You do not have permission to view this user's listings.")
-        if user.is_staff or user.id == user_id:
-            cars = carModel.objects.filter(seller__id=user_id)
-        else:
-            cars = carModel.objects.filter(seller__id=user_id)
+    def get(self, request, user_id):
+        cars = get_user_cars(request.user, user_id)
         serializer = CarSerializer(cars, many=True)
-        return Response({"cars": serializer.data})
+        return Response({'cars': serializer.data})
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def car_constants(request):
+    try:
+        constants = get_car_constants()
+        if not constants:
+            return Response({'detail': 'Constants not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(constants, status=status.HTTP_200_OK)
+    except ValueError as e:
+        return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except KeyError as e:
+        return Response({'detail': f'Missing key: {e}'}, status=status.HTTP_400_BAD_REQUEST)

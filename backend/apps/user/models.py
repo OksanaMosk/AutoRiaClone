@@ -1,16 +1,15 @@
-
-
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+
 from core.models import BaseModel
+
 from apps.user.managers import UserManager
 
-class Dealership(models.Model):
+
+class Dealership(BaseModel):
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True, null=True)
     phone = models.CharField(max_length=50, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'dealership'
@@ -22,14 +21,14 @@ class Dealership(models.Model):
 
 class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
     class Role(models.TextChoices):
-        BUYER = "buyer", "Buyer"
-        SELLER = "seller", "Seller"
-        MANAGER = "manager", "Manager"
-        ADMIN = "admin", "Administrator"
+        BUYER = 'buyer', 'Buyer'
+        SELLER = 'seller', 'Seller'
+        MANAGER = 'manager', 'Manager'
+        ADMIN = 'admin', 'Administrator'
 
     class AccountType(models.TextChoices):
-        BASIC = "basic", "Basic"
-        PREMIUM = "premium", "Premium"
+        BASIC = 'basic', 'Basic'
+        PREMIUM = 'premium', 'Premium'
 
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.BUYER)
@@ -44,10 +43,10 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name="user"
+        related_name='user'
     )
 
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = UserManager()
@@ -68,7 +67,7 @@ class ProfileModel(BaseModel):
     user = models.OneToOneField(
         UserModel,
         on_delete=models.CASCADE,
-        related_name="profile"
+        related_name='profile'
     )
 
     class Meta:
@@ -76,4 +75,4 @@ class ProfileModel(BaseModel):
         ordering = ['-id']
 
     def __str__(self):
-        return f"{self.name} {self.surname}"
+        return f'{self.name} {self.surname}'

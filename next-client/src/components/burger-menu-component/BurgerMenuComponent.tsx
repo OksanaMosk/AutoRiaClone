@@ -1,10 +1,10 @@
 "use client"
 
-import type { IUser } from "@/models/IUser";
-import type { FC } from "react";
 import Link from "next/link";
 import { UserInfoComponent } from "@/components/user-info-component/UserInfoComponent";
 import ThemesButton from "@/components/themes-button/ThemesButton";
+import type { IUser } from "@/models/IUser";
+import type { FC } from "react";
 import styles from "./BurgerMenuComponent.module.css";
 
 type BurgerMenuProps = {
@@ -37,14 +37,14 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
             {!authenticated ? (
                 <>
                     <Link
-                        href={{ pathname: "/login", query: { from } }}
+                        href={{pathname: "/login", query: {from}}}
                         onClick={closeMenuAction}
                         className={styles.burgerLink}
                     >
                         Sign In
                     </Link>
                     <Link
-                        href={{ pathname: "/register", query: { from } }}
+                        href={{pathname: "/register", query: {from}}}
                         onClick={closeMenuAction}
                         className={styles.burgerLink}
                     >
@@ -67,7 +67,7 @@ export const BurgerMenuComponent: FC<BurgerMenuProps> = ({
                 )
             )}
 
-            <ThemesButton />
+            <ThemesButton/>
         </nav>
     );
 };

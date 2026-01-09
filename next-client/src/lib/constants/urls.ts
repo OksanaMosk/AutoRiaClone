@@ -1,5 +1,3 @@
-
-
 const paths = {
   auth: "/auth",
   cars: "/cars",
@@ -20,12 +18,10 @@ export const urls = {
 
     users: {
         list: `${paths.users}/`,
-        block: (id: string) => `${paths.users}/${id}/block/`,
-        unblock: (id: string) => `${paths.users}/${id}/unblock/`,
+        active: (id: string) => `${paths.users}/${id}/active/`,
         changeAccountType: (id: string) => `${paths.users}/change-account-type/${id}/`,
         changeRole: (id: string) => `${paths.users}/change-role/${id}/`,
         delete: (id: string) => `${paths.users}/${id}/delete/`,
-        filterSort: `${paths.users}/filter-sort/`,
         userCars: (userId: string) => `${paths.users}/${userId}/cars/`,
     },
 

@@ -647,14 +647,28 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/users/",
+							"raw": "{{base_url}}/users/?role=manager&is_active=true&ordering=-email",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"users",
 								""
-							]
+							],
+                            "query": [
+                                {
+                                  "key": "role",
+                                  "value": "manager"
+                                },
+                                {
+                                  "key": "is_active",
+                                  "value": "true"
+                                },
+                                {
+                                  "key": "ordering",
+                                  "value": "-email"
+                                }
+                           ]
 						}
 					},
 					"response": []
@@ -756,105 +770,38 @@
 					},
 					"response": []
 				},
-				{
-					"name": "Filter / Sort",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/users/filter-sort/",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"filter-sort",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Block Status",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/users/{{user_id}}/block/",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"{{user_id}}",
-								"block",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Block User",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/users/{{user_id}}/block/",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"{{user_id}}",
-								"block",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Block User (PATCH)",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/users/{{user_id}}/block/",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"{{user_id}}",
-								"block",
-								""
-							]
-						}
-					},
-					"response": []
-				},
+{
+                  "name": "Update User Active Status",
+                  "request": {
+                      "method": "PATCH",
+                      "header": [
+                          {
+                              "key": "Authorization",
+                              "value": "Bearer {{token}}"
+                          },
+                          {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                          }
+                    ],
+                          "url": {
+                              "raw": "{{base_url}}/users/{{user_id}}/active/",
+                              "host": [
+                                "{{base_url}}"
+                              ],
+                              "path": [
+                                    "users",
+                                    "{{user_id}}",
+                                    "active"
+                              ]
+                          },
+                              "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"is_active\": false\n}"
+                              }
+                          },
+                    "response": []
+                },
 				{
 					"name": "Delete User",
 					"request": {
@@ -874,81 +821,6 @@
 								"users",
 								"{{user_id}}",
 								"delete",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Unblock User",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/users/{{user_id}}/unblock/",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"{{user_id}}",
-								"unblock",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Unblock User (PUT)",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/users/{{user_id}}/unblock/",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"{{user_id}}",
-								"unblock",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Unblock User (PATCH)",
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/users/{{user_id}}/unblock/",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"{{user_id}}",
-								"unblock",
 								""
 							]
 						}

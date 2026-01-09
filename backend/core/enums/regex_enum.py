@@ -1,8 +1,5 @@
-from enum import Enum
 import re
-
-from django.core.exceptions import ValidationError
-from profanity_check import predict
+from enum import Enum
 
 
 class RegexEnum(Enum):

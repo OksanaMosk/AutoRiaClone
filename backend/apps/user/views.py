@@ -1,19 +1,23 @@
-import os
-
 from django.contrib.auth import get_user_model
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import get_template
-from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, DestroyAPIView
-from rest_framework.permissions import AllowAny
+
+from rest_framework import filters
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.generics import DestroyAPIView, ListCreateAPIView, RetrieveUpdateAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
 
-from apps.user.models import Dealership
-from apps.user.serializers import UserSerializer
-from apps.user.permissions import IsAdmin, IsManager, IsAdminOrManager
+from django_filters.rest_framework import DjangoFilterBackend
+
+from apps.user.permissions import IsAdmin, IsAdminOrManager
+from apps.user.serializers import (
+    UserAccountTypeUpdateSerializer,
+    UserActiveSerializer,
+    UserRoleSerializer,
+    UserSerializer,
+    UserUpdateSerializer,
+)
+from apps.user.services import UserService
 
 UserModel = get_user_model()
 
@@ -29,50 +33,42 @@ class UserListCreateAPIView(ListCreateAPIView):
     """
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
 
-class BlockUserAPIView(RetrieveUpdateAPIView):
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [AllowAny()]
+        return [IsAuthenticated(), IsAdminOrManager()]
+
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['role', 'account_type', 'is_active']
+    ordering_fields = ['id', 'email', 'role', 'account_type', 'is_active']
+    ordering = ['id']
+
+
+class UpdateUserActiveAPIView(RetrieveUpdateAPIView):
     """
-    get:
-        Retrieve information about a specific user by ID.
-        Requires authentication and appropriate permissions.
-    patch:
-        Block or unblock a user.
-        Provide 'is_blocked' boolean field in the request body.
+    PATCH:
+        Change the 'is_active' status of a user.
+        - Admins can change anyone.
+        - Managers can change only BUYER's and SELLERs, cannot deactivate admins or managers.
     """
     queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserActiveSerializer
     permission_classes = [IsAdminOrManager]
-    lookup_field = "pk"
+    lookup_field = 'pk'
 
     def patch(self, request, *args, **kwargs):
         user = self.get_object()
-        if user.is_active:
-            user.is_active = False
-            user.save()
-        return Response(self.get_serializer(user).data, status=status.HTTP_200_OK)
+        current_user = request.user
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-class UnblockUserAPIView(RetrieveUpdateAPIView):
-    """
-    get:
-        Retrieve information about a specific user by ID.
-        Requires authentication and admin or manager permissions.
+        if current_user.role == UserModel.Role.MANAGER:
+            if user.role in [UserModel.Role.ADMIN, UserModel.Role.MANAGER]:
+                raise PermissionDenied('Managers cannot change active status of admins or managers.')
 
-    patch:
-        Unblock a user.
-        Provide 'is_blocked' boolean field in the request body.
-    """
-    queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAdminOrManager]
-    lookup_field = "pk"
-
-    def patch(self, request, *args, **kwargs):
-        user = self.get_object()
-        if not user.is_active:
-            user.is_active = True
-            user.save()
-        return Response(self.get_serializer(user).data, status=status.HTTP_200_OK)
+        user = UserService.toggle_user_active_status(user, serializer.validated_data['is_active'])
+        return Response(UserActiveSerializer(user).data)
 
 class UpdateUserAPIView(RetrieveUpdateAPIView):
     """
@@ -84,80 +80,75 @@ class UpdateUserAPIView(RetrieveUpdateAPIView):
         Provide the fields to update in the request body (e.g., username, email).
     """
     queryset = UserModel.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
     lookup_field = "pk"
 
+    def get_serializer(self, *args, **kwargs):
+        kwargs['partial'] = True
+        return super().get_serializer(*args, **kwargs)
+
 class DeleteUserAPIView(DestroyAPIView):
     """
-    delete:
+    DELETE:
         Delete a specific user by ID.
-        Requires authentication and admin permissions.
+        - Admins can delete anyone.
+        - Managers can delete only BUYER's and SELLERs.
     """
-
     queryset = UserModel.objects.all()
-    permission_classes = [IsAuthenticated, IsAdmin | IsManager]
-    lookup_field = "pk"
+    permission_classes = [IsAdminOrManager]
+    lookup_field = 'pk'
+
+    def destroy(self, request, *args, **kwargs):
+        user_to_delete = self.get_object()
+        current_user = request.user
+        if current_user.role == UserModel.Role.MANAGER:
+            if user_to_delete.role in [UserModel.Role.ADMIN, UserModel.Role.MANAGER]:
+                raise PermissionDenied('Managers cannot delete admins or other managers.')
+
+        return super().destroy(request, *args, **kwargs)
 
 
 class ChangeUserRoleAPIView(APIView):
     """
-    patch:
+    PATCH:
         Change the role of a specific user.
-        Provide 'role' field in the request body.
-        Requires admin permissions.
+        Requires admin permissions and superuser status.
+        Validates 'role' field via UserRoleSerializer.
     """
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def patch(self, request, user_id):
-        if not request.user.is_superuser:
-            raise PermissionDenied("You do not have permission to change user roles.")
-
-        try:
-            user = UserModel.objects.get(id=user_id)
-        except UserModel.DoesNotExist:
-            return Response({"detail": "User not found."}, status=404)
-
-        new_role = request.data.get("role")
-        if new_role not in [UserModel.Role.BUYER, UserModel.Role.SELLER, UserModel.Role.MANAGER, UserModel.Role.ADMIN]:
-            return Response({"detail": "Invalid role."}, status=400)
-
-        user.role = new_role
-        user.save()
-        return Response(UserSerializer(user).data, status=200)
+        serializer = UserRoleSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = UserService.change_user_role(request.user, user_id, serializer.validated_data['role'])
+        return Response(UserSerializer(user).data)
 
 
 class ChangeUserAccountTypeAPIView(APIView):
     """
-    patch:
-        Change the account typeof a specific user.
-        Requires the requesting user to be authenticated and an admin.
-        Only superusers can change account types.
-        Provide 'account_type' field in the request body (BASIC or PREMIUM).
+    PATCH:
+        Change the account type of specific user.
+        Requires admin permissions and superuser status.
+        Validates 'account_type' field via ChangeUserAccountTypeSerializer.
     """
-
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def patch(self, request, user_id):
-        if not request.user.is_superuser:
-            raise PermissionDenied("You do not have permission to change user account types.")
+        serializer = UserAccountTypeUpdateSerializer(
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
 
-        try:
-            user = UserModel.objects.get(id=user_id)
-        except UserModel.DoesNotExist:
-            return Response({"detail": "User not found."}, status=404)
+        user = UserService.change_user_account_type(
+            request.user,
+            user_id,
+            serializer.validated_data['account_type']
+        )
 
-        new_account_type = request.data.get("account_type")
-        if new_account_type not in [
-            UserModel.AccountType.BASIC,
-            UserModel.AccountType.PREMIUM,
-        ]:
-            return Response({"detail": "Invalid account type."}, status=400)
+        return Response(UserSerializer(user).data)
 
-        user.account_type = new_account_type
-        user.save()
-
-        return Response(UserSerializer(user).data, status=200)
 
 class ChangeUserDealershipAPIView(APIView):
     """
@@ -168,58 +159,8 @@ class ChangeUserDealershipAPIView(APIView):
     """
 
     permission_classes = [IsAdmin]
+
     def patch(self, request, user_id):
-        try:
-            user = UserModel.objects.get(id=user_id)
-        except UserModel.DoesNotExist:
-            return Response({"detail": "User not found"}, status=404)
-        dealership_id = request.data.get("dealership_id")
-        if dealership_id is not None:
-            try:
-                dealership = Dealership.objects.get(id=dealership_id)
-            except Dealership.DoesNotExist:
-                return Response({"detail": "Dealership not found"}, status=404)
-            user.dealership = dealership
-        else:
-            user.dealership = None  # від’єднати від салону
-        user.save()
-        return Response(UserSerializer(user).data, status=200)
-
-
-class UserFilterSortAPIView(APIView):
-    """
-    get:
-        Retrieve a list of users with optional filtering and sorting.
-        Supports query parameters for filtering (e.g., account_type, is_active)
-        and sorting (e.g., ?ordering=username).
-    """
-    permission_classes = [IsAuthenticated, IsManager | IsAdmin]
-
-    def get(self, request):
-        is_active = request.query_params.get('is_active', None)
-        account_type = request.query_params.get('account_type', None)
-        role = request.query_params.get('role', None)
-        sort_by = request.query_params.get('sort_by', 'id')
-        sort_order = request.query_params.get('sort_order', 'asc')
-        valid_roles = ['buyer', 'seller', 'manager', 'admin']
-        if role and role not in valid_roles:
-            return Response({"detail": "Invalid role."}, status=400)
-        users = UserModel.objects.all()
-        if is_active is not None:
-            if is_active.lower() not in ['true', 'false']:
-                return Response({"detail": "Invalid value for 'is_active' parameter."}, status=400)
-            is_active = is_active.lower() == 'true'
-            users = users.filter(is_active=is_active)
-        if account_type:
-            users = users.filter(account_type=account_type)
-        if role:
-            users = users.filter(role=role)
-        valid_sort_fields = ['id', 'username', 'email', 'role', 'account_type', 'is_active']
-        if sort_by not in valid_sort_fields:
-            return Response({"detail": "Invalid sort field."}, status=400)
-        if sort_order == 'asc':
-            users = users.order_by(sort_by)
-        else:
-            users = users.order_by(f'-{sort_by}')
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+        dealership_id = request.data.get('dealership_id')
+        user = UserService.change_user_dealership(user_id, dealership_id)
+        return Response(UserSerializer(user).data)

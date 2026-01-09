@@ -21,7 +21,7 @@ export const ScrollTopButtonComponent = () => {
 
     return (
         <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => window.scrollTo({top: 0, behavior: "smooth"})}
             className={styles.scrollToTopBtn}
             aria-label="Scroll to top"
             title="Scroll to top"
