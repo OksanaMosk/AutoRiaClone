@@ -244,10 +244,6 @@ Change Role
 PATCH /users/change-role/{user_id}/
 Changes the role (e.g., Admin, Manager) of a user.
 
-Filter / Sort
-GET /users/filter-sort/
-Filters and sorts users based on provided criteria.
-
 Get Block Status
 GET /users/{id}/block/
 Retrieves the block status of a user.
@@ -263,18 +259,6 @@ Updates the block status of a user.
 Delete User
 DELETE /users/{id}/delete/
 Deletes a user from the platform.
-
-Unblock User
-GET /users/{id}/unblock/
-Unblocks a user.
-
-Unblock User (PUT)
-PUT /users/{id}/unblock/
-Unblocks a user.
-
-Unblock User (PATCH)
-PATCH /users/{id}/unblock/
-Updates the unblock status of a user.
 
 Read User Update Info
 GET /users/{id}/update/
