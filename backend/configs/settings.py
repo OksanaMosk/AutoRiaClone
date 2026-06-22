@@ -33,7 +33,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG")=="True"
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['*']
+
 
 
 AUTH_USER_MODEL = 'user.UserModel'
@@ -147,7 +148,7 @@ USE_TZ = True
 STATIC_URL = '/drf-static/'
 STATIC_ROOT=os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT='storage'
-MEDIA_URL='/api/media/'
+MEDIA_URL='https://autoriaclone.duckdns.org:8443/api/media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

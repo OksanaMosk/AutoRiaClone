@@ -9,7 +9,8 @@ const ActivateAccount = () => {
     const {token} = useParams();
     useEffect(() => {
         if (token) {
-            const activationUrl = `http://localhost:8888/api/auth/activate/${token}/`;
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8888/api";
+            const activationUrl = `${apiUrl}/auth/activate/${token}/`;
             fetch(activationUrl, {
                 method: "PATCH",
                 headers: {

@@ -28,7 +28,8 @@ class EmailService:
     @classmethod
     def register(cls, user):
         token=JWTService.create_token(user,ActivateToken)
-        url = f'http://localhost:8888/api/auth/activate/{token}/'
+        base_url = os.environ.get('BASE_URL', 'http://localhost:8888')
+        url = f'{base_url}/api/auth/activate/{token}/'
         cls.__send_email.delay(
             to=user.email,
             template_name='register.html',
@@ -38,7 +39,8 @@ class EmailService:
     @classmethod
     def recovery(cls, user):
         token=JWTService.create_token(user, RecoveryToken)
-        url =  f'http://localhost:3000/reset-password?token={token}'
+        base_url = os.environ.get('BASE_URL', 'http://localhost:3000')
+        url = f'{base_url}/reset-password?token={token}'
         cls.__send_email.delay(
             to=user.email,
             template_name='recovery.html',

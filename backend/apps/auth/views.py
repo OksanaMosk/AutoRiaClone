@@ -1,4 +1,5 @@
 import logging
+import os
 
 from django.contrib.auth import authenticate, get_user_model
 from django.shortcuts import redirect
@@ -58,7 +59,8 @@ class ActivateUserView(GenericAPIView):
         response = self.activate_user(token)
 
         if response.status_code == 200:
-            return redirect('http://localhost:3000/login?activated=true')
+            base_url = os.environ.get('BASE_URL', 'http://localhost:3000')
+            return redirect(f'{base_url}/login?activated=true')
         return response
 
 class RecoveryRequestView(GenericAPIView):

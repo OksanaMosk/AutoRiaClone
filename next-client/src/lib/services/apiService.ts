@@ -1,6 +1,6 @@
 import axios, {AxiosError, AxiosHeaders, AxiosRequestConfig} from "axios";
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const baseURL = process.env.NEXT_PUBLIC_API_URL || "https://autoriaclone.duckdns.org:8443/api"
 const apiService = axios.create({baseURL});
 
 if (typeof window !== "undefined") {
